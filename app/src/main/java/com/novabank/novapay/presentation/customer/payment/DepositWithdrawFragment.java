@@ -11,6 +11,7 @@ import androidx.annotation.Nullable;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.navigation.fragment.NavHostFragment;
 
+import com.novabank.novapay.BuildConfig;
 import com.novabank.novapay.R;
 import com.novabank.novapay.core.common.Constants;
 import com.novabank.novapay.core.ui.BaseFragment;
@@ -164,9 +165,12 @@ public class DepositWithdrawFragment extends BaseFragment<FragmentDepositWithdra
 
                     if (clientSecret != null && !clientSecret.trim().isEmpty()) {
                         // Luồng GATEWAY: OTP đã xác thực -> Mở Stripe PaymentSheet
+                        String stripePubKey = !BuildConfig.STRIPE_PUBLISHABLE_KEY.isEmpty()
+                                ? BuildConfig.STRIPE_PUBLISHABLE_KEY
+                                : getString(R.string.money_stripe_publishable_key);
                         boolean launched = stripeGatewayHelper.presentPaymentSheet(
                                 requireContext(),
-                                getString(R.string.money_stripe_publishable_key),
+                                stripePubKey,
                                 getString(R.string.money_stripe_merchant_name),
                                 draftId,
                                 clientSecret

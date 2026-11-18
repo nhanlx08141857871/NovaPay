@@ -2,6 +2,7 @@ package com.novabank.novapay.core.di;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import com.novabank.novapay.BuildConfig;
 import com.novabank.novapay.core.common.Constants;
 import com.novabank.novapay.data.remote.server.AuthInterceptor;
 
@@ -57,8 +58,12 @@ public final class NetworkModule {
                 .addInterceptor(loggingInterceptor)
                 .build();
 
+        String baseUrl = !BuildConfig.BACKEND_BASE_URL.isEmpty()
+                ? BuildConfig.BACKEND_BASE_URL
+                : Constants.DEFAULT_BACKEND_BASE_URL;
+
         return new Retrofit.Builder()
-                .baseUrl(Constants.DEFAULT_BACKEND_BASE_URL)
+                .baseUrl(baseUrl)
                 .client(client)
                 .addConverterFactory(GsonConverterFactory.create(gson))
                 .addCallAdapterFactory(RxJava3CallAdapterFactory.create())

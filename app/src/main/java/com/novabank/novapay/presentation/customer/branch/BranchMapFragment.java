@@ -22,6 +22,7 @@ import androidx.core.content.ContextCompat;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.navigation.fragment.NavHostFragment;
 
+import com.novabank.novapay.BuildConfig;
 import com.novabank.novapay.R;
 import com.novabank.novapay.core.common.Constants;
 import com.novabank.novapay.core.common.UiState;
@@ -93,7 +94,10 @@ public class BranchMapFragment extends BaseFragment<FragmentBranchMapBinding> {
     @Override
     protected void setupViews() {
         viewModel = new ViewModelProvider(this).get(BranchMapViewModel.class);
-        viewModel.setOpenRouteApiKey(getString(R.string.openroute_api_key));
+        String orsKey = !BuildConfig.ORS_API_KEY.isEmpty()
+                ? BuildConfig.ORS_API_KEY
+                : getString(R.string.openroute_api_key);
+        viewModel.setOpenRouteApiKey(orsKey);
 
         Context appCtx = requireContext().getApplicationContext();
         IConfigurationProvider osmConfig = Configuration.getInstance();

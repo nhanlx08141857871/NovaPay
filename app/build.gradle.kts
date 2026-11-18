@@ -1,3 +1,5 @@
+import java.util.Properties
+
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.hilt.android)
@@ -6,6 +8,51 @@ plugins {
 if (file("google-services.json").exists()) {
     apply(plugin = "com.google.gms.google-services")
 }
+
+fun readSimpleKeyValueFile(targetFile: File): Map<String, String> {
+    if (!targetFile.exists()) return emptyMap()
+    val result = LinkedHashMap<String, String>()
+    targetFile.forEachLine(Charsets.UTF_8) { rawLine ->
+        val line = rawLine.trim()
+        if (line.isNotEmpty() && !line.startsWith("#") && line.contains("=")) {
+            val idx = line.indexOf('=')
+            val key = line.substring(0, idx).trim()
+            var value = line.substring(idx + 1).trim()
+            if ((value.startsWith("\"") && value.endsWith("\"")) ||
+                (value.startsWith("'") && value.endsWith("'"))
+            ) {
+                value = value.substring(1, value.length - 1)
+            }
+            result[key] = value
+        }
+    }
+    return result
+}
+
+fun escapeBuildConfigString(raw: String): String =
+    raw.replace("\\", "\\\\").replace("\"", "\\\"")
+
+val localProps = Properties().apply {
+    val lpFile = rootProject.file("local.properties")
+    if (lpFile.exists()) {
+        lpFile.inputStream().use { load(it) }
+    }
+}
+val serverEnvMap = readSimpleKeyValueFile(rootProject.file("server/.env"))
+
+// Chỉ đọc các khóa cho phép phía Client theo GEMINI.md §1 (ORS_API_KEY, STRIPE_PUBLISHABLE_KEY pk_test_..., BACKEND_BASE_URL).
+// Tuyệt đối KHÔNG nhúng GEMINI_API_KEY, BREVO_API_KEY, STRIPE_SECRET_KEY hay FIREBASE_PRIVATE_KEY vào APK.
+val orsApiKey: String = (localProps.getProperty("ORS_API_KEY")
+    ?: localProps.getProperty("OPENROUTE_API_KEY")
+    ?: "").trim()
+
+val rawStripePubKey: String = (localProps.getProperty("STRIPE_PUBLISHABLE_KEY")
+    ?: serverEnvMap["STRIPE_PUBLISHABLE_KEY"]
+    ?: "").trim()
+val stripePublishableKey: String = if (rawStripePubKey.startsWith("pk_")) rawStripePubKey else ""
+
+val backendBaseUrl: String = (localProps.getProperty("BACKEND_BASE_URL")
+    ?: "http://10.0.2.2:3000/").trim().let { if (it.endsWith("/")) it else "$it/" }
 
 android {
     namespace = "com.novabank.novapay"
@@ -21,6 +68,10 @@ android {
         versionName = "1.0"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
+
+        buildConfigField("String", "ORS_API_KEY", "\"${escapeBuildConfigString(orsApiKey)}\"")
+        buildConfigField("String", "STRIPE_PUBLISHABLE_KEY", "\"${escapeBuildConfigString(stripePublishableKey)}\"")
+        buildConfigField("String", "BACKEND_BASE_URL", "\"${escapeBuildConfigString(backendBaseUrl)}\"")
     }
 
     buildTypes {
@@ -39,6 +90,7 @@ android {
 
     buildFeatures {
         viewBinding = true
+        buildConfig = true
     }
 }
 

@@ -50,9 +50,14 @@ service cloud.firestore {
       }
     }
 
-    // 4. transactions/{txId} — Chỉ Server ghi trong ACID Transaction
+    // 4. transactions/{txId} — Chỉ Server ghi trong ACID Transaction; người gửi, người nhận nội bộ và Officer được đọc biên lai
     match /transactions/{txId} {
-      allow read: if (isSignedIn() && resource.data.initiatedBy == request.auth.uid) || isOfficer();
+      allow read: if isOfficer()
+        || (isSignedIn() && resource != null && (
+             resource.data.initiatedBy == request.auth.uid
+             || (resource.data.get("toAccountId", null) != null
+                 && get(/databases/$(database)/documents/accounts/$(resource.data.toAccountId)).data.ownerUid == request.auth.uid)
+           ));
       allow write: if false;
     }
 

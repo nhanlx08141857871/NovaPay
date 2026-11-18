@@ -12,6 +12,7 @@ export interface AppConfig {
   brevoSenderEmail: string;
   brevoSenderName: string;
   stripeSecretKey: string;
+  stripePublishableKey: string;
   geminiApiKey: string;
   geminiModel: string;
 }
@@ -44,6 +45,7 @@ export const config: AppConfig = {
   brevoSenderEmail: process.env.BREVO_SENDER_EMAIL || "no-reply@novapay.vn",
   brevoSenderName: process.env.BREVO_SENDER_NAME || "NovaPay Banking",
   stripeSecretKey: process.env.STRIPE_SECRET_KEY || "",
+  stripePublishableKey: (process.env.STRIPE_PUBLISHABLE_KEY || "").trim(),
   geminiApiKey: process.env.GEMINI_API_KEY || "",
   geminiModel: process.env.GEMINI_MODEL || "gemini-2.5-flash",
 };
