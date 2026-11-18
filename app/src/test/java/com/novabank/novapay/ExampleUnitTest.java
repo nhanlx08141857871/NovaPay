@@ -1,4 +1,4 @@
-package com.example.novapay;
+package com.novabank.novapay;
 
 import org.junit.Test;
 
