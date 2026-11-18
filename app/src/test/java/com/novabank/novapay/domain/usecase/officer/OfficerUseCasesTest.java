@@ -103,6 +103,16 @@ public class OfficerUseCasesTest {
         double lastRate = -1.0;
 
         @Override
+        public Observable<AppResult<List<InterestRate>>> observeAllRates() {
+            return Observable.just(AppResult.success(Collections.emptyList()));
+        }
+
+        @Override
+        public Observable<AppResult<InterestRate>> observeRateForTerm(int termMonths) {
+            return Observable.empty();
+        }
+
+        @Override
         public Observable<AppResult<List<InterestRate>>> observeInterestRates() {
             return Observable.just(AppResult.success(Collections.emptyList()));
         }

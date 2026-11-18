@@ -25,6 +25,26 @@ function initFirebase(): void {
   if (admin.apps.length > 0) {
     return;
   }
+
+  const projectId = (process.env.FIREBASE_PROJECT_ID || "").trim();
+  const clientEmail = (process.env.FIREBASE_CLIENT_EMAIL || "").trim();
+  const rawPrivateKey = (process.env.FIREBASE_PRIVATE_KEY || "").trim();
+  const privateKey = rawPrivateKey
+    .replace(/^["']|["']$/g, "")
+    .replace(/\\n/g, "\n")
+    .trim();
+
+  if (projectId && clientEmail && privateKey) {
+    admin.initializeApp({
+      credential: admin.credential.cert({
+        projectId,
+        clientEmail,
+        privateKey,
+      }),
+    });
+    return;
+  }
+
   const raw = process.env.FIREBASE_SERVICE_ACCOUNT_JSON;
   if (raw && raw.trim().length > 0) {
     admin.initializeApp({
@@ -39,7 +59,7 @@ function initFirebase(): void {
     return;
   }
   throw new Error(
-    "Thiếu FIREBASE_SERVICE_ACCOUNT_JSON hoặc GOOGLE_APPLICATION_CREDENTIALS để chạy seed."
+    "Thiếu cấu hình Firebase Admin (FIREBASE_PROJECT_ID + FIREBASE_CLIENT_EMAIL + FIREBASE_PRIVATE_KEY) trong server/.env để chạy seed."
   );
 }
 

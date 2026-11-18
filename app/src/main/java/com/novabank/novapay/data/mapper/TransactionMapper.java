@@ -53,6 +53,7 @@ public final class TransactionMapper {
                     m.getPhone(),
                     m.getItemId(),
                     m.getOrderId(),
+                    m.getQuantity(),
                     m.getMortgageAccountId(),
                     m.getGatewayRef()
             );

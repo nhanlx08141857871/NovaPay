@@ -78,6 +78,16 @@ public class ObserveSavingProjectionUseCaseTest {
             public Observable<AppResult<InterestRate>> observeRateForTerm(int termMonths) {
                 return Observable.empty();
             }
+
+            @Override
+            public Observable<AppResult<List<InterestRate>>> observeInterestRates() {
+                return ratesSubject;
+            }
+
+            @Override
+            public Single<AppResult<String>> saveInterestRate(int termMonths, double annualRate) {
+                return Single.just(AppResult.success("rate_" + termMonths));
+            }
         };
 
         ObserveSavingProjectionUseCase useCase =

@@ -5,13 +5,11 @@ import com.novabank.novapay.data.remote.server.FaceCheckApi;
 import com.novabank.novapay.data.repository.AccountRepositoryImpl;
 import com.novabank.novapay.data.repository.AuthRepositoryImpl;
 import com.novabank.novapay.data.repository.EkycRepositoryImpl;
-import com.novabank.novapay.data.repository.InterestRateRepositoryImpl;
 import com.novabank.novapay.data.repository.LedgerRepositoryImpl;
 import com.novabank.novapay.data.repository.UserRepositoryImpl;
 import com.novabank.novapay.domain.repository.AccountRepository;
 import com.novabank.novapay.domain.repository.AuthRepository;
 import com.novabank.novapay.domain.repository.EkycRepository;
-import com.novabank.novapay.domain.repository.InterestRateRepository;
 import com.novabank.novapay.domain.repository.LedgerRepository;
 import com.novabank.novapay.domain.repository.UserRepository;
 
@@ -62,8 +60,4 @@ public abstract class CoreRepositoryModule {
     @Binds
     @Singleton
     public abstract LedgerRepository bindLedgerRepository(LedgerRepositoryImpl impl);
-
-    @Binds
-    @Singleton
-    public abstract InterestRateRepository bindInterestRateRepository(InterestRateRepositoryImpl impl);
 }

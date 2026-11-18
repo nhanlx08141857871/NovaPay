@@ -2,4 +2,181 @@
 <resources>
     <!-- Chuỗi giao diện Phân hệ Giao dịch, Chuyển tiền, Stripe & Tiện ích (Owner: Thành viên B) -->
     <string name="money_section_title">Giao dịch &amp; Thanh toán</string>
+    <string name="money_action_back">← Quay lại</string>
+    <string name="money_source_account_label">Tài khoản thanh toán nguồn (CHECKING)</string>
+    <string name="money_source_account_format">%1$s • Số dư: %2$s</string>
+    <string name="money_no_active_checking_title">Chưa có tài khoản thanh toán</string>
+    <string name="money_no_active_checking_desc">Bạn cần ít nhất một tài khoản CHECKING đang hoạt động để thực hiện giao dịch.</string>
+    <string name="money_high_value_security_hint">Giao dịch trên 5.000.000 ₫ sẽ được bảo vệ 3 lớp: Quét khuôn mặt eKYC + Sinh trắc học + OTP Email.</string>
+
+    <!-- Chuyển tiền (TransferFragment) -->
+    <string name="money_transfer_title">Chuyển tiền nhanh 24/7</string>
+    <string name="money_transfer_open_deposit_withdraw">Nạp / Rút / Vay</string>
+    <string name="money_transfer_tab_internal">Nội bộ NovaPay</string>
+    <string name="money_transfer_tab_interbank">Liên ngân hàng</string>
+    <string name="money_transfer_beneficiaries_title">Danh bạ thụ hưởng đã lưu</string>
+    <string name="money_transfer_beneficiaries_empty">Chưa có người nhận lưu sẵn. Tích chọn lưu bên dưới khi chuyển khoản.</string>
+    <string name="money_transfer_beneficiary_delete">Xóa</string>
+    <string name="money_transfer_beneficiary_deleted">Đã xóa khỏi danh bạ thụ hưởng.</string>
+    <string name="money_transfer_beneficiary_internal_tag">Nội bộ NovaPay</string>
+    <string name="money_transfer_recipient_account_hint">Số tài khoản người nhận</string>
+    <string name="money_transfer_scan_qr">Quét mã QR</string>
+    <string name="money_transfer_lookup_action">Tra cứu</string>
+    <string name="money_transfer_lookup_loading">Đang tra cứu chủ tài khoản…</string>
+    <string name="money_transfer_lookup_verified">Người nhận xác thực: %1$s</string>
+    <string name="money_transfer_lookup_required">Vui lòng tra cứu và xác nhận số tài khoản nội bộ hợp lệ trước khi chuyển.</string>
+    <string name="money_transfer_bank_hint">Chọn ngân hàng thụ hưởng</string>
+    <string name="money_transfer_recipient_name_hint">Họ và tên người nhận (không dấu hoặc có dấu)</string>
+    <string name="money_transfer_amount_hint">Số tiền chuyển (VNĐ)</string>
+    <string name="money_transfer_chip_100k">100.000 ₫</string>
+    <string name="money_transfer_chip_500k">500.000 ₫</string>
+    <string name="money_transfer_chip_1m">1.000.000 ₫</string>
+    <string name="money_transfer_chip_6m">6.000.000 ₫ (&gt;5M)</string>
+    <string name="money_transfer_note_hint">Nội dung chuyển tiền</string>
+    <string name="money_transfer_default_note">Chuyen tien NovaPay</string>
+    <string name="money_transfer_save_beneficiary">Lưu người nhận vào danh bạ thụ hưởng</string>
+    <string name="money_transfer_alias_hint">Tên gợi nhớ (tùy chọn)</string>
+    <string name="money_transfer_submit_action">Tiếp tục xác thực giao dịch</string>
+
+    <!-- Quét mã QR (QrScannerFragment) -->
+    <string name="money_qr_title">Quét mã QR chuyển khoản</string>
+    <string name="money_qr_subtitle">Đưa mã QR NovaPay hoặc mã tài khoản vào khung hình để tự động điền thông tin người nhận.</string>
+    <string name="money_qr_permission_message">Ứng dụng cần quyền Camera để quét mã QR thanh toán.</string>
+    <string name="money_qr_permission_grant">Cấp quyền Camera</string>
+    <string name="money_qr_manual_title">Hoặc dán nội dung mã QR (hỗ trợ kiểm thử máy ảo)</string>
+    <string name="money_qr_manual_hint">novapay://transfer?accountNumber=... hoặc số TK</string>
+    <string name="money_qr_manual_apply">Áp dụng mã QR</string>
+    <string name="money_qr_invalid_payload">Mã QR không hợp lệ hoặc không chứa số tài khoản nhận tiền.</string>
+    <string name="money_qr_applied_success">Đã điền thông tin người nhận từ mã QR.</string>
+
+    <!-- Nạp / Rút tiền Stripe & Trả nợ vay (DepositWithdrawFragment) -->
+    <string name="money_dw_title">Nạp / Rút tiền &amp; Trả nợ vay</string>
+    <string name="money_dw_tab_deposit">Nạp Stripe</string>
+    <string name="money_dw_tab_withdraw">Rút tiền</string>
+    <string name="money_dw_tab_mortgage">Trả nợ vay</string>
+    <string name="money_dw_deposit_Account_label">Tài khoản CHECKING nhận tiền nạp</string>
+    <string name="money_dw_deposit_subtitle">Nạp tiền qua cổng quốc tế Stripe PaymentSheet (Test Mode). Xác thực OTP Email 2FA, miễn FaceCheck &gt; 5M.</string>
+    <string name="money_dw_withdraw_subtitle">Rút tiền từ tài khoản CHECKING về thẻ/ngân hàng liên kết (áp dụng xác thực 3 lớp nếu trên 5.000.000 ₫).</string>
+    <string name="money_dw_withdraw_dest_hint">Số thẻ / Tài khoản ngân hàng liên kết nhận tiền rút</string>
+    <string name="money_dw_mortgage_select_hint">Chọn hợp đồng vay thế chấp (MORTGAGE)</string>
+    <string name="money_dw_mortgage_item_format">%1$s • Dư nợ: %2$s</string>
+    <string name="money_dw_mortgage_empty">Bạn hiện không có khoản vay thế chấp nào đang dư nợ.</string>
+    <string name="money_dw_mortgage_summary">Dư nợ còn lại: %1$s\nKỳ trả định kỳ: %2$s (%3$s)\nHạn thanh toán kế tiếp: %4$s</string>
+    <string name="money_dw_mortgage_freq_monthly">Hàng tháng</string>
+    <string name="money_dw_mortgage_freq_biweekly">Mỗi 2 tuần</string>
+    <string name="money_dw_amount_hint">Số tiền giao dịch (VNĐ)</string>
+    <string name="money_dw_chip_200k">200.000 ₫</string>
+    <string name="money_dw_chip_2m">2.000.000 ₫</string>
+    <string name="money_dw_chip_10m">10.000.000 ₫</string>
+    <string name="money_dw_note_hint">Ghi chú giao dịch</string>
+    <string name="money_dw_action_deposit">Tiếp tục nạp tiền qua Stripe</string>
+    <string name="money_dw_action_withdraw">Tiếp tục rút tiền</string>
+    <string name="money_dw_action_mortgage">Thanh toán kỳ hạn khoản vay</string>
+    <string name="money_stripe_merchant_name">NovaPay Digital Banking (Sandbox)</string>
+    <string name="money_stripe_publishable_key" translatable="false">pk_test_51NovaPaySandboxReplaceWithRealTestKey000000</string>
+    <string name="money_stripe_canceled">Bạn đã hủy phiên thanh toán trên Stripe PaymentSheet.</string>
+    <string name="money_stripe_failed">Thanh toán Stripe không thành công: %1$s</string>
+    <string name="money_stripe_finalizing">Đang xác nhận giao dịch với cổng Stripe…</string>
+    <string name="money_stripe_key_unconfigured">Chưa cấu hình khóa công khai Stripe (pk_test_…) hợp lệ để mở PaymentSheet.</string>
+
+    <!-- Xác thực OTP 2FA & Điều phối 3 lớp (OtpVerificationDialogFragment) -->
+    <string name="money_otp_dialog_title">Xác thực bảo mật giao dịch</string>
+    <string name="money_otp_step_face_pending">Bước 1/3: Giao dịch giá trị cao (&gt; 5.000.000 ₫) — Vui lòng quét khuôn mặt đối chiếu eKYC.</string>
+    <string name="money_otp_step_biometric_pending">Bước 2/3: Đã khớp khuôn mặt eKYC — Vui lòng xác thực sinh trắc học / mã khóa thiết bị.</string>
+    <string name="money_otp_step_otp_ready">Nhập mã OTP 6 chữ số đã gửi tới Email đăng ký của bạn.</string>
+    <string name="money_otp_countdown_running">Mã OTP còn hiệu lực trong: %1$s</string>
+    <string name="money_otp_countdown_expired">Mã OTP đã hết hạn (180 giây). Vui lòng bấm Gửi lại mã.</string>
+    <string name="money_otp_input_hint">Mã OTP (6 chữ số)</string>
+    <string name="money_otp_resend_action">Gửi lại mã OTP</string>
+    <string name="money_otp_resent_success">Đã gửi mã OTP mới tới Email của bạn (hiệu lực 180 giây).</string>
+    <string name="money_otp_retry_face_action">Quét lại khuôn mặt</string>
+    <string name="money_otp_retry_biometric_action">Xác thực vân tay / PIN máy</string>
+    <string name="money_otp_confirm_action">Xác nhận giao dịch</string>
+    <string name="money_otp_cancel_action">Hủy bỏ</string>
+    <string name="money_otp_biometric_title">Xác thực giao dịch NovaPay</string>
+    <string name="money_otp_biometric_subtitle">Xác nhận sinh trắc học hoặc mật khẩu thiết bị để tiếp tục nhập OTP</string>
+    <string name="money_otp_verifying_loading">Đang xác thực mã OTP và hạch toán giao dịch…</string>
+
+    <!-- Biên lai giao dịch điện tử (ReceiptFragment) -->
+    <string name="money_receipt_title">Biên lai giao dịch điện tử</string>
+    <string name="money_receipt_bank_header">NOVAPAY DIGITAL BANKING</string>
+    <string name="money_receipt_status_success">GIAO DỊCH THÀNH CÔNG</string>
+    <string name="money_receipt_status_failed">GIAO DỊCH THẤT BẠI</string>
+    <string name="money_receipt_label_tx_id">Mã giao dịch</string>
+    <string name="money_receipt_label_time">Thời gian</string>
+    <string name="money_receipt_label_type">Loại giao dịch</string>
+    <string name="money_receipt_label_from_account">Tài khoản nguồn</string>
+    <string name="money_receipt_label_target">Thông tin thụ hưởng / Dịch vụ</string>
+    <string name="money_receipt_label_fee">Phí giao dịch</string>
+    <string name="money_receipt_free_fee">Miễn phí (0 ₫)</string>
+    <string name="money_receipt_label_note">Nội dung</string>
+    <string name="money_receipt_label_security">Xác thực bảo mật</string>
+    <string name="money_receipt_security_3layer">3 lớp (FaceCheck eKYC + Sinh trắc học + Email OTP)</string>
+    <string name="money_receipt_security_otp">2 lớp (Email OTP 2FA)</string>
+    <string name="money_receipt_share_png">Chia sẻ ảnh biên lai (PNG)</string>
+    <string name="money_receipt_back_home">Về trang chủ</string>
+    <string name="money_receipt_share_chooser">Chia sẻ biên lai giao dịch NovaPay</string>
+    <string name="money_receipt_export_failed">Không thể xuất ảnh biên lai lúc này.</string>
+    <string name="money_tx_type_internal">Chuyển tiền nội bộ NovaPay</string>
+    <string name="money_tx_type_interbank">Chuyển tiền liên ngân hàng 24/7</string>
+    <string name="money_tx_type_gateway">Nạp tiền qua cổng Stripe</string>
+    <string name="money_tx_type_deposit">Nạp tiền tài khoản</string>
+    <string name="money_tx_type_withdraw">Rút tiền về tài khoản liên kết</string>
+    <string name="money_tx_type_bill">Thanh toán hóa đơn Điện / Nước</string>
+    <string name="money_tx_type_topup">Nạp tiền điện thoại</string>
+    <string name="money_tx_type_service">Đặt vé &amp; Mua sắm dịch vụ</string>
+    <string name="money_tx_type_mortgage">Thanh toán kỳ hạn khoản vay thế chấp</string>
+
+    <!-- Hóa đơn Điện / Nước (UtilityBillFragment) -->
+    <string name="money_bills_title">Thanh toán Hóa đơn Điện / Nước</string>
+    <string name="money_bills_filter_all">Tất cả</string>
+    <string name="money_bills_filter_electric">Tiền điện</string>
+    <string name="money_bills_filter_water">Tiền nước</string>
+    <string name="money_bills_customer_code_hint">Mã khách hàng (VD: PE010001, WA010001)</string>
+    <string name="money_bills_search_action">Tra cứu hóa đơn</string>
+    <string name="money_bills_empty_prompt">Nhập mã khách hàng để tra cứu hóa đơn Điện / Nước chưa thanh toán.</string>
+    <string name="money_bills_empty_result">Không có hóa đơn nợ cước nào cho mã khách hàng này.</string>
+    <string name="money_bills_period_format">Kỳ cước: %1$s • Hạn: %2$s</string>
+    <string name="money_bills_customer_format">KH: %1$s (%2$s)</string>
+    <string name="money_bills_pay_action">Thanh toán ngay</string>
+    <string name="money_bills_default_note">Thanh toan hoa don %1$s ky %2$s</string>
+
+    <!-- Nạp tiền điện thoại (PhoneTopupFragment) -->
+    <string name="money_topup_title">Nạp tiền điện thoại</string>
+    <string name="money_topup_phone_hint">Số điện thoại di động (VD: 0901234567)</string>
+    <string name="money_topup_carrier_label">Nhà mạng viễn thông</string>
+    <string name="money_topup_carrier_viettel">Viettel</string>
+    <string name="money_topup_carrier_vinaphone">VinaPhone</string>
+    <string name="money_topup_carrier_mobifone">MobiFone</string>
+    <string name="money_topup_carrier_vietnamobile">Vietnamobile</string>
+    <string name="money_topup_denomination_label">Chọn mệnh giá nạp</string>
+    <string name="money_topup_denom_20k">20.000 ₫</string>
+    <string name="money_topup_denom_50k">50.000 ₫</string>
+    <string name="money_topup_denom_100k">100.000 ₫</string>
+    <string name="money_topup_denom_200k">200.000 ₫</string>
+    <string name="money_topup_denom_500k">500.000 ₫</string>
+    <string name="money_topup_denom_500k_desc">Mệnh giá tiêu chuẩn</string>
+    <string name="money_topup_selected_amount">Số tiền thanh toán: %1$s</string>
+    <string name="money_topup_invalid_phone">Vui lòng nhập số điện thoại hợp lệ (9–11 chữ số).</string>
+    <string name="money_topup_submit_action">Nạp tiền ngay</string>
+    <string name="money_topup_default_note">Nap tien dien thoai %1$s (%2$s)</string>
+
+    <!-- Đặt dịch vụ & Mua sắm (ServiceBookingFragment) -->
+    <string name="money_services_title">Đặt vé &amp; Mua sắm tiện ích</string>
+    <string name="money_services_tab_flight">Vé máy bay</string>
+    <string name="money_services_tab_movie">Xem phim</string>
+    <string name="money_services_tab_hotel">Khách sạn</string>
+    <string name="money_services_tab_product">Mua sắm</string>
+    <string name="money_services_tab_orders">Đơn đã đặt</string>
+    <string name="money_services_empty_catalog">Danh mục hiện chưa có dịch vụ nào.</string>
+    <string name="money_services_empty_orders">Bạn chưa có đơn đặt vé hoặc mua sắm nào.</string>
+    <string name="money_services_unit_price">Đơn giá: %1$s</string>
+    <string name="money_services_book_action">Chọn đặt</string>
+    <string name="money_services_checkout_title">Xác nhận đặt dịch vụ</string>
+    <string name="money_services_quantity_format">Số lượng: %1$d</string>
+    <string name="money_services_total_format">Tổng thanh toán: %1$s</string>
+    <string name="money_services_pay_now">Thanh toán đơn hàng</string>
+    <string name="money_services_default_note">Thanh toan dich vu %1$s (SL: %2$d)</string>
+    <string name="money_services_order_code_format">Mã đơn: %1$s • SL: %2$d</string>
+    <string name="money_services_order_status_format">Trạng thái: %1$s • %2$s</string>
 </resources>
