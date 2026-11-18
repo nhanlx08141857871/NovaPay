@@ -1,5 +1,79 @@
 <?xml version="1.0" encoding="utf-8"?>
 <navigation xmlns:android="http://schemas.android.com/apk/res/android"
-    android:id="@+id/nav_officer_map_ai">
-    <!-- Thành viên C khai báo các Fragment Officer, Chatbot & DeepLink novapay://branches tại đây -->
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/nav_officer_map_ai"
+    app:startDestination="@id/officerDashboardFragment">
+
+    <fragment
+        android:id="@+id/officerDashboardFragment"
+        android:name="com.novabank.novapay.presentation.officer.OfficerDashboardFragment"
+        android:label="@string/officer_dashboard_title"
+        tools:layout="@layout/fragment_officer_dashboard">
+        <deepLink app:uri="novapay://officer" />
+
+        <action
+            android:id="@+id/action_officerDashboard_to_customerManagement"
+            app:destination="@id/customerManagementFragment" />
+        <action
+            android:id="@+id/action_officerDashboard_to_officerEkycReview"
+            app:destination="@id/officerEkycReviewFragment" />
+        <action
+            android:id="@+id/action_officerDashboard_to_interestRateManagement"
+            app:destination="@id/interestRateManagementFragment" />
+        <action
+            android:id="@+id/action_officerDashboard_to_branchMap"
+            app:destination="@id/branchMapFragment" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/customerManagementFragment"
+        android:name="com.novabank.novapay.presentation.officer.CustomerManagementFragment"
+        android:label="@string/officer_customers_title"
+        tools:layout="@layout/fragment_customer_management">
+        <action
+            android:id="@+id/action_customerManagement_to_createCustomer"
+            app:destination="@id/createCustomerFragment" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/createCustomerFragment"
+        android:name="com.novabank.novapay.presentation.officer.CreateCustomerFragment"
+        android:label="@string/officer_create_customer_title"
+        tools:layout="@layout/fragment_create_customer" />
+
+    <fragment
+        android:id="@+id/officerEkycReviewFragment"
+        android:name="com.novabank.novapay.presentation.officer.OfficerEkycReviewFragment"
+        android:label="@string/officer_ekyc_review_title"
+        tools:layout="@layout/fragment_officer_ekyc_review">
+        <argument
+            android:name="focusUid"
+            android:defaultValue="@null"
+            app:argType="string"
+            app:nullable="true" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/interestRateManagementFragment"
+        android:name="com.novabank.novapay.presentation.officer.InterestRateManagementFragment"
+        android:label="@string/officer_interest_rates_title"
+        tools:layout="@layout/fragment_interest_rate_management" />
+
+    <fragment
+        android:id="@+id/branchMapFragment"
+        android:name="com.novabank.novapay.presentation.customer.branch.BranchMapFragment"
+        android:label="@string/map_branches_title"
+        tools:layout="@layout/fragment_branch_map">
+        <deepLink app:uri="novapay://branches" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/chatbotFragment"
+        android:name="com.novabank.novapay.presentation.customer.chatbot.ChatbotFragment"
+        android:label="@string/chatbot_title"
+        tools:layout="@layout/fragment_chatbot">
+        <deepLink app:uri="novapay://chatbot" />
+    </fragment>
+
 </navigation>
