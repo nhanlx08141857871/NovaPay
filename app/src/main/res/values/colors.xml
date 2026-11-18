@@ -1,5 +1,70 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <!-- Base neutral palette -->
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
+
+    <!-- NovaPay Brand — Light Scheme (Material 3) -->
+    <color name="md_theme_light_primary">#FF0B3B75</color>
+    <color name="md_theme_light_onPrimary">#FFFFFFFF</color>
+    <color name="md_theme_light_primaryContainer">#FFD4E3FF</color>
+    <color name="md_theme_light_onPrimaryContainer">#FF001C3B</color>
+
+    <color name="md_theme_light_secondary">#FF00796B</color>
+    <color name="md_theme_light_onSecondary">#FFFFFFFF</color>
+    <color name="md_theme_light_secondaryContainer">#FF9CF2E4</color>
+    <color name="md_theme_light_onSecondaryContainer">#FF00201C</color>
+
+    <color name="md_theme_light_tertiary">#FFB45309</color>
+    <color name="md_theme_light_onTertiary">#FFFFFFFF</color>
+    <color name="md_theme_light_tertiaryContainer">#FFFFDDB5</color>
+    <color name="md_theme_light_onTertiaryContainer">#FF2A1800</color>
+
+    <color name="md_theme_light_error">#FFBA1A1A</color>
+    <color name="md_theme_light_onError">#FFFFFFFF</color>
+    <color name="md_theme_light_errorContainer">#FFFFDAD6</color>
+    <color name="md_theme_light_onErrorContainer">#FF410002</color>
+
+    <color name="md_theme_light_background">#FFF8FAFC</color>
+    <color name="md_theme_light_onBackground">#FF0F172A</color>
+    <color name="md_theme_light_surface">#FFFFFFFF</color>
+    <color name="md_theme_light_onSurface">#FF0F172A</color>
+    <color name="md_theme_light_surfaceVariant">#FFE2E8F0</color>
+    <color name="md_theme_light_onSurfaceVariant">#FF475569</color>
+    <color name="md_theme_light_outline">#FF94A3B8</color>
+
+    <!-- NovaPay Brand — Dark Scheme (Material 3) -->
+    <color name="md_theme_dark_primary">#FFA5C8FF</color>
+    <color name="md_theme_dark_onPrimary">#FF00315F</color>
+    <color name="md_theme_dark_primaryContainer">#FF004786</color>
+    <color name="md_theme_dark_onPrimaryContainer">#FFD4E3FF</color>
+
+    <color name="md_theme_dark_secondary">#FF80D5C8</color>
+    <color name="md_theme_dark_onSecondary">#FF003730</color>
+    <color name="md_theme_dark_secondaryContainer">#FF005047</color>
+    <color name="md_theme_dark_onSecondaryContainer">#FF9CF2E4</color>
+
+    <color name="md_theme_dark_tertiary">#FFFFB95C</color>
+    <color name="md_theme_dark_onTertiary">#FF462A00</color>
+    <color name="md_theme_dark_tertiaryContainer">#FF643F00</color>
+    <color name="md_theme_dark_onTertiaryContainer">#FFFFDDB5</color>
+
+    <color name="md_theme_dark_error">#FFFFB4AB</color>
+    <color name="md_theme_dark_onError">#FF690005</color>
+    <color name="md_theme_dark_errorContainer">#FF93000A</color>
+    <color name="md_theme_dark_onErrorContainer">#FFFFDAD6</color>
+
+    <color name="md_theme_dark_background">#FF0B1120</color>
+    <color name="md_theme_dark_onBackground">#FFE2E8F0</color>
+    <color name="md_theme_dark_surface">#FF111827</color>
+    <color name="md_theme_dark_onSurface">#FFE2E8F0</color>
+    <color name="md_theme_dark_surfaceVariant">#FF1E293B</color>
+    <color name="md_theme_dark_onSurfaceVariant">#FFCBD5E1</color>
+    <color name="md_theme_dark_outline">#FF64748B</color>
+
+    <!-- Banking Semantic Colors -->
+    <color name="novapay_income_positive">#FF16A34A</color>
+    <color name="novapay_expense_negative">#FFDC2626</color>
+    <color name="novapay_warning_pending">#FFD97706</color>
+    <color name="novapay_verified_badge">#FF0284C7</color>
 </resources>

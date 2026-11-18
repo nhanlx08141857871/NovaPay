@@ -1,6 +1,7 @@
 *.iml
 .gradle
 /local.properties
+local.properties
 /.idea/caches
 /.idea/libraries
 /.idea/modules.xml
@@ -12,4 +13,16 @@
 /captures
 .externalNativeBuild
 .cxx
-local.properties
+.vscode/
+
+# Bảo mật dự án NovaPay (Cấm commit khóa bí mật & cấu hình nhạy cảm)
+google-services.json
+app/google-services.json
+server/.env
+server/.env.*
+!server/.env.example
+server/serviceAccountKey*.json
+server/node_modules/
+server/dist/
+*.jks
+*.keystore

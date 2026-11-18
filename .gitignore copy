@@ -1,8 +1,0 @@
-# Bảo mật dự án NovaPay
-google-services.json
-local.properties
-server/.env
-server/node_modules/
-server/dist/
-*.jks
-*.keystore

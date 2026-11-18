@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Chuỗi giao diện Phân hệ Core, Auth, eKYC & Tài khoản (Owner: Thành viên A) -->
+    <string name="core_brand_tagline">Ngân hàng số thế hệ mới — An toàn &amp; Thông minh</string>
+    <string name="core_login_title">Đăng nhập NovaPay</string>
+    <string name="core_login_email_hint">Email đăng nhập</string>
+    <string name="core_login_password_hint">Mật khẩu</string>
+    <string name="core_login_action">Đăng nhập</string>
+    <string name="core_login_empty_credentials">Vui lòng nhập đầy đủ email và mật khẩu.</string>
+    <string name="core_login_skeleton_notice">Khung đăng nhập Day-0 đã sẵn sàng cho Giai đoạn 3B.</string>
+    <string name="core_academic_sandbox_disclaimer">Ứng dụng mô phỏng nghiệp vụ ngân hàng số phục vụ học thuật &amp; nghiên cứu (Khoa CNTT — ĐH Tôn Đức Thắng). Không phát sinh lưu ký tiền tệ thực tế.</string>
+    <string name="core_error_network_generic">Không thể kết nối máy chủ. Vui lòng kiểm tra mạng và thử lại.</string>
+    <string name="core_session_locked_message">Tài khoản của bạn đã bị khóa bởi ngân hàng. Vui lòng liên hệ quầy giao dịch.</string>
+</resources>

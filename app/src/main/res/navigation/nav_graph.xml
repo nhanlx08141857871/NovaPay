@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/nav_graph"
+    app:startDestination="@id/nav_core">
+
+    <!-- Sub-graph của Thành viên A (Core, Auth, eKYC, Customer Home, Accounts) -->
+    <include app:graph="@navigation/nav_core" />
+
+    <!-- Sub-graph của Thành viên B (Chuyển tiền, Stripe, OTP, Hóa đơn, Tiện ích) -->
+    <include app:graph="@navigation/nav_money" />
+
+    <!-- Sub-graph của Thành viên C (Bank Officer, Bản đồ chi nhánh, AI Chatbot) -->
+    <include app:graph="@navigation/nav_officer_map_ai" />
+
+</navigation>

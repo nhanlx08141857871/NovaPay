@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Chuỗi giao diện Phân hệ Officer, Bản đồ, AI Chatbot & State Views dùng chung (Owner: Thành viên C) -->
+    <string name="state_loading_message">Đang tải dữ liệu…</string>
+    <string name="state_empty_title">Chưa có dữ liệu</string>
+    <string name="state_empty_subtitle">Danh sách hiện đang trống.</string>
+    <string name="state_error_title">Đã xảy ra lỗi</string>
+    <string name="state_error_default_message">Không thể tải thông tin lúc này. Vui lòng thử lại.</string>
+    <string name="state_action_retry">Thử lại</string>
+    <string name="map_tdtu_fallback_notice">Không lấy được GPS tại TP.HCM — đang sử dụng vị trí mặc định ĐH Tôn Đức Thắng (Quận 7).</string>
+</resources>

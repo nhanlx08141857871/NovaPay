@@ -1,0 +1,118 @@
+rules_version = '2';
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // --- Hàm kiểm tra phân quyền cốt lõi ---
+    function isSignedIn() {
+      return request.auth != null;
+    }
+
+    function isOwner(uid) {
+      return isSignedIn() && request.auth.uid == uid;
+    }
+
+    function isOfficer() {
+      return isSignedIn() && request.auth.token.role == "OFFICER";
+    }
+
+    // 1. users/{uid} & subcollection beneficiaries/{id}
+    match /users/{uid} {
+      allow read: if isOwner(uid) || isOfficer();
+      // Khách hàng đang ACTIVE chỉ được phép tự cập nhật SĐT, địa chỉ, ảnh đại diện (cấm sửa role, status, ekyc, CCCD)
+      allow update: if isOwner(uid)
+        && resource.data.status == "ACTIVE"
+        && request.resource.data.diff(resource.data).affectedKeys()
+             .hasOnly(["phone", "address", "avatarUrl", "updatedAt"]);
+      allow create, delete: if false;
+
+      match /beneficiaries/{beneficiaryId} {
+        allow read, write: if isOwner(uid);
+      }
+    }
+
+    // 2. ekyc_images/{uid} — Chỉ Server ghi; chính chủ và Officer đọc
+    match /ekyc_images/{uid} {
+      allow read: if isOwner(uid) || isOfficer();
+      allow write: if false;
+    }
+
+    // 3. accounts/{accountId} & subcollection ledger/{entryId}
+    match /accounts/{accountId} {
+      allow read: if (isSignedIn() && resource.data.ownerUid == request.auth.uid) || isOfficer();
+      allow write: if false;
+
+      match /ledger/{entryId} {
+        allow read: if (isSignedIn()
+          && get(/databases/$(database)/documents/accounts/$(accountId)).data.ownerUid == request.auth.uid)
+          || isOfficer();
+        allow write: if false;
+      }
+    }
+
+    // 4. transactions/{txId} — Chỉ Server ghi trong ACID Transaction
+    match /transactions/{txId} {
+      allow read: if (isSignedIn() && resource.data.initiatedBy == request.auth.uid) || isOfficer();
+      allow write: if false;
+    }
+
+    // 5. transaction_drafts/{draftId} — Tuyệt đối chỉ Server đọc/ghi (chứa otpHash & stripeIntentId)
+    match /transaction_drafts/{draftId} {
+      allow read, write: if false;
+    }
+
+    // 6. face_checks/{draftId} — Chỉ Server ghi; Officer đọc để hậu kiểm
+    match /face_checks/{draftId} {
+      allow read: if isOfficer();
+      allow write: if false;
+    }
+
+    // 7. interest_rates/{rateId} — Người dùng đăng nhập được đọc; chỉ Server (qua API Officer) được ghi
+    match /interest_rates/{rateId} {
+      allow read: if isSignedIn();
+      allow write: if false;
+    }
+
+    // 8. banks/{bankCode} — Danh mục ngân hàng liên kết
+    match /banks/{bankCode} {
+      allow read: if isSignedIn();
+      allow write: if false;
+    }
+
+    // 9. branches/{branchId} — Danh sách chi nhánh & ATM NovaBank
+    match /branches/{branchId} {
+      allow read: if isSignedIn();
+      allow write: if false;
+    }
+
+    // 10. utility_bills/{billId} — Tra cứu hóa đơn Điện/Nước; cập nhật PAID bắt buộc qua Server Transaction
+    match /utility_bills/{billId} {
+      allow read: if isSignedIn();
+      allow write: if false;
+    }
+
+    // 11. service_catalog/{itemId} — Danh mục vé máy bay, xem phim, khách sạn, sản phẩm TMĐT
+    match /service_catalog/{itemId} {
+      allow read: if isSignedIn();
+      allow write: if false;
+    }
+
+    // 12. orders/{orderId} — Đơn hàng dịch vụ của khách hàng
+    match /orders/{orderId} {
+      allow read: if (isSignedIn() && resource.data.uid == request.auth.uid) || isOfficer();
+      allow write: if false;
+    }
+
+    // 13. chat_sessions/{uid}/messages/{msgId} — Lịch sử AI Chatbot (ghi qua POST /ai/chat trên Server)
+    match /chat_sessions/{uid}/messages/{msgId} {
+      allow read: if isOwner(uid);
+      allow write: if false;
+    }
+
+    // 14. audit_logs/{logId} — Nhật ký kiểm toán thao tác của Officer (bất biến phía Client)
+    match /audit_logs/{logId} {
+      allow read: if isOfficer();
+      allow write: if false;
+    }
+  }
+}
