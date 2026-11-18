@@ -309,6 +309,9 @@ export async function getCustomerFinancialContext(
 
     for (const accDoc of accountsSnap.docs) {
       const accData = accDoc.data() || {};
+      if (accData.type === "MORTGAGE") {
+        continue;
+      }
       if (accData.type === "CHECKING" && typeof accData.balance === "number") {
         checkingBalance += Math.trunc(accData.balance);
       }
@@ -342,6 +345,33 @@ export interface GenerateChatReplyOptions {
   model?: string;
   fetchFn?: typeof fetch;
   timeoutMs?: number;
+  history?: Array<{ role: "USER" | "BOT"; text: string }>;
+}
+
+export const CHAT_HISTORY_LIMIT = 6;
+
+export function buildGeminiContents(
+  message: string,
+  history: Array<{ role: "USER" | "BOT"; text: string }> = []
+): Array<{ role: "user" | "model"; parts: Array<{ text: string }> }> {
+  const contents: Array<{ role: "user" | "model"; parts: Array<{ text: string }> }> = [];
+  for (const item of history.slice(-CHAT_HISTORY_LIMIT)) {
+    const text = typeof item.text === "string" ? item.text.trim() : "";
+    if (!text) continue;
+    const role = item.role === "BOT" ? "model" : "user";
+    if (contents.length === 0 && role === "model") continue;
+    if (contents.length > 0 && contents[contents.length - 1].role === role) {
+      contents[contents.length - 1].parts[0].text += `\n${text}`;
+      continue;
+    }
+    contents.push({ role, parts: [{ text }] });
+  }
+  if (contents.length > 0 && contents[contents.length - 1].role === "user") {
+    contents[contents.length - 1].parts[0].text += `\n${message}`;
+  } else {
+    contents.push({ role: "user", parts: [{ text: message }] });
+  }
+  return contents;
 }
 
 export async function generateChatReply(
@@ -384,12 +414,7 @@ export async function generateChatReply(
         systemInstruction: {
           parts: [{ text: systemPrompt }],
         },
-        contents: [
-          {
-            role: "user",
-            parts: [{ text: message }],
-          },
-        ],
+        contents: buildGeminiContents(message, options.history),
         generationConfig: {
           temperature: 0.3,
           responseMimeType: "application/json",
@@ -433,9 +458,21 @@ export async function handleChatAndPersist(
   const nowMs = (deps.nowMs ?? Date.now)();
 
   const context = await getCustomerFinancialContext(db, uid, nowMs);
-  const result = await generateChatReply(message, context, deps.chatOptions);
-
   const messagesCol = db.collection("chat_sessions").doc(uid).collection("messages");
+
+  let history: Array<{ role: "USER" | "BOT"; text: string }> = [];
+  try {
+    const recent = await messagesCol.orderBy("createdAt", "desc").limit(CHAT_HISTORY_LIMIT).get();
+    history = recent.docs
+      .map((doc) => doc.data() as { role?: string; text?: string })
+      .filter((d) => (d.role === "USER" || d.role === "BOT") && typeof d.text === "string")
+      .map((d) => ({ role: d.role as "USER" | "BOT", text: d.text as string }))
+      .reverse();
+  } catch {
+    history = [];
+  }
+
+  const result = await generateChatReply(message, context, { ...deps.chatOptions, history });
   const batch = db.batch();
 
   batch.set(messagesCol.doc(), {

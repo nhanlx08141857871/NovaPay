@@ -114,6 +114,7 @@
     <string name="money_receipt_security_3layer">3 lớp (FaceCheck eKYC + Sinh trắc học + Email OTP)</string>
     <string name="money_receipt_security_otp">2 lớp (Email OTP 2FA)</string>
     <string name="money_receipt_share_png">Chia sẻ ảnh biên lai (PNG)</string>
+    <string name="money_receipt_share_pdf">Xuất và chia sẻ biên lai (PDF)</string>
     <string name="money_receipt_back_home">Về trang chủ</string>
     <string name="money_receipt_share_chooser">Chia sẻ biên lai giao dịch NovaPay</string>
     <string name="money_receipt_export_failed">Không thể xuất ảnh biên lai lúc này.</string>

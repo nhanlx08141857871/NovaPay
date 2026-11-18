@@ -4,6 +4,7 @@ import {
   buildRuleBasedReply,
   formatVndInteger,
   generateChatReply,
+  buildGeminiContents,
   getVietnamMonthStartMillis,
   parseAndSanitizeAiResponse,
   validateChatMessageInput,
@@ -144,4 +145,18 @@ test("generateChatReply uses Gemini response when valid and falls back on missin
     }) as typeof fetch,
   });
   assert.ok(timeoutReply.actions.some((a) => a.deepLink === "novapay://topup"));
+});
+
+test("buildGeminiContents merges history, keeps alternating roles and ends with the new user message", () => {
+  const contents = buildGeminiContents("còn tháng trước thì sao", [
+    { role: "BOT", text: "Xin chào" },
+    { role: "USER", text: "Tháng này tôi chi bao nhiêu" },
+    { role: "BOT", text: "Bạn đã chi 2.000.000 ₫" },
+  ]);
+  assert.deepEqual(
+    contents.map((c) => c.role),
+    ["user", "model", "user"]
+  );
+  assert.equal(contents[2].parts[0].text, "còn tháng trước thì sao");
+  assert.equal(buildGeminiContents("a").length, 1);
 });

@@ -14,6 +14,7 @@ describe("Stripe GATEWAY 2-Phase Flow & Idempotent /payments/finalize", () => {
   const db = new MockFirestore();
   const sentOtps: string[] = [];
   let paymentIntentStatus = "succeeded";
+  let paymentIntentAmount = 10_000_000;
   let baseUrl = "";
   let server: ReturnType<express.Express["listen"]>;
 
@@ -51,7 +52,7 @@ describe("Stripe GATEWAY 2-Phase Flow & Idempotent /payments/finalize", () => {
         return {
           id: paymentIntentId,
           status: paymentIntentStatus,
-          amount: 10_000_000,
+          amount: paymentIntentAmount,
           currency: "vnd",
         };
       },
@@ -153,6 +154,19 @@ describe("Stripe GATEWAY 2-Phase Flow & Idempotent /payments/finalize", () => {
     assert.equal(notReadyRes.status, 400);
     assert.equal(((await notReadyRes.json()) as { error: string }).error, "PAYMENT_NOT_COMPLETED");
     assert.equal(db.getRaw("accounts/acc_chk_gw")?.balance, 1_000_000);
+
+    // 3b. Reject finalize when Stripe amount differs from the draft amount
+    paymentIntentStatus = "succeeded";
+    paymentIntentAmount = 1_000;
+    const mismatchRes = await fetch(`${baseUrl}/payments/finalize`, {
+      method: "POST",
+      headers: { "content-type": "application/json" },
+      body: JSON.stringify({ draftId: initJson.draftId }),
+    });
+    assert.equal(mismatchRes.status, 400);
+    assert.equal(((await mismatchRes.json()) as { error: string }).error, "PAYMENT_NOT_COMPLETED");
+    assert.equal(db.getRaw("accounts/acc_chk_gw")?.balance, 1_000_000);
+    paymentIntentAmount = 10_000_000;
 
     // 4. Finalize once succeeded -> credits 10M once
     paymentIntentStatus = "succeeded";

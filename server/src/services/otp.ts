@@ -2,7 +2,12 @@ import crypto from "crypto";
 
 export const OTP_EXPIRY_SECONDS = 180;
 export const OTP_MAX_ATTEMPTS = 5;
+export const OTP_RESEND_COOLDOWN_SECONDS = 30;
+export const OTP_MAX_RESENDS = 5;
+export const FACE_CHECK_MAX_ATTEMPTS = 5;
+export const DRAFT_RETENTION_MS = 24 * 60 * 60 * 1000;
 export const HIGH_VALUE_THRESHOLD_VND = 5_000_000;
+export const MAX_GATEWAY_DEPOSIT_VND = 100_000_000;
 
 /**
  * Generates a cryptographically secure 6-digit numeric OTP code (000000..999999).

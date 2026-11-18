@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Color;
+import android.graphics.pdf.PdfDocument;
 import android.net.Uri;
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -88,6 +89,7 @@ public class ReceiptFragment extends BaseFragment<FragmentReceiptBinding> {
             }
         });
         b.btnSharePng.setOnClickListener(v -> exportAndShareReceiptPng());
+        b.btnSharePdf.setOnClickListener(v -> exportAndShareReceiptPdf());
 
         viewModel.loadReceipt(txId);
     }
@@ -229,6 +231,65 @@ public class ReceiptFragment extends BaseFragment<FragmentReceiptBinding> {
 
         Intent shareIntent = new Intent(Intent.ACTION_SEND);
         shareIntent.setType("image/png");
+        shareIntent.putExtra(Intent.EXTRA_STREAM, contentUri);
+        shareIntent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
+
+        startActivity(Intent.createChooser(shareIntent, getString(R.string.money_receipt_share_chooser)));
+    }
+    private void exportAndShareReceiptPdf() {
+        View captureView = getBinding().cardReceiptCapture;
+        int width = captureView.getWidth();
+        int height = captureView.getHeight();
+        if (width <= 0 || height <= 0) {
+            showSnackbar(getString(R.string.money_receipt_export_failed));
+            return;
+        }
+
+        File receiptsDir = new File(requireContext().getCacheDir(), "receipts");
+        if (!receiptsDir.exists() && !receiptsDir.mkdirs()) {
+            showSnackbar(getString(R.string.money_receipt_export_failed));
+            return;
+        }
+
+        String safeId = (txId != null && !txId.isEmpty())
+                ? txId.replaceAll("[^A-Za-z0-9_-]", "_")
+                : String.valueOf(System.currentTimeMillis());
+        File pdfFile = new File(receiptsDir, "novapay_receipt_" + safeId + ".pdf");
+
+        final int pageWidthPoints = 595;
+        float scale = pageWidthPoints / (float) width;
+        int pageHeightPoints = Math.max(1, Math.round(height * scale));
+
+        PdfDocument document = new PdfDocument();
+        try {
+            PdfDocument.PageInfo pageInfo =
+                    new PdfDocument.PageInfo.Builder(pageWidthPoints, pageHeightPoints, 1).create();
+            PdfDocument.Page page = document.startPage(pageInfo);
+            Canvas canvas = page.getCanvas();
+            canvas.drawColor(Color.WHITE);
+            canvas.scale(scale, scale);
+            captureView.draw(canvas);
+            document.finishPage(page);
+
+            try (FileOutputStream fos = new FileOutputStream(pdfFile)) {
+                document.writeTo(fos);
+                fos.flush();
+            }
+        } catch (IOException | IllegalStateException ex) {
+            showSnackbar(getString(R.string.money_receipt_export_failed));
+            return;
+        } finally {
+            document.close();
+        }
+
+        Uri contentUri = FileProvider.getUriForFile(
+                requireContext(),
+                requireContext().getPackageName() + ".fileprovider",
+                pdfFile
+        );
+
+        Intent shareIntent = new Intent(Intent.ACTION_SEND);
+        shareIntent.setType("application/pdf");
         shareIntent.putExtra(Intent.EXTRA_STREAM, contentUri);
         shareIntent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
 

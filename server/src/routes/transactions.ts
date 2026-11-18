@@ -8,9 +8,14 @@ import {
   stripBase64DataUrlPrefix,
 } from "../services/faceCheck";
 import {
+  DRAFT_RETENTION_MS,
+  FACE_CHECK_MAX_ATTEMPTS,
   HIGH_VALUE_THRESHOLD_VND,
+  MAX_GATEWAY_DEPOSIT_VND,
   OTP_EXPIRY_SECONDS,
   OTP_MAX_ATTEMPTS,
+  OTP_MAX_RESENDS,
+  OTP_RESEND_COOLDOWN_SECONDS,
   OtpService,
   otpService as defaultOtpService,
 } from "../services/otp";
@@ -408,7 +413,12 @@ export function createTransactionsRouter(deps?: TransactionsRouteDeps): Router {
           );
           return;
         }
-        toExternal = { bankCode, accountNumber, name };
+        const bankSnap = await db.collection("banks").doc(bankCode.toUpperCase()).get();
+        if (!bankSnap.exists) {
+          sendApiError(res, 400, "INVALID_ARGUMENT", "Ngân hàng nhận không được hỗ trợ.");
+          return;
+        }
+        toExternal = { bankCode: bankCode.toUpperCase(), accountNumber, name };
       } else if (type === "BILL") {
         const billId = asTrimmedString(meta.billId);
         const billCode = asTrimmedString(meta.billCode);
@@ -577,6 +587,11 @@ export function createTransactionsRouter(deps?: TransactionsRouteDeps): Router {
         }
       }
 
+      if (type === "GATEWAY" && amount > MAX_GATEWAY_DEPOSIT_VND) {
+        sendApiError(res, 400, "LIMIT_EXCEEDED", "Số tiền nạp vượt quá mức tối đa cho mỗi lần nạp.");
+        return;
+      }
+
       const requiresFace = type !== "GATEWAY" && amount > HIGH_VALUE_THRESHOLD_VND;
       const requiresBiometric = requiresFace;
 
@@ -603,11 +618,15 @@ export function createTransactionsRouter(deps?: TransactionsRouteDeps): Router {
           requiresFace: true,
           otpHash: null,
           otpExpiresAt: null,
+          otpSentAt: null,
+          resendCount: 0,
+          faceAttempts: 0,
           attempts: 0,
           faceChecked: false,
           stripeIntentId: null,
           txId: null,
           createdAt: admin.firestore.FieldValue.serverTimestamp(),
+          expireAt: admin.firestore.Timestamp.fromMillis(nowMs + DRAFT_RETENTION_MS),
         });
 
         res.status(200).json({
@@ -632,11 +651,14 @@ export function createTransactionsRouter(deps?: TransactionsRouteDeps): Router {
         requiresFace: false,
         otpHash,
         otpExpiresAt,
+        otpSentAt: nowMs,
+        resendCount: 0,
         attempts: 0,
         faceChecked: false,
         stripeIntentId: null,
         txId: null,
         createdAt: admin.firestore.FieldValue.serverTimestamp(),
+        expireAt: admin.firestore.Timestamp.fromMillis(nowMs + DRAFT_RETENTION_MS),
       });
 
       try {
@@ -741,6 +763,18 @@ export function createTransactionsRouter(deps?: TransactionsRouteDeps): Router {
 
         const faceResult = await faceCheckSvc.verifyFaceMatch(ekycImageBase64, imageBase64);
         if (!faceResult.matched) {
+          const faceAttempts = Number(draftData.faceAttempts ?? 0) + 1;
+          if (faceAttempts >= FACE_CHECK_MAX_ATTEMPTS) {
+            await draftRef.update({ faceAttempts, status: "EXPIRED" });
+            sendApiError(
+              res,
+              429,
+              "TOO_MANY_ATTEMPTS",
+              "Bạn đã xác thực khuôn mặt sai quá số lần cho phép. Giao dịch đã bị khóa."
+            );
+            return;
+          }
+          await draftRef.update({ faceAttempts });
           sendApiError(
             res,
             403,
@@ -791,6 +825,7 @@ export function createTransactionsRouter(deps?: TransactionsRouteDeps): Router {
           faceChecked: true,
           otpHash,
           otpExpiresAt,
+          otpSentAt: nowMs,
           attempts: 0,
         });
 
@@ -854,6 +889,27 @@ export function createTransactionsRouter(deps?: TransactionsRouteDeps): Router {
         }
 
         const nowMs = now();
+        const resendCount = Number(draftData.resendCount ?? 0);
+        if (resendCount >= OTP_MAX_RESENDS) {
+          sendApiError(
+            res,
+            429,
+            "TOO_MANY_ATTEMPTS",
+            "Bạn đã yêu cầu gửi lại mã OTP quá số lần cho phép."
+          );
+          return;
+        }
+        const lastSentAt = typeof draftData.otpSentAt === "number" ? draftData.otpSentAt : null;
+        if (lastSentAt !== null && nowMs - lastSentAt < OTP_RESEND_COOLDOWN_SECONDS * 1000) {
+          sendApiError(
+            res,
+            429,
+            "RESEND_TOO_SOON",
+            `Vui lòng đợi ${OTP_RESEND_COOLDOWN_SECONDS} giây trước khi yêu cầu gửi lại mã OTP.`
+          );
+          return;
+        }
+
         const recipientEmail = String(userData.email ?? req.user?.email ?? "").trim();
         const payload = asPlainObject(draftData.payload);
         const otp = otpSvc.generateOtpCode();
@@ -883,6 +939,8 @@ export function createTransactionsRouter(deps?: TransactionsRouteDeps): Router {
         await draftRef.update({
           otpHash,
           otpExpiresAt,
+          otpSentAt: nowMs,
+          resendCount: resendCount + 1,
           attempts: 0,
         });
 
@@ -992,9 +1050,13 @@ export function createTransactionsRouter(deps?: TransactionsRouteDeps): Router {
 
       const expectedHash = typeof draftData.otpHash === "string" ? draftData.otpHash : "";
       if (!otpSvc.verifyOtpHash(otp, expectedHash, draftId)) {
-        const nextAttempts = currentAttempts + 1;
+        const nextAttempts = await db.runTransaction(async (tx) => {
+          const fresh = await tx.get(draftRef);
+          const next = Number(fresh.data()?.attempts ?? 0) + 1;
+          tx.update(draftRef, next >= OTP_MAX_ATTEMPTS ? { attempts: next, status: "EXPIRED" } : { attempts: next });
+          return next;
+        });
         if (nextAttempts >= OTP_MAX_ATTEMPTS) {
-          await draftRef.update({ attempts: nextAttempts, status: "EXPIRED" });
           sendApiError(
             res,
             429,
@@ -1003,7 +1065,6 @@ export function createTransactionsRouter(deps?: TransactionsRouteDeps): Router {
           );
           return;
         }
-        await draftRef.update({ attempts: nextAttempts });
         sendApiError(res, 400, "OTP_INVALID", "Mã OTP không chính xác.");
         return;
       }

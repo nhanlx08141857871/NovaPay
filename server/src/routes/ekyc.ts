@@ -109,6 +109,11 @@ ekycRouter.post("/submit", requireAuth, async (req: AuthenticatedRequest, res: R
         throw new RouteHttpError(403, "PERMISSION_DENIED", "Tài khoản đang bị khóa, không thể thực hiện eKYC.");
       }
 
+      const currentEkyc = (userData.ekyc ?? {}) as { status?: string };
+      if (currentEkyc.status === "VERIFIED" && !isOfficerCounterSubmit) {
+        throw new RouteHttpError(409, "ALREADY_VERIFIED", "Tài khoản đã được xác minh eKYC.");
+      }
+
       tx.set(imageRef, {
         imageBase64: cleanBase64,
         capturedAt: FieldValue.serverTimestamp(),

@@ -96,4 +96,54 @@ public class ObserveMonthlyCashflowUseCaseTest {
         assertEquals(3, result.getData().getEntryCount());
         observer.dispose();
     }
+    @Test
+    public void execute_excludesMortgageLedgerFromMonthlyCashflow() {
+        Instant now = Instant.now();
+        Account checking = new Account(
+                "chk", "u1", AccountType.CHECKING, "1001", AccountStatus.ACTIVE,
+                10_000_000L, "VND", 5_000_000L, 20_000_000L, null, null, now
+        );
+        Account mortgage = new Account(
+                "mor", "u1", AccountType.MORTGAGE, "3001", AccountStatus.ACTIVE,
+                0L, "VND", 0L, 0L, null, null, now
+        );
+
+        AccountRepository fakeAccRepo = new AccountRepository() {
+            @Override
+            public Observable<AppResult<List<Account>>> observeMyAccounts() {
+                return Observable.just(AppResult.success(Arrays.asList(checking, mortgage)));
+            }
+
+            @Override
+            public Observable<AppResult<Account>> observeAccountById(String accountId) {
+                return Observable.empty();
+            }
+
+            @Override
+            public Single<AppResult<Account>> getAccountById(String accountId) {
+                return Single.never();
+            }
+        };
+
+        LedgerRepository fakeLedgerRepo = (accountId, dir, from, to) -> {
+            if ("chk".equals(accountId)) {
+                return Observable.just(AppResult.success(Collections.singletonList(
+                        new LedgerEntry("e1", "chk", "t1", LedgerDirection.OUT, 2_000_000L, 8_000_000L, "Mortgage", now)
+                )));
+            }
+            return Observable.just(AppResult.success(Collections.singletonList(
+                    new LedgerEntry("e2", "mor", "t1", LedgerDirection.IN, 2_000_000L, 8_000_000L, "Mortgage", now)
+            )));
+        };
+
+        TestObserver<AppResult<MonthlyCashflowSummary>> observer =
+                new ObserveMonthlyCashflowUseCase(fakeAccRepo, fakeLedgerRepo).execute().test();
+
+        observer.assertValueCount(1);
+        MonthlyCashflowSummary summary = observer.values().get(0).getData();
+        assertEquals(0L, summary.getTotalIn());
+        assertEquals(2_000_000L, summary.getTotalOut());
+        assertEquals(1, summary.getEntryCount());
+        observer.dispose();
+    }
 }

@@ -35,6 +35,7 @@ async function createTestHarness(): Promise<TestHarness> {
   const sentEmails: TestHarness["sentEmails"] = [];
   const db = new MockFirestore(() => currentNow);
 
+  db.seed("banks/VCB", { code: "VCB", name: "Vietcombank" });
   db.seed("users/uid_1", {
     fullName: "Trần Thị Lan",
     email: "lan@novapay.vn",
@@ -594,5 +595,113 @@ describe("Transactions Routes", () => {
     });
     assert.equal(limitRes.status, 400);
     assert.equal(((await limitRes.json()) as { error: string }).error, "LIMIT_EXCEEDED");
+  });
+  it("locks a PENDING_FACE draft after 5 failed FaceCheck attempts", async () => {
+    const h = await createTestHarness();
+    harnesses.push(h);
+
+    const initRes = await fetch(`${h.baseUrl}/transactions/initiate`, {
+      method: "POST",
+      headers: { "content-type": "application/json" },
+      body: JSON.stringify({
+        type: "TRANSFER_INTERBANK",
+        fromAccountId: "acc_chk_1",
+        toExternal: { bankCode: "VCB", accountNumber: "0071000999888", name: "Lê Hoàng Nam" },
+        amount: 6_000_000,
+      }),
+    });
+    const { draftId } = (await initRes.json()) as { draftId: string };
+
+    h.setFaceResult({ matched: false, manualAuditRequired: false, confidence: 0.2 });
+    const faceCheck = () =>
+      fetch(`${h.baseUrl}/transactions/face-check`, {
+        method: "POST",
+        headers: { "content-type": "application/json" },
+        body: JSON.stringify({ draftId, imageBase64: "data:image/jpeg;base64,LIVE" }),
+      });
+
+    for (let attempt = 1; attempt <= 4; attempt++) {
+      const res = await faceCheck();
+      assert.equal(res.status, 403);
+      assert.equal(((await res.json()) as { error: string }).error, "FACE_MISMATCH");
+    }
+    const lockedRes = await faceCheck();
+    assert.equal(lockedRes.status, 429);
+    assert.equal(((await lockedRes.json()) as { error: string }).error, "TOO_MANY_ATTEMPTS");
+    assert.equal(h.db.getRaw(`transaction_drafts/${draftId}`)?.status, "EXPIRED");
+
+    h.setFaceResult({ matched: true, manualAuditRequired: false, confidence: 0.95 });
+    const afterLockRes = await faceCheck();
+    assert.equal(afterLockRes.status, 400);
+    assert.equal(h.sentEmails.length, 0);
+  });
+
+  it("throttles /resend-otp with a cooldown and a maximum number of resends", async () => {
+    const h = await createTestHarness();
+    harnesses.push(h);
+
+    const initRes = await fetch(`${h.baseUrl}/transactions/initiate`, {
+      method: "POST",
+      headers: { "content-type": "application/json" },
+      body: JSON.stringify({
+        type: "TOPUP",
+        fromAccountId: "acc_chk_1",
+        amount: 100_000,
+        meta: { phone: "0909111222" },
+      }),
+    });
+    const { draftId } = (await initRes.json()) as { draftId: string };
+    const resend = () =>
+      fetch(`${h.baseUrl}/transactions/resend-otp`, {
+        method: "POST",
+        headers: { "content-type": "application/json" },
+        body: JSON.stringify({ draftId }),
+      });
+
+    const tooSoonRes = await resend();
+    assert.equal(tooSoonRes.status, 429);
+    assert.equal(((await tooSoonRes.json()) as { error: string }).error, "RESEND_TOO_SOON");
+    assert.equal(h.sentEmails.length, 1);
+
+    let clock = Date.UTC(2026, 10, 18, 4, 0, 0);
+    for (let i = 1; i <= 5; i++) {
+      clock += 31_000;
+      h.setNow(clock);
+      const okRes = await resend();
+      assert.equal(okRes.status, 200);
+    }
+    assert.equal(h.sentEmails.length, 6);
+
+    clock += 31_000;
+    h.setNow(clock);
+    const cappedRes = await resend();
+    assert.equal(cappedRes.status, 429);
+    assert.equal(((await cappedRes.json()) as { error: string }).error, "TOO_MANY_ATTEMPTS");
+    assert.equal(h.sentEmails.length, 6);
+  });
+
+  it("rejects unknown interbank bank codes and oversized gateway deposits", async () => {
+    const h = await createTestHarness();
+    harnesses.push(h);
+
+    const bankRes = await fetch(`${h.baseUrl}/transactions/initiate`, {
+      method: "POST",
+      headers: { "content-type": "application/json" },
+      body: JSON.stringify({
+        type: "TRANSFER_INTERBANK",
+        fromAccountId: "acc_chk_1",
+        toExternal: { bankCode: "ZZZ", accountNumber: "0071000999888", name: "Lê Hoàng Nam" },
+        amount: 100_000,
+      }),
+    });
+    assert.equal(bankRes.status, 400);
+
+    const depositRes = await fetch(`${h.baseUrl}/transactions/initiate`, {
+      method: "POST",
+      headers: { "content-type": "application/json" },
+      body: JSON.stringify({ type: "GATEWAY", fromAccountId: "acc_chk_1", amount: 100_000_001 }),
+    });
+    assert.equal(depositRes.status, 400);
+    assert.equal(((await depositRes.json()) as { error: string }).error, "LIMIT_EXCEEDED");
   });
 });

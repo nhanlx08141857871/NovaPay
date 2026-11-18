@@ -113,13 +113,14 @@ export function createFaceCheckService(deps?: FaceCheckServiceDeps): FaceCheckSe
 
       const endpoint = `https://generativelanguage.googleapis.com/v1beta/models/${encodeURIComponent(
         model
-      )}:generateContent?key=${encodeURIComponent(apiKey)}`;
+      )}:generateContent`;
 
       try {
         const response = await fetchFn(endpoint, {
           method: "POST",
           headers: {
             "content-type": "application/json",
+            "x-goog-api-key": apiKey,
           },
           body: JSON.stringify({
             contents: [

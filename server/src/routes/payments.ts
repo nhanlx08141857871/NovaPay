@@ -99,6 +99,23 @@ export function createPaymentsRouter(deps?: PaymentsRouteDeps): Router {
         return;
       }
 
+      const draftPayload =
+        draftData.payload && typeof draftData.payload === "object"
+          ? (draftData.payload as Record<string, unknown>)
+          : {};
+      if (
+        intent.amount !== Number(draftPayload.amount ?? 0) ||
+        String(intent.currency).toLowerCase() !== "vnd"
+      ) {
+        sendApiError(
+          res,
+          400,
+          "PAYMENT_NOT_COMPLETED",
+          "Số tiền hoặc loại tiền thanh toán Stripe không khớp với giao dịch."
+        );
+        return;
+      }
+
       const result = await db.runTransaction(async (tx) => {
         // PHASE 1: Tất cả tx.get trước mọi tx.set/tx.update
         const freshDraftSnap = await tx.get(draftRef);

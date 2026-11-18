@@ -233,6 +233,14 @@
                 android:text="@string/money_receipt_share_png" />
 
             <com.google.android.material.button.MaterialButton
+                android:id="@+id/btnSharePdf"
+                style="@style/Widget.NovaPay.Button.Outlined"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:text="@string/money_receipt_share_pdf" />
+
+            <com.google.android.material.button.MaterialButton
                 android:id="@+id/btnBackHome"
                 style="@style/Widget.NovaPay.Button.Outlined"
                 android:layout_width="match_parent"

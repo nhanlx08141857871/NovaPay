@@ -129,6 +129,9 @@ npm install
 # 2. Kiểm tra biên dịch TypeScript
 npm run build
 
+# 2b. Chạy bộ kiểm thử tự động của Backend
+npm test
+
 # 3. Đẩy bộ quy tắc phân quyền firestore.rules trực tiếp lên Cloud Firestore
 npm run deploy:rules
 
@@ -136,6 +139,9 @@ npm run deploy:rules
 npm run seed
 ```
 *(Lệnh `npm run seed` có tính chất **Idempotent** — bạn có thể chạy lại bất kỳ lúc nào để khôi phục dữ liệu mẫu mà không bị trùng bản ghi.)*
+
+> **Dọn dẹp `transaction_drafts` hết hạn:**
+> Mỗi draft giao dịch có trường `expireAt` (giữ 24 giờ). Bạn có thể bật chính sách TTL của Firestore cho trường này (`gcloud firestore fields ttls update expireAt --collection-group=transaction_drafts --enable-ttl`) hoặc chạy thủ công `npm run cleanup:drafts` trong thư mục `server/` để xóa các draft quá hạn (kể cả draft cũ chưa có `expireAt`).
 
 > **Lưu ý về Composite Indexes trên Firestore:**
 > Nếu muốn đồng bộ luôn cấu hình đánh chỉ mục từ `firestore.indexes.json` (hoặc khi Firestore báo link tạo index lần đầu trong log), bạn có thể cài Firebase CLI (`npm i -g firebase-tools`), đăng nhập `firebase login` và chạy `firebase deploy --only firestore:indexes` tại thư mục gốc.

@@ -3,6 +3,7 @@ package com.novabank.novapay.domain.usecase.transaction;
 import com.novabank.novapay.core.common.AppResult;
 import com.novabank.novapay.core.common.Constants;
 import com.novabank.novapay.domain.model.account.Account;
+import com.novabank.novapay.domain.model.account.AccountType;
 import com.novabank.novapay.domain.model.transaction.LedgerDirection;
 import com.novabank.novapay.domain.model.transaction.LedgerEntry;
 import com.novabank.novapay.domain.model.transaction.MonthlyCashflowSummary;
@@ -64,11 +65,20 @@ public final class ObserveMonthlyCashflowUseCase {
 
             List<Observable<AppResult<List<LedgerEntry>>>> streams = new ArrayList<>();
             for (Account account : accounts) {
+                if (account.getType() == AccountType.MORTGAGE) {
+                    continue;
+                }
                 streams.add(ledgerRepository.observeLedger(
                         account.getAccountId(),
                         null,
                         startOfMonth,
                         startOfNextMonth
+                ));
+            }
+
+            if (streams.isEmpty()) {
+                return Observable.just(AppResult.success(
+                        new MonthlyCashflowSummary(monthLabel, 0L, 0L, 0)
                 ));
             }
 
