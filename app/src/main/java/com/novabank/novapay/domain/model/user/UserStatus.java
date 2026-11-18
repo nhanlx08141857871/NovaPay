@@ -1,0 +1,16 @@
+package com.novabank.novapay.domain.model.user;
+
+/**
+ * Trạng thái hoạt động của tài khoản người dùng.
+ */
+public enum UserStatus {
+    ACTIVE,
+    LOCKED;
+
+    public static UserStatus fromString(String raw) {
+        if (raw != null && "LOCKED".equalsIgnoreCase(raw.trim())) {
+            return LOCKED;
+        }
+        return ACTIVE;
+    }
+}

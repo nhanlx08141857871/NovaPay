@@ -1,17 +1,23 @@
 package com.novabank.novapay.presentation.auth;
 
 /**
- * Dữ liệu trạng thái màn hình Đăng nhập (khung Day-0 chuẩn MVVM cho Thành viên A mở rộng ở 3B).
+ * Dữ liệu trạng thái màn hình Đăng nhập.
  */
 public final class LoginUiState {
 
     private final boolean ready;
+    private final String authenticatedRole;
 
-    public LoginUiState(boolean ready) {
+    public LoginUiState(boolean ready, String authenticatedRole) {
         this.ready = ready;
+        this.authenticatedRole = authenticatedRole;
     }
 
     public boolean isReady() {
         return ready;
+    }
+
+    public String getAuthenticatedRole() {
+        return authenticatedRole;
     }
 }

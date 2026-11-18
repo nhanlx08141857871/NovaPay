@@ -11,4 +11,116 @@
         android:label="@string/core_login_title"
         tools:layout="@layout/fragment_login" />
 
+    <fragment
+        android:id="@+id/customerHomeFragment"
+        android:name="com.novabank.novapay.presentation.customer.home.CustomerHomeFragment"
+        android:label="@string/core_home_title"
+        tools:layout="@layout/fragment_customer_home">
+        <deepLink app:uri="novapay://home" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/accountRouterFragment"
+        android:name="com.novabank.novapay.presentation.customer.account.AccountRouterFragment"
+        android:label="@string/core_account_router_title"
+        tools:layout="@layout/fragment_account_router">
+        <argument
+            android:name="accountId"
+            app:argType="string" />
+        <deepLink app:uri="novapay://accounts/{accountId}" />
+
+        <action
+            android:id="@+id/action_accountRouter_to_checkingDetail"
+            app:destination="@id/checkingDetailFragment"
+            app:popUpTo="@id/accountRouterFragment"
+            app:popUpToInclusive="true" />
+        <action
+            android:id="@+id/action_accountRouter_to_savingDetail"
+            app:destination="@id/savingDetailFragment"
+            app:popUpTo="@id/accountRouterFragment"
+            app:popUpToInclusive="true" />
+        <action
+            android:id="@+id/action_accountRouter_to_mortgageDetail"
+            app:destination="@id/mortgageDetailFragment"
+            app:popUpTo="@id/accountRouterFragment"
+            app:popUpToInclusive="true" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/checkingDetailFragment"
+        android:name="com.novabank.novapay.presentation.customer.account.CheckingDetailFragment"
+        android:label="@string/core_checking_title"
+        tools:layout="@layout/fragment_checking_detail">
+        <argument
+            android:name="accountId"
+            app:argType="string" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/savingDetailFragment"
+        android:name="com.novabank.novapay.presentation.customer.account.SavingDetailFragment"
+        android:label="@string/core_saving_title"
+        tools:layout="@layout/fragment_saving_detail">
+        <argument
+            android:name="accountId"
+            app:argType="string" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/mortgageDetailFragment"
+        android:name="com.novabank.novapay.presentation.customer.account.MortgageDetailFragment"
+        android:label="@string/core_mortgage_title"
+        tools:layout="@layout/fragment_mortgage_detail">
+        <argument
+            android:name="accountId"
+            app:argType="string" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/transactionHistoryFragment"
+        android:name="com.novabank.novapay.presentation.customer.history.TransactionHistoryFragment"
+        android:label="@string/core_history_title"
+        tools:layout="@layout/fragment_transaction_history">
+        <argument
+            android:name="range"
+            android:defaultValue="@null"
+            app:argType="string"
+            app:nullable="true" />
+        <deepLink app:uri="novapay://transactions" />
+        <deepLink app:uri="novapay://transactions?range={range}" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/profileFragment"
+        android:name="com.novabank.novapay.presentation.customer.profile.ProfileFragment"
+        android:label="@string/core_profile_title"
+        tools:layout="@layout/fragment_profile">
+        <deepLink app:uri="novapay://profile" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/ekycCaptureFragment"
+        android:name="com.novabank.novapay.presentation.ekyc.EkycCaptureFragment"
+        android:label="@string/core_ekyc_title"
+        tools:layout="@layout/fragment_ekyc_capture">
+        <argument
+            android:name="targetUid"
+            android:defaultValue="@null"
+            app:argType="string"
+            app:nullable="true" />
+        <deepLink app:uri="novapay://ekyc" />
+        <deepLink app:uri="novapay://ekyc?targetUid={targetUid}" />
+    </fragment>
+
+    <dialog
+        android:id="@+id/faceCheckDialogFragment"
+        android:name="com.novabank.novapay.presentation.ekyc.FaceCheckDialogFragment"
+        android:label="@string/core_face_check_title"
+        tools:layout="@layout/dialog_face_check">
+        <argument
+            android:name="draftId"
+            app:argType="string" />
+        <deepLink app:uri="novapay://face-check?draftId={draftId}" />
+    </dialog>
+
 </navigation>
