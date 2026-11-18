@@ -8,4 +8,163 @@
     <string name="state_error_default_message">Không thể tải thông tin lúc này. Vui lòng thử lại.</string>
     <string name="state_action_retry">Thử lại</string>
     <string name="map_tdtu_fallback_notice">Không lấy được GPS tại TP.HCM — đang sử dụng vị trí mặc định ĐH Tôn Đức Thắng (Quận 7).</string>
+
+    <!-- OpenRouteService API key (để trống mặc định; nạp cục bộ khi cần định tuyến đi bộ trực tuyến) -->
+    <string name="openroute_api_key" translatable="false"></string>
+
+    <!-- Dùng chung Menu & Điều hướng -->
+    <string name="officer_action_refresh">Làm mới</string>
+    <string name="officer_action_logout">Đăng xuất</string>
+    <string name="officer_action_back">Quay lại</string>
+    <string name="officer_action_cancel">Hủy</string>
+    <string name="officer_action_confirm">Xác nhận</string>
+    <string name="officer_action_save">Lưu thay đổi</string>
+    <string name="officer_action_close">Đóng</string>
+
+    <!-- Màn hình 1: OfficerDashboardFragment -->
+    <string name="officer_dashboard_title">Bảng điều khiển Nhân viên</string>
+    <string name="officer_dashboard_role_badge">Nhân viên Ngân hàng (Officer)</string>
+    <string name="officer_dashboard_email_fallback">Tài khoản nhân viên NovaPay</string>
+    <string name="officer_stat_total_customers">Khách hàng</string>
+    <string name="officer_stat_pending_ekyc">Chờ eKYC</string>
+    <string name="officer_stat_daily_tx">GD hôm nay</string>
+    <string name="officer_quick_actions_title">Nghiệp vụ nhanh</string>
+    <string name="officer_nav_customers_title">Khách hàng</string>
+    <string name="officer_nav_customers_subtitle">Tra cứu, khóa/mở &amp; tạo mới</string>
+    <string name="officer_nav_ekyc_title">Duyệt eKYC</string>
+    <string name="officer_nav_ekyc_subtitle">Đối chiếu &amp; chụp hộ tại quầy</string>
+    <string name="officer_nav_rates_title">Lãi suất</string>
+    <string name="officer_nav_rates_subtitle">Bảng lãi suất tiết kiệm</string>
+    <string name="officer_nav_branches_title">Chi nhánh &amp; ATM</string>
+    <string name="officer_nav_branches_subtitle">Bản đồ mạng lưới NovaPay</string>
+    <string name="officer_post_audit_title">Hậu kiểm FaceCheck (&gt; 5 triệu)</string>
+    <string name="officer_post_audit_count_format">%1$d chờ kiểm</string>
+    <string name="officer_post_audit_empty">Không có giao dịch cần hậu kiểm khuôn mặt.</string>
+    <string name="officer_post_audit_open_review">Mở duyệt eKYC &amp; Hậu kiểm</string>
+    <string name="officer_post_audit_item_uid">KH: %1$s</string>
+    <string name="officer_post_audit_item_tx">Mã GD: %1$s</string>
+    <string name="officer_post_audit_item_tx_pending">Đang chờ hoàn tất giao dịch</string>
+    <string name="officer_audit_logs_title">Nhật ký kiểm toán (Audit Logs)</string>
+    <string name="officer_audit_logs_empty">Chưa ghi nhận nhật ký kiểm toán nào.</string>
+    <string name="officer_audit_item_target">Đối tượng: %1$s</string>
+    <string name="officer_audit_item_actor">Thực hiện: %1$s</string>
+    <string name="officer_logout_confirm_title">Đăng xuất tài khoản?</string>
+    <string name="officer_logout_confirm_message">Bạn sẽ rời khỏi phân hệ Nhân viên Ngân hàng và quay về màn hình đăng nhập.</string>
+
+    <!-- Màn hình 2: CustomerManagementFragment -->
+    <string name="officer_customers_title">Quản lý khách hàng</string>
+    <string name="officer_customers_search_hint">Tìm theo tên, email, SĐT hoặc CCCD</string>
+    <string name="officer_customers_empty_title">Không tìm thấy khách hàng</string>
+    <string name="officer_customers_empty_subtitle">Thử từ khóa khác hoặc tạo khách hàng mới.</string>
+    <string name="officer_customer_status_active">Hoạt động</string>
+    <string name="officer_customer_status_locked">Đã khóa</string>
+    <string name="officer_customer_ekyc_verified">eKYC: Đã duyệt</string>
+    <string name="officer_customer_ekyc_pending">eKYC: Chờ duyệt</string>
+    <string name="officer_customer_ekyc_rejected">eKYC: Từ chối</string>
+    <string name="officer_customer_ekyc_none">eKYC: Chưa nộp</string>
+    <string name="officer_customer_phone_format">SĐT: %1$s</string>
+    <string name="officer_customer_cccd_format">CCCD: %1$s</string>
+    <string name="officer_customer_edit_action">Sửa hồ sơ</string>
+    <string name="officer_customer_lock_action">Khóa TK</string>
+    <string name="officer_customer_unlock_action">Mở khóa</string>
+    <string name="officer_customer_lock_confirm_title">Khóa tài khoản khách hàng?</string>
+    <string name="officer_customer_lock_confirm_message">Khách hàng %1$s sẽ bị đăng xuất tức thì và không thể giao dịch cho đến khi được mở khóa.</string>
+    <string name="officer_customer_unlock_confirm_title">Mở khóa tài khoản?</string>
+    <string name="officer_customer_unlock_confirm_message">Khôi phục quyền truy cập và giao dịch cho khách hàng %1$s.</string>
+    <string name="officer_customer_edit_dialog_title">Cập nhật thông tin khách hàng</string>
+    <string name="officer_customer_update_success">Đã cập nhật thông tin khách hàng.</string>
+    <string name="officer_customer_status_locked_success">Đã khóa tài khoản khách hàng.</string>
+    <string name="officer_customer_status_unlocked_success">Đã mở khóa tài khoản khách hàng.</string>
+
+    <!-- Màn hình 3: CreateCustomerFragment -->
+    <string name="officer_create_customer_title">Tạo khách hàng mới</string>
+    <string name="officer_create_customer_subtitle">Khởi tạo tài khoản ngân hàng &amp; ví thanh toán CHECKING mặc định</string>
+    <string name="officer_customer_field_fullname">Họ và tên</string>
+    <string name="officer_customer_field_email">Email đăng nhập</string>
+    <string name="officer_customer_field_phone">Số điện thoại</string>
+    <string name="officer_customer_field_national_id">Số CMND / CCCD (9 hoặc 12 số)</string>
+    <string name="officer_customer_field_dob">Ngày sinh (YYYY-MM-DD)</string>
+    <string name="officer_customer_field_address">Địa chỉ liên hệ</string>
+    <string name="officer_customer_field_password">Mật khẩu khởi tạo (tối thiểu 6 ký tự)</string>
+    <string name="officer_create_customer_submit">Tạo tài khoản khách hàng</string>
+    <string name="officer_create_customer_success">Đã tạo khách hàng thành công (UID: %1$s).</string>
+    <string name="officer_validation_fullname">Họ và tên phải có ít nhất 2 ký tự.</string>
+    <string name="officer_validation_email">Địa chỉ email không hợp lệ.</string>
+    <string name="officer_validation_phone">Số điện thoại phải gồm 10–11 số (bắt đầu bằng 0 hoặc +84).</string>
+    <string name="officer_validation_national_id">Số CMND/CCCD phải gồm 9 hoặc 12 chữ số.</string>
+    <string name="officer_validation_dob">Ngày sinh không hợp lệ (định dạng YYYY-MM-DD).</string>
+    <string name="officer_validation_address">Địa chỉ không được để trống.</string>
+    <string name="officer_validation_password">Mật khẩu khởi tạo phải có ít nhất 6 ký tự.</string>
+
+    <!-- Màn hình 4: OfficerEkycReviewFragment -->
+    <string name="officer_ekyc_review_title">Duyệt eKYC &amp; Hậu kiểm</string>
+    <string name="officer_ekyc_filter_pending">Chờ duyệt</string>
+    <string name="officer_ekyc_filter_all">Chưa xác minh</string>
+    <string name="officer_ekyc_filter_manual_audit">Hậu kiểm FaceCheck</string>
+    <string name="officer_ekyc_empty_title">Không có hồ sơ cần xử lý</string>
+    <string name="officer_ekyc_empty_subtitle">Chưa có hồ sơ eKYC hoặc giao dịch hậu kiểm nào trong mục này.</string>
+    <string name="officer_ekyc_photo_label">Ảnh định danh eKYC</string>
+    <string name="officer_ekyc_facecheck_label">Ảnh FaceCheck hậu kiểm</string>
+    <string name="officer_ekyc_no_image">Chưa có ảnh khuôn mặt</string>
+    <string name="officer_ekyc_manual_audit_badge">Hậu kiểm FaceCheck thủ công</string>
+    <string name="officer_ekyc_approve_action">Duyệt</string>
+    <string name="officer_ekyc_reject_action">Từ chối</string>
+    <string name="officer_ekyc_counter_capture_action">Chụp hộ eKYC tại quầy</string>
+    <string name="officer_ekyc_approve_confirm_title">Phê duyệt eKYC?</string>
+    <string name="officer_ekyc_approve_confirm_message">Xác nhận định danh eKYC hợp lệ cho khách hàng %1$s.</string>
+    <string name="officer_ekyc_reject_confirm_title">Từ chối eKYC?</string>
+    <string name="officer_ekyc_reject_confirm_message">Từ chối ảnh eKYC của khách hàng %1$s. Khách hàng hoặc nhân viên cần chụp lại.</string>
+    <string name="officer_ekyc_review_approved">Đã phê duyệt eKYC cho khách hàng.</string>
+    <string name="officer_ekyc_review_rejected">Đã từ chối hồ sơ eKYC.</string>
+    <string name="officer_ekyc_capture_returned">Đã nhận kết quả chụp hộ eKYC tại quầy, đang tải lại danh sách.</string>
+    <string name="officer_ekyc_capture_unavailable">Màn hình chụp hộ eKYC (novapay://ekyc) thuộc phân hệ A và chưa được tích hợp trên nhánh này.</string>
+    <string name="officer_ekyc_zoom_title">Kiểm tra ảnh khuôn mặt</string>
+
+    <!-- Màn hình 5: InterestRateManagementFragment -->
+    <string name="officer_interest_rates_title">Quản lý lãi suất tiết kiệm</string>
+    <string name="officer_rate_form_title">Cập nhật / Thêm mức lãi suất</string>
+    <string name="officer_rate_term_hint">Kỳ hạn (tháng)</string>
+    <string name="officer_rate_term_helper">Nhập 0 cho tài khoản không kỳ hạn (tối đa 120 tháng)</string>
+    <string name="officer_rate_annual_hint">Lãi suất năm (%/năm)</string>
+    <string name="officer_rate_save_action">Lưu lãi suất</string>
+    <string name="officer_rate_non_term">Không kỳ hạn</string>
+    <string name="officer_rate_term_months_format">Kỳ hạn %1$d tháng</string>
+    <string name="officer_rate_percent_format">%1$.2f %%/năm</string>
+    <string name="officer_rate_effective_format">Hiệu lực: %1$s</string>
+    <string name="officer_rate_updated_by_format">Cập nhật bởi: %1$s</string>
+    <string name="officer_rate_validation_term">Kỳ hạn phải là số nguyên từ 0 đến 120 tháng.</string>
+    <string name="officer_rate_validation_annual">Lãi suất năm phải nằm trong khoảng (0, 50] %%/năm.</string>
+    <string name="officer_rate_save_success">Đã lưu mức lãi suất và ghi nhật ký kiểm toán.</string>
+    <string name="officer_rate_empty_title">Chưa có cấu hình lãi suất</string>
+    <string name="officer_rate_empty_subtitle">Hãy nhập kỳ hạn và lãi suất ở biểu mẫu phía trên để tạo mới.</string>
+
+    <!-- Màn hình 6: BranchMapFragment -->
+    <string name="map_branches_title">Chi nhánh &amp; ATM NovaPay</string>
+    <string name="map_my_location_action">Vị trí của tôi</string>
+    <string name="map_user_marker_title">Vị trí của bạn</string>
+    <string name="map_tdtu_marker_title">ĐH Tôn Đức Thắng (Vị trí mặc định)</string>
+    <string name="map_type_branch">Chi nhánh</string>
+    <string name="map_type_atm">Máy ATM</string>
+    <string name="map_nearest_badge">Gần nhất</string>
+    <string name="map_straight_line_badge">Đường chim bay</string>
+    <string name="map_distance_meters_format">%1$d m • ~%2$d phút đi bộ</string>
+    <string name="map_distance_km_format">%1$.2f km • ~%2$d phút đi bộ</string>
+    <string name="map_open_hours_format">Giờ mở cửa: %1$s</string>
+    <string name="map_phone_format">Hotline: %1$s</string>
+    <string name="map_recenter_action">Định vị lại</string>
+    <string name="map_branches_empty_title">Chưa có dữ liệu chi nhánh</string>
+    <string name="map_branches_empty_subtitle">Hiện chưa có chi nhánh hoặc cây ATM nào được cấu hình.</string>
+
+    <!-- Màn hình 7: ChatbotFragment -->
+    <string name="chatbot_title">Trợ lý ảo NovaPay AI</string>
+    <string name="chatbot_empty_title">Xin chào! Tôi là trợ lý NovaPay</string>
+    <string name="chatbot_empty_subtitle">Hãy hỏi về số dư, biến động tháng này, chuyển tiền, hóa đơn điện nước hoặc tìm chi nhánh gần nhất.</string>
+    <string name="chatbot_input_hint">Nhập câu hỏi cho trợ lý NovaPay…</string>
+    <string name="chatbot_send_action">Gửi</string>
+    <string name="chatbot_empty_message_warning">Vui lòng nhập nội dung tin nhắn.</string>
+    <string name="chatbot_deeplink_unavailable">Màn hình đích (%1$s) chưa khả dụng trên nhánh độc lập này.</string>
+    <string name="chatbot_send_failed">Không thể gửi tin nhắn tới trợ lý AI. Vui lòng thử lại.</string>
+    <string name="chatbot_suggestion_balance">Kiểm tra số dư</string>
+    <string name="chatbot_suggestion_bills">Thanh toán hóa đơn</string>
+    <string name="chatbot_suggestion_branches">Tìm chi nhánh gần nhất</string>
 </resources>
