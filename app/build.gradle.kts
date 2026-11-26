@@ -29,6 +29,16 @@ fun readSimpleKeyValueFile(targetFile: File): Map<String, String> {
     return result
 }
 
+fun stripWrappingQuotes(raw: String?): String {
+    var value = (raw ?: "").trim()
+    if ((value.startsWith("\"") && value.endsWith("\"")) ||
+        (value.startsWith("'") && value.endsWith("'"))
+    ) {
+        value = value.substring(1, value.length - 1).trim()
+    }
+    return value
+}
+
 fun escapeBuildConfigString(raw: String): String =
     raw.replace("\\", "\\\\").replace("\"", "\\\"")
 
@@ -40,19 +50,21 @@ val localProps = Properties().apply {
 }
 val serverEnvMap = readSimpleKeyValueFile(rootProject.file("server/.env"))
 
-// Chỉ đọc các khóa cho phép phía Client theo GEMINI.md §1 (ORS_API_KEY, STRIPE_PUBLISHABLE_KEY pk_test_..., BACKEND_BASE_URL).
-// Tuyệt đối KHÔNG nhúng GEMINI_API_KEY, BREVO_API_KEY, STRIPE_SECRET_KEY hay FIREBASE_PRIVATE_KEY vào APK.
-val orsApiKey: String = (localProps.getProperty("ORS_API_KEY")
-    ?: localProps.getProperty("OPENROUTE_API_KEY")
-    ?: "").trim()
+// Chỉ đọc các khóa cho phép phía Client theo GEMINI.md §1 (ORS_API_KEY, STRIPE_PUBLISHABLE_KEY pk_test_..., SERVER_BASE_URL / BACKEND_BASE_URL).
+// Tuyệt đối KHÔNG nhúng GEMINI_API_KEY, BREVO_API_KEY, STRIPE_SECRET_KEY hay FIREBASE_PRIVATE_KEY vào APK / BuildConfig.
+val orsApiKey: String = stripWrappingQuotes(localProps.getProperty("ORS_API_KEY"))
+    .ifEmpty { stripWrappingQuotes(localProps.getProperty("OPENROUTE_API_KEY")) }
 
-val rawStripePubKey: String = (localProps.getProperty("STRIPE_PUBLISHABLE_KEY")
-    ?: serverEnvMap["STRIPE_PUBLISHABLE_KEY"]
-    ?: "").trim()
+val rawStripePubKey: String = stripWrappingQuotes(localProps.getProperty("STRIPE_PUBLISHABLE_KEY"))
+    .ifEmpty { stripWrappingQuotes(serverEnvMap["STRIPE_PUBLISHABLE_KEY"]) }
 val stripePublishableKey: String = if (rawStripePubKey.startsWith("pk_")) rawStripePubKey else ""
 
-val backendBaseUrl: String = (localProps.getProperty("BACKEND_BASE_URL")
-    ?: "http://10.0.2.2:3000/").trim().let { if (it.endsWith("/")) it else "$it/" }
+val backendBaseUrl: String = stripWrappingQuotes(localProps.getProperty("SERVER_BASE_URL"))
+    .ifEmpty { stripWrappingQuotes(localProps.getProperty("BACKEND_BASE_URL")) }
+    .ifEmpty { stripWrappingQuotes(serverEnvMap["SERVER_BASE_URL"]) }
+    .ifEmpty { stripWrappingQuotes(serverEnvMap["BACKEND_BASE_URL"]) }
+    .ifEmpty { "http://10.0.2.2:3000/" }
+    .let { if (it.endsWith("/")) it else "$it/" }
 
 android {
     namespace = "com.novabank.novapay"
