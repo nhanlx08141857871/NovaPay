@@ -1,3 +1,5 @@
+> Xem tổng quan sản phẩm & hướng dẫn trải nghiệm nhanh tại **[GIOI_THIEU.md](./GIOI_THIEU.md)**
+
 # NovaPay — Ứng Dụng Ngân Hàng Số (Mobile Banking)
 
 > **Tuyên bố Học thuật (Academic Sandbox Simulation — TDTU):**
