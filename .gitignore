@@ -27,3 +27,4 @@ server/node_modules/
 server/dist/
 *.jks
 *.keystore
+/lamviec
