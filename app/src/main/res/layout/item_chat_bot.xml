@@ -27,12 +27,13 @@
                 android:gravity="center_vertical"
                 android:orientation="horizontal">
 
-                <ImageView
-                    android:layout_width="14dp"
-                    android:layout_height="14dp"
+                <com.google.android.material.imageview.ShapeableImageView
+                    android:layout_width="20dp"
+                    android:layout_height="20dp"
                     android:importantForAccessibility="no"
-                    android:src="@drawable/ic_np_sparkle_ai"
-                    app:tint="@color/np_accent_emerald" />
+                    android:scaleType="centerCrop"
+                    android:src="@drawable/img_novapay_logo"
+                    app:shapeAppearanceOverlay="@style/ShapeAppearance.NovaPay.LogoSmall" />
 
                 <TextView
                     android:layout_width="wrap_content"

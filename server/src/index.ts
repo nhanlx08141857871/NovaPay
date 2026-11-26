@@ -17,7 +17,13 @@ export const app = express();
 
 app.set("trust proxy", 1);
 app.use(helmet());
-app.use(cors());
+app.use(
+  cors({
+    origin: "*",
+    methods: ["GET", "POST", "PATCH", "PUT", "DELETE", "OPTIONS"],
+    allowedHeaders: ["Content-Type", "Authorization"],
+  })
+);
 // Giới hạn payload 1MB đủ cho ảnh Base64 eKYC / FaceCheck (< 200KB JPEG)
 app.use(express.json({ limit: "1mb" }));
 
@@ -64,7 +70,9 @@ app.use((err: Error & { type?: string }, _req: Request, res: Response, _next: Ne
 });
 
 if (require.main === module) {
-  app.listen(config.port, () => {
-    console.log(`[NovaPay Server] Listening on port ${config.port}`);
+  const port = Number(process.env.PORT) || config.port || 3000;
+  const host = "0.0.0.0";
+  app.listen(port, host, () => {
+    console.log(`[NovaPay Server] Listening on http://${host}:${port}`);
   });
 }

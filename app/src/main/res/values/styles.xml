@@ -164,4 +164,20 @@
     <style name="Widget.NovaPay.BottomNavigationView.ActiveIndicator" parent="Widget.Material3.BottomNavigationView.ActiveIndicator">
         <item name="android:color">@color/np_accent_emerald_soft</item>
     </style>
+
+    <!-- Brand Logo Rounded Corner Overlays (16dp Hero / 12dp Header & Receipt / 6dp Avatar) -->
+    <style name="ShapeAppearance.NovaPay.Logo16" parent="">
+        <item name="cornerFamily">rounded</item>
+        <item name="cornerSize">16dp</item>
+    </style>
+
+    <style name="ShapeAppearance.NovaPay.Logo12" parent="">
+        <item name="cornerFamily">rounded</item>
+        <item name="cornerSize">12dp</item>
+    </style>
+
+    <style name="ShapeAppearance.NovaPay.LogoSmall" parent="">
+        <item name="cornerFamily">rounded</item>
+        <item name="cornerSize">6dp</item>
+    </style>
 </resources>

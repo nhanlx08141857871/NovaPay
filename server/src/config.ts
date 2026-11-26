@@ -37,7 +37,7 @@ export function normalizePrivateKey(rawKey?: string): string {
 }
 
 export const config: AppConfig = {
-  port: Number(process.env.PORT || 3000),
+  port: Number(process.env.PORT) || 3000,
   firebaseProjectId: (process.env.FIREBASE_PROJECT_ID || "").trim(),
   firebaseClientEmail: (process.env.FIREBASE_CLIENT_EMAIL || "").trim(),
   firebasePrivateKey: normalizePrivateKey(process.env.FIREBASE_PRIVATE_KEY),
