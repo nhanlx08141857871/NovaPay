@@ -119,6 +119,9 @@
     <string name="officer_ekyc_capture_returned">Đã nhận kết quả chụp hộ eKYC tại quầy, đang tải lại danh sách.</string>
     <string name="officer_ekyc_capture_unavailable">Không thể mở màn hình chụp hộ eKYC lúc này. Vui lòng thử lại.</string>
     <string name="officer_ekyc_zoom_title">Kiểm tra ảnh khuôn mặt</string>
+    <string name="officer_ekyc_tap_to_zoom">Chạm ảnh để phóng to</string>
+    <string name="officer_kpi_zero" translatable="false">0</string>
+    <string name="chatbot_bot_badge">Trợ lý NovaPay AI</string>
 
     <!-- Màn hình 5: InterestRateManagementFragment -->
     <string name="officer_interest_rates_title">Quản lý lãi suất tiết kiệm</string>

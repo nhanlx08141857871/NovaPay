@@ -51,6 +51,24 @@
     <string name="core_home_action_branches">Chi nhánh</string>
     <string name="core_home_action_chatbot">Trợ lý AI</string>
     <string name="core_home_action_profile">Hồ sơ</string>
+    <string name="core_home_action_qr">Quét QR</string>
+    <string name="core_home_action_deposit">Nạp tiền</string>
+    <string name="core_home_utilities_title">Tiện ích &amp; Khám phá</string>
+    <string name="core_home_view_all_history">Xem lịch sử</string>
+    <string name="core_home_verified_shield">Bảo mật đa lớp NovaPay</string>
+
+    <!-- Thanh điều hướng 4 Tab Khách hàng -->
+    <string name="core_nav_home">Trang chủ</string>
+    <string name="core_nav_transfer">Chuyển tiền</string>
+    <string name="core_nav_history">Lịch sử</string>
+    <string name="core_nav_profile">Cá nhân</string>
+
+    <!-- Tiêu đề phân nhóm biểu mẫu & thông tin -->
+    <string name="core_profile_identity_section">Thông tin định danh</string>
+    <string name="core_profile_contact_section">Thông tin liên hệ</string>
+    <string name="core_checking_limits_section">Hạn mức giao dịch</string>
+    <string name="core_saving_details_section">Thông tin kỳ hạn tiết kiệm</string>
+    <string name="core_mortgage_details_section">Thông tin hợp đồng vay</string>
     <string name="core_home_chart_title">Biến động thu chi tháng %1$s</string>
     <string name="core_home_chart_income">Tiền vào: %1$s</string>
     <string name="core_home_chart_expense">Tiền ra: %1$s</string>

@@ -4,67 +4,119 @@
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
 
-    <!-- NovaPay Brand — Light Scheme (Material 3) -->
-    <color name="md_theme_light_primary">#FF0B3B75</color>
+    <!-- ========================================================== -->
+    <!-- NovaPay Quiet Instrument — Light Scheme (Material 3)       -->
+    <!-- Zero purple/lavender; 90-95% neutral Slate + Navy/Emerald  -->
+    <!-- ========================================================== -->
+    <color name="md_theme_light_primary">#FF0F172A</color>
     <color name="md_theme_light_onPrimary">#FFFFFFFF</color>
-    <color name="md_theme_light_primaryContainer">#FFD4E3FF</color>
-    <color name="md_theme_light_onPrimaryContainer">#FF001C3B</color>
+    <color name="md_theme_light_primaryContainer">#FFF1F5F9</color>
+    <color name="md_theme_light_onPrimaryContainer">#FF0F172A</color>
 
-    <color name="md_theme_light_secondary">#FF00796B</color>
+    <color name="md_theme_light_secondary">#FF059669</color>
     <color name="md_theme_light_onSecondary">#FFFFFFFF</color>
-    <color name="md_theme_light_secondaryContainer">#FF9CF2E4</color>
-    <color name="md_theme_light_onSecondaryContainer">#FF00201C</color>
+    <color name="md_theme_light_secondaryContainer">#FFECFDF5</color>
+    <color name="md_theme_light_onSecondaryContainer">#FF065F46</color>
 
-    <color name="md_theme_light_tertiary">#FFB45309</color>
+    <color name="md_theme_light_tertiary">#FFD97706</color>
     <color name="md_theme_light_onTertiary">#FFFFFFFF</color>
-    <color name="md_theme_light_tertiaryContainer">#FFFFDDB5</color>
-    <color name="md_theme_light_onTertiaryContainer">#FF2A1800</color>
+    <color name="md_theme_light_tertiaryContainer">#FFFEF3C7</color>
+    <color name="md_theme_light_onTertiaryContainer">#FF92400E</color>
 
-    <color name="md_theme_light_error">#FFBA1A1A</color>
+    <color name="md_theme_light_error">#FFDC2626</color>
     <color name="md_theme_light_onError">#FFFFFFFF</color>
-    <color name="md_theme_light_errorContainer">#FFFFDAD6</color>
-    <color name="md_theme_light_onErrorContainer">#FF410002</color>
+    <color name="md_theme_light_errorContainer">#FFFEE2E2</color>
+    <color name="md_theme_light_onErrorContainer">#FF991B1B</color>
 
     <color name="md_theme_light_background">#FFF8FAFC</color>
     <color name="md_theme_light_onBackground">#FF0F172A</color>
     <color name="md_theme_light_surface">#FFFFFFFF</color>
     <color name="md_theme_light_onSurface">#FF0F172A</color>
-    <color name="md_theme_light_surfaceVariant">#FFE2E8F0</color>
+    <color name="md_theme_light_surfaceVariant">#FFF1F5F9</color>
     <color name="md_theme_light_onSurfaceVariant">#FF475569</color>
-    <color name="md_theme_light_outline">#FF94A3B8</color>
+    <color name="md_theme_light_outline">#FFCBD5E1</color>
+    <color name="md_theme_light_outlineVariant">#FFE2E8F0</color>
 
-    <!-- NovaPay Brand — Dark Scheme (Material 3) -->
-    <color name="md_theme_dark_primary">#FFA5C8FF</color>
-    <color name="md_theme_dark_onPrimary">#FF00315F</color>
-    <color name="md_theme_dark_primaryContainer">#FF004786</color>
-    <color name="md_theme_dark_onPrimaryContainer">#FFD4E3FF</color>
+    <!-- Material 3 Surface Containers (override default lavender tints) -->
+    <color name="md_theme_light_surfaceContainerLowest">#FFFFFFFF</color>
+    <color name="md_theme_light_surfaceContainerLow">#FFF8FAFC</color>
+    <color name="md_theme_light_surfaceContainer">#FFFFFFFF</color>
+    <color name="md_theme_light_surfaceContainerHigh">#FFF1F5F9</color>
+    <color name="md_theme_light_surfaceContainerHighest">#FFE2E8F0</color>
 
-    <color name="md_theme_dark_secondary">#FF80D5C8</color>
-    <color name="md_theme_dark_onSecondary">#FF003730</color>
-    <color name="md_theme_dark_secondaryContainer">#FF005047</color>
-    <color name="md_theme_dark_onSecondaryContainer">#FF9CF2E4</color>
+    <!-- ========================================================== -->
+    <!-- NovaPay Quiet Instrument — Dark Scheme (Material 3)        -->
+    <!-- ========================================================== -->
+    <color name="md_theme_dark_primary">#FFF8FAFC</color>
+    <color name="md_theme_dark_onPrimary">#FF0F172A</color>
+    <color name="md_theme_dark_primaryContainer">#FF1E293B</color>
+    <color name="md_theme_dark_onPrimaryContainer">#FFF8FAFC</color>
 
-    <color name="md_theme_dark_tertiary">#FFFFB95C</color>
-    <color name="md_theme_dark_onTertiary">#FF462A00</color>
-    <color name="md_theme_dark_tertiaryContainer">#FF643F00</color>
-    <color name="md_theme_dark_onTertiaryContainer">#FFFFDDB5</color>
+    <color name="md_theme_dark_secondary">#FF10B981</color>
+    <color name="md_theme_dark_onSecondary">#FF022C22</color>
+    <color name="md_theme_dark_secondaryContainer">#FF064E3B</color>
+    <color name="md_theme_dark_onSecondaryContainer">#FFA7F3D0</color>
 
-    <color name="md_theme_dark_error">#FFFFB4AB</color>
-    <color name="md_theme_dark_onError">#FF690005</color>
-    <color name="md_theme_dark_errorContainer">#FF93000A</color>
-    <color name="md_theme_dark_onErrorContainer">#FFFFDAD6</color>
+    <color name="md_theme_dark_tertiary">#FFF59E0B</color>
+    <color name="md_theme_dark_onTertiary">#FF451A03</color>
+    <color name="md_theme_dark_tertiaryContainer">#FF78350F</color>
+    <color name="md_theme_dark_onTertiaryContainer">#FFFDE68A</color>
+
+    <color name="md_theme_dark_error">#FFF87171</color>
+    <color name="md_theme_dark_onError">#FF450A0A</color>
+    <color name="md_theme_dark_errorContainer">#FF7F1D1D</color>
+    <color name="md_theme_dark_onErrorContainer">#FFFECACA</color>
 
     <color name="md_theme_dark_background">#FF0B1120</color>
-    <color name="md_theme_dark_onBackground">#FFE2E8F0</color>
+    <color name="md_theme_dark_onBackground">#FFF1F5F9</color>
     <color name="md_theme_dark_surface">#FF111827</color>
-    <color name="md_theme_dark_onSurface">#FFE2E8F0</color>
+    <color name="md_theme_dark_onSurface">#FFF1F5F9</color>
     <color name="md_theme_dark_surfaceVariant">#FF1E293B</color>
-    <color name="md_theme_dark_onSurfaceVariant">#FFCBD5E1</color>
-    <color name="md_theme_dark_outline">#FF64748B</color>
+    <color name="md_theme_dark_onSurfaceVariant">#FF94A3B8</color>
+    <color name="md_theme_dark_outline">#FF334155</color>
+    <color name="md_theme_dark_outlineVariant">#FF1E293B</color>
 
-    <!-- Banking Semantic Colors -->
+    <color name="md_theme_dark_surfaceContainerLowest">#FF0B1120</color>
+    <color name="md_theme_dark_surfaceContainerLow">#FF0F172A</color>
+    <color name="md_theme_dark_surfaceContainer">#FF111827</color>
+    <color name="md_theme_dark_surfaceContainerHigh">#FF1E293B</color>
+    <color name="md_theme_dark_surfaceContainerHighest">#FF334155</color>
+
+    <!-- ========================================================== -->
+    <!-- Semantic Fintech Tokens (Adaptive via values-night)        -->
+    <!-- ========================================================== -->
     <color name="novapay_income_positive">#FF16A34A</color>
     <color name="novapay_expense_negative">#FFDC2626</color>
     <color name="novapay_warning_pending">#FFD97706</color>
-    <color name="novapay_verified_badge">#FF0284C7</color>
+    <color name="novapay_verified_badge">#FF16A34A</color>
+
+    <color name="np_brand_navy">#FF0F172A</color>
+    <color name="np_accent_emerald">#FF059669</color>
+    <color name="np_accent_emerald_soft">#FFECFDF5</color>
+    <color name="np_accent_emerald_ink">#FF065F46</color>
+
+    <color name="np_border_hairline">#FFE2E8F0</color>
+    <color name="np_border_control">#FFCBD5E1</color>
+    <color name="np_divider_subtle">#FFF1F5F9</color>
+    <color name="np_surface_subtle">#FFF8FAFC</color>
+    <color name="np_text_muted">#FF64748B</color>
+
+    <!-- Hero Account / Brand Cards (Always Deep Navy / Deep Emerald) -->
+    <color name="np_hero_navy_bg">#FF0F172A</color>
+    <color name="np_hero_navy_stroke">#FF1E293B</color>
+    <color name="np_hero_navy_text">#FFFFFFFF</color>
+    <color name="np_hero_navy_muted">#FF94A3B8</color>
+    <color name="np_hero_emerald_bg">#FF065F46</color>
+    <color name="np_hero_emerald_stroke">#FF047857</color>
+    <color name="np_hero_slate_bg">#FF1E293B</color>
+
+    <!-- Semantic Pill Badge Backgrounds & Borders -->
+    <color name="np_badge_verified_bg">#FFDCFCE7</color>
+    <color name="np_badge_verified_stroke">#FF86EFAC</color>
+    <color name="np_badge_pending_bg">#FFFEF3C7</color>
+    <color name="np_badge_pending_stroke">#FFFDE68A</color>
+    <color name="np_badge_locked_bg">#FFFEE2E2</color>
+    <color name="np_badge_locked_stroke">#FFFECACA</color>
+    <color name="np_badge_neutral_bg">#FFF1F5F9</color>
+    <color name="np_badge_neutral_stroke">#FFE2E8F0</color>
 </resources>

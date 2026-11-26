@@ -79,8 +79,10 @@ public class AccountCardAdapter extends RecyclerView.Adapter<AccountCardAdapter.
         ) {
             Context context = binding.getRoot().getContext();
             binding.tvAccountType.setText(resolveTypeLabel(context, account.getType()));
+            binding.viewAccountAccentBar.setBackgroundColor(resolveTypeAccentColor(context, account.getType()));
             binding.tvAccountStatus.setText(resolveStatusLabel(context, account.getStatus()));
             binding.tvAccountStatus.setTextColor(resolveStatusColor(context, account.getStatus()));
+            binding.tvAccountStatus.setBackgroundResource(resolveStatusBadgeBg(account.getStatus()));
             binding.tvAccountNumber.setText(account.getAccountNumber());
 
             if (account.getType() == AccountType.MORTGAGE && account.getMortgage() != null) {
@@ -113,6 +115,16 @@ public class AccountCardAdapter extends RecyclerView.Adapter<AccountCardAdapter.
             return context.getString(R.string.core_account_type_checking);
         }
 
+        private static int resolveTypeAccentColor(Context context, AccountType type) {
+            if (type == AccountType.SAVING) {
+                return ContextCompat.getColor(context, R.color.np_accent_emerald);
+            }
+            if (type == AccountType.MORTGAGE) {
+                return ContextCompat.getColor(context, R.color.novapay_warning_pending);
+            }
+            return ContextCompat.getColor(context, R.color.np_brand_navy);
+        }
+
         private static String resolveStatusLabel(Context context, AccountStatus status) {
             if (status == AccountStatus.FROZEN) {
                 return context.getString(R.string.core_account_status_frozen);
@@ -131,6 +143,16 @@ public class AccountCardAdapter extends RecyclerView.Adapter<AccountCardAdapter.
                 return ContextCompat.getColor(context, R.color.novapay_expense_negative);
             }
             return ContextCompat.getColor(context, R.color.novapay_income_positive);
+        }
+
+        private static int resolveStatusBadgeBg(AccountStatus status) {
+            if (status == AccountStatus.FROZEN) {
+                return R.drawable.bg_np_badge_pending;
+            }
+            if (status == AccountStatus.CLOSED) {
+                return R.drawable.bg_np_badge_locked;
+            }
+            return R.drawable.bg_np_badge_verified;
         }
     }
 }

@@ -222,20 +222,45 @@ public class QrScannerFragment extends BaseFragment<FragmentQrScannerBinding> {
         if (payload == null || !isAdded()) {
             return;
         }
-        Bundle result = new Bundle();
-        result.putString(KEY_QR_ACCOUNT_NUMBER, payload.getAccountNumber());
+        androidx.navigation.NavController navController = NavHostFragment.findNavController(this);
+        androidx.navigation.NavBackStackEntry prev = navController.getPreviousBackStackEntry();
+        if (prev != null && prev.getDestination().getId() == R.id.transferFragment) {
+            Bundle result = new Bundle();
+            result.putString(KEY_QR_ACCOUNT_NUMBER, payload.getAccountNumber());
+            if (payload.getBankCode() != null) {
+                result.putString(KEY_QR_BANK_CODE, payload.getBankCode());
+            }
+            if (payload.getRecipientName() != null) {
+                result.putString(KEY_QR_RECIPIENT_NAME, payload.getRecipientName());
+            }
+            result.putLong(KEY_QR_AMOUNT, payload.getAmount());
+            if (payload.getNote() != null) {
+                result.putString(KEY_QR_NOTE, payload.getNote());
+            }
+            getParentFragmentManager().setFragmentResult(REQ_QR_SCAN_RESULT, result);
+            navController.popBackStack();
+            return;
+        }
+
+        // Mở trực tiếp từ Trang chủ (novapay://qr) -> chuyển tiếp sang TransferFragment kèm dữ liệu QR
+        Bundle args = new Bundle();
+        args.putString("accountNumber", payload.getAccountNumber());
         if (payload.getBankCode() != null) {
-            result.putString(KEY_QR_BANK_CODE, payload.getBankCode());
+            args.putString("bankCode", payload.getBankCode());
         }
         if (payload.getRecipientName() != null) {
-            result.putString(KEY_QR_RECIPIENT_NAME, payload.getRecipientName());
+            args.putString("recipientName", payload.getRecipientName());
         }
-        result.putLong(KEY_QR_AMOUNT, payload.getAmount());
+        if (payload.getAmount() > 0L) {
+            args.putString("amount", String.valueOf(payload.getAmount()));
+        }
         if (payload.getNote() != null) {
-            result.putString(KEY_QR_NOTE, payload.getNote());
+            args.putString("note", payload.getNote());
         }
-        getParentFragmentManager().setFragmentResult(REQ_QR_SCAN_RESULT, result);
-        NavHostFragment.findNavController(this).popBackStack();
+        androidx.navigation.NavOptions navOptions = new androidx.navigation.NavOptions.Builder()
+                .setPopUpTo(R.id.qrScannerFragment, true)
+                .build();
+        navController.navigate(R.id.transferFragment, args, navOptions);
     }
 
     @Override

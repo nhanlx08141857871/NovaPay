@@ -15,7 +15,9 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical"
-            android:padding="16dp">
+            android:paddingHorizontal="@dimen/np_screen_padding"
+            android:paddingTop="12dp"
+            android:paddingBottom="24dp">
 
             <LinearLayout
                 android:layout_width="match_parent"
@@ -25,7 +27,7 @@
 
                 <com.google.android.material.button.MaterialButton
                     android:id="@+id/btnBack"
-                    style="@style/Widget.Material3.Button.TextButton"
+                    style="@style/Widget.NovaPay.Button.Back"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="@string/money_action_back" />
@@ -33,6 +35,7 @@
                 <TextView
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
+                    android:layout_marginStart="4dp"
                     android:layout_weight="1"
                     android:text="@string/money_topup_title"
                     android:textAppearance="?attr/textAppearanceTitleLarge"
@@ -41,10 +44,10 @@
             </LinearLayout>
 
             <com.google.android.material.card.MaterialCardView
-                style="@style/Widget.NovaPay.Card.Elevated"
+                style="@style/Widget.NovaPay.Card.Outlined"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="12dp"
+                android:layout_marginTop="14dp"
                 app:contentPadding="16dp">
 
                 <LinearLayout
@@ -53,7 +56,7 @@
                     android:orientation="vertical">
 
                     <com.google.android.material.textfield.TextInputLayout
-                        style="@style/Widget.Material3.TextInputLayout.OutlinedBox.ExposedDropdownMenu"
+                        style="@style/Widget.NovaPay.TextInputLayout.Dropdown"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:hint="@string/money_source_account_label">
@@ -62,6 +65,7 @@
                             android:id="@+id/actvSourceAccount"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
+                            android:fontFeatureSettings="tnum"
                             android:inputType="none" />
                     </com.google.android.material.textfield.TextInputLayout>
 
@@ -70,22 +74,26 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="14dp"
-                        android:hint="@string/money_topup_phone_hint">
+                        android:hint="@string/money_topup_phone_hint"
+                        app:startIconDrawable="@drawable/ic_np_phone"
+                        app:startIconTint="?attr/colorOnSurfaceVariant">
 
                         <com.google.android.material.textfield.TextInputEditText
                             android:id="@+id/etPhoneNumber"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
+                            android:fontFeatureSettings="tnum"
                             android:inputType="phone" />
                     </com.google.android.material.textfield.TextInputLayout>
 
                     <TextView
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_marginTop="16dp"
+                        android:layout_marginTop="18dp"
                         android:text="@string/money_topup_carrier_label"
-                        android:textAppearance="?attr/textAppearanceLabelLarge"
-                        android:textColor="?attr/colorOnSurfaceVariant" />
+                        android:textAppearance="?attr/textAppearanceTitleSmall"
+                        android:textColor="?attr/colorOnSurface"
+                        android:textStyle="bold" />
 
                     <com.google.android.material.chip.ChipGroup
                         android:id="@+id/chipGroupCarrier"
@@ -130,8 +138,9 @@
                         android:layout_height="wrap_content"
                         android:layout_marginTop="16dp"
                         android:text="@string/money_topup_denomination_label"
-                        android:textAppearance="?attr/textAppearanceLabelLarge"
-                        android:textColor="?attr/colorOnSurfaceVariant" />
+                        android:textAppearance="?attr/textAppearanceTitleSmall"
+                        android:textColor="?attr/colorOnSurface"
+                        android:textStyle="bold" />
 
                     <com.google.android.material.chip.ChipGroup
                         android:id="@+id/chipGroupDenomination"
@@ -147,6 +156,7 @@
                             style="@style/Widget.Material3.Chip.Filter"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
+                            android:fontFeatureSettings="tnum"
                             android:text="@string/money_topup_denom_20k" />
 
                         <com.google.android.material.chip.Chip
@@ -154,6 +164,7 @@
                             style="@style/Widget.Material3.Chip.Filter"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
+                            android:fontFeatureSettings="tnum"
                             android:text="@string/money_topup_denom_50k" />
 
                         <com.google.android.material.chip.Chip
@@ -161,6 +172,7 @@
                             style="@style/Widget.Material3.Chip.Filter"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
+                            android:fontFeatureSettings="tnum"
                             android:text="@string/money_topup_denom_100k" />
 
                         <com.google.android.material.chip.Chip
@@ -168,6 +180,7 @@
                             style="@style/Widget.Material3.Chip.Filter"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
+                            android:fontFeatureSettings="tnum"
                             android:text="@string/money_topup_denom_200k" />
 
                         <com.google.android.material.chip.Chip
@@ -175,16 +188,23 @@
                             style="@style/Widget.Material3.Chip.Filter"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
+                            android:fontFeatureSettings="tnum"
                             android:text="@string/money_topup_denom_500k" />
                     </com.google.android.material.chip.ChipGroup>
+
+                    <View
+                        android:layout_width="match_parent"
+                        android:layout_height="1dp"
+                        android:layout_marginVertical="14dp"
+                        android:background="@color/np_divider_subtle" />
 
                     <TextView
                         android:id="@+id/tvSelectedTopupAmount"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_marginTop="14dp"
+                        android:fontFeatureSettings="tnum"
                         android:textAppearance="?attr/textAppearanceTitleMedium"
-                        android:textColor="?attr/colorPrimary"
+                        android:textColor="@color/np_accent_emerald"
                         android:textStyle="bold" />
                 </LinearLayout>
             </com.google.android.material.card.MaterialCardView>

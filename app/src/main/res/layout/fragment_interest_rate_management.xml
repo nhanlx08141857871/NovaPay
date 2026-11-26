@@ -14,11 +14,18 @@
         app:menu="@menu/menu_officer_refresh"
         app:navigationContentDescription="@string/officer_action_back"
         app:navigationIcon="@drawable/ic_modc_back"
+        app:navigationIconTint="?attr/colorOnSurface"
         app:title="@string/officer_interest_rates_title"
+        app:titleTextAppearance="?attr/textAppearanceTitleLarge"
         app:titleTextColor="?attr/colorOnSurface" />
 
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="@color/np_border_hairline" />
+
     <com.google.android.material.card.MaterialCardView
-        style="@style/Widget.NovaPay.Card.Elevated"
+        style="@style/Widget.NovaPay.Card.Outlined"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_margin="16dp"
@@ -40,7 +47,7 @@
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="12dp"
+                android:layout_marginTop="14dp"
                 android:orientation="horizontal"
                 android:weightSum="2">
 
@@ -58,6 +65,7 @@
                         android:id="@+id/etTermMonths"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
+                        android:fontFeatureSettings="tnum"
                         android:inputType="number" />
                 </com.google.android.material.textfield.TextInputLayout>
 
@@ -74,6 +82,7 @@
                         android:id="@+id/etAnnualRate"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
+                        android:fontFeatureSettings="tnum"
                         android:inputType="numberDecimal" />
                 </com.google.android.material.textfield.TextInputLayout>
             </LinearLayout>
@@ -83,7 +92,7 @@
                 style="@style/Widget.NovaPay.Button.Primary"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="12dp"
+                android:layout_marginTop="14dp"
                 android:text="@string/officer_rate_save_action" />
         </LinearLayout>
     </com.google.android.material.card.MaterialCardView>
@@ -93,7 +102,9 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:indeterminate="true"
-        android:visibility="gone" />
+        android:visibility="gone"
+        app:indicatorColor="@color/np_accent_emerald"
+        app:trackColor="@color/np_border_hairline" />
 
     <FrameLayout
         android:id="@+id/layoutBodyContainer"

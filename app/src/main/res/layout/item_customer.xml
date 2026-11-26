@@ -4,8 +4,8 @@
     style="@style/Widget.NovaPay.Card.Outlined"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:layout_marginBottom="10dp"
-    app:contentPadding="14dp">
+    android:layout_marginBottom="12dp"
+    app:contentPadding="16dp">
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -29,12 +29,10 @@
 
             <TextView
                 android:id="@+id/tvCustomerStatusBadge"
+                style="@style/Widget.NovaPay.StatusBadge"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:paddingHorizontal="8dp"
-                android:paddingVertical="3dp"
-                android:textAppearance="?attr/textAppearanceLabelSmall"
-                android:textStyle="bold" />
+                android:layout_marginStart="8dp" />
         </LinearLayout>
 
         <TextView
@@ -56,6 +54,7 @@
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
+                android:fontFeatureSettings="tnum"
                 android:textAppearance="?attr/textAppearanceBodySmall"
                 android:textColor="?attr/colorOnSurfaceVariant" />
 
@@ -63,22 +62,27 @@
                 android:id="@+id/tvCustomerNationalId"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:fontFeatureSettings="tnum"
                 android:textAppearance="?attr/textAppearanceBodySmall"
                 android:textColor="?attr/colorOnSurfaceVariant" />
         </LinearLayout>
 
         <TextView
             android:id="@+id/tvCustomerEkycBadge"
+            style="@style/Widget.NovaPay.StatusBadge"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="6dp"
-            android:textAppearance="?attr/textAppearanceLabelMedium"
-            android:textStyle="bold" />
+            android:layout_marginTop="10dp" />
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:layout_marginVertical="12dp"
+            android:background="@color/np_divider_subtle" />
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="10dp"
             android:orientation="horizontal">
 
             <com.google.android.material.button.MaterialButton
@@ -88,24 +92,30 @@
                 android:layout_height="wrap_content"
                 android:layout_marginEnd="8dp"
                 android:layout_weight="1"
+                android:minHeight="42dp"
                 android:text="@string/officer_customer_edit_action" />
 
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/btnToggleLock"
-                style="@style/Widget.NovaPay.Button.Outlined"
+                style="@style/Widget.NovaPay.Button.Outlined.Danger"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
+                android:minHeight="42dp"
                 android:text="@string/officer_customer_lock_action" />
         </LinearLayout>
 
         <com.google.android.material.button.MaterialButton
             android:id="@+id/btnCounterCaptureEkyc"
-            style="@style/Widget.NovaPay.Button.Outlined"
+            style="@style/Widget.NovaPay.Button.Tonal"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="8dp"
-            android:text="@string/officer_ekyc_counter_capture_action" />
+            android:minHeight="42dp"
+            android:text="@string/officer_ekyc_counter_capture_action"
+            app:icon="@drawable/ic_np_ekyc_badge"
+            app:iconGravity="textStart"
+            app:iconSize="18dp" />
     </LinearLayout>
 
 </com.google.android.material.card.MaterialCardView>

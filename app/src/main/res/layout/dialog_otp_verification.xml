@@ -4,7 +4,7 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:background="?attr/colorSurface"
-    android:padding="20dp">
+    android:padding="22dp">
 
     <LinearLayout
         android:id="@+id/contentContainer"
@@ -12,22 +12,46 @@
         android:layout_height="wrap_content"
         android:orientation="vertical">
 
-        <TextView
-            android:id="@+id/tvOtpTitle"
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="@string/money_otp_dialog_title"
-            android:textAppearance="?attr/textAppearanceTitleLarge"
-            android:textColor="?attr/colorOnSurface"
-            android:textStyle="bold" />
+            android:gravity="center_vertical"
+            android:orientation="horizontal">
+
+            <FrameLayout
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:background="@drawable/bg_np_circle_soft_emerald">
+
+                <ImageView
+                    android:layout_width="22dp"
+                    android:layout_height="22dp"
+                    android:layout_gravity="center"
+                    android:importantForAccessibility="no"
+                    android:src="@drawable/ic_np_shield_check"
+                    app:tint="@color/np_accent_emerald" />
+            </FrameLayout>
+
+            <TextView
+                android:id="@+id/tvOtpTitle"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="12dp"
+                android:layout_weight="1"
+                android:text="@string/money_otp_dialog_title"
+                android:textAppearance="?attr/textAppearanceTitleLarge"
+                android:textColor="?attr/colorOnSurface"
+                android:textStyle="bold" />
+        </LinearLayout>
 
         <com.google.android.material.card.MaterialCardView
             android:id="@+id/cardStepStatus"
             style="@style/Widget.NovaPay.Card.Outlined"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="12dp"
-            app:contentPadding="12dp">
+            android:layout_marginTop="14dp"
+            app:cardBackgroundColor="@color/np_surface_subtle"
+            app:contentPadding="14dp">
 
             <LinearLayout
                 android:layout_width="match_parent"
@@ -38,16 +62,17 @@
                     android:id="@+id/tvStepGuide"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:lineSpacingExtra="2dp"
                     android:text="@string/money_otp_step_otp_ready"
                     android:textAppearance="?attr/textAppearanceBodyMedium"
                     android:textColor="?attr/colorOnSurface" />
 
                 <com.google.android.material.button.MaterialButton
                     android:id="@+id/btnRetrySecurityStep"
-                    style="@style/Widget.Material3.Button.TonalButton"
+                    style="@style/Widget.NovaPay.Button.Tonal"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="8dp"
+                    android:layout_marginTop="10dp"
                     android:text="@string/money_otp_retry_face_action"
                     android:visibility="gone" />
             </LinearLayout>
@@ -57,10 +82,11 @@
             android:id="@+id/tvCountdown"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="12dp"
+            android:layout_marginTop="14dp"
+            android:fontFeatureSettings="tnum"
             android:gravity="center"
             android:textAppearance="?attr/textAppearanceTitleSmall"
-            android:textColor="?attr/colorPrimary"
+            android:textColor="@color/np_accent_emerald"
             android:textStyle="bold" />
 
         <com.google.android.material.textfield.TextInputLayout
@@ -75,20 +101,26 @@
                 android:id="@+id/etOtpCode"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:fontFeatureSettings="tnum"
                 android:gravity="center"
                 android:inputType="number"
-                android:letterSpacing="0.25"
+                android:letterSpacing="0.32"
                 android:maxLength="6"
-                android:textAppearance="?attr/textAppearanceHeadlineSmall" />
+                android:textAppearance="?attr/textAppearanceHeadlineSmall"
+                android:textStyle="bold" />
         </com.google.android.material.textfield.TextInputLayout>
 
         <TextView
             android:id="@+id/tvInlineError"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="8dp"
+            android:layout_marginTop="10dp"
+            android:background="@drawable/bg_np_badge_locked"
+            android:paddingHorizontal="12dp"
+            android:paddingVertical="8dp"
             android:textAppearance="?attr/textAppearanceBodySmall"
-            android:textColor="?attr/colorError"
+            android:textColor="@color/novapay_expense_negative"
+            android:textStyle="bold"
             android:visibility="gone" />
 
         <com.google.android.material.button.MaterialButton
@@ -98,12 +130,13 @@
             android:layout_height="wrap_content"
             android:layout_gravity="end"
             android:layout_marginTop="4dp"
-            android:text="@string/money_otp_resend_action" />
+            android:text="@string/money_otp_resend_action"
+            android:textColor="?attr/colorSecondary" />
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="12dp"
+            android:layout_marginTop="14dp"
             android:orientation="horizontal">
 
             <com.google.android.material.button.MaterialButton
@@ -120,7 +153,7 @@
 
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/btnConfirmOtp"
-                style="@style/Widget.NovaPay.Button.Primary"
+                style="@style/Widget.NovaPay.Button.Accent"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"

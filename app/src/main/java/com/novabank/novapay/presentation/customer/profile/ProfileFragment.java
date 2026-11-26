@@ -116,18 +116,22 @@ public class ProfileFragment extends BaseFragment<FragmentProfileBinding> {
         if (ekycStatus == EkycStatus.VERIFIED) {
             b.tvEkycStatus.setText(R.string.core_profile_ekyc_verified);
             b.tvEkycStatus.setTextColor(ContextCompat.getColor(requireContext(), R.color.novapay_verified_badge));
+            b.tvEkycStatus.setBackgroundResource(R.drawable.bg_np_badge_verified);
             b.btnStartEkyc.setVisibility(View.GONE);
         } else if (ekycStatus == EkycStatus.PENDING) {
             b.tvEkycStatus.setText(R.string.core_profile_ekyc_pending);
             b.tvEkycStatus.setTextColor(ContextCompat.getColor(requireContext(), R.color.novapay_warning_pending));
+            b.tvEkycStatus.setBackgroundResource(R.drawable.bg_np_badge_pending);
             b.btnStartEkyc.setVisibility(View.GONE);
         } else if (ekycStatus == EkycStatus.REJECTED) {
             b.tvEkycStatus.setText(R.string.core_profile_ekyc_rejected);
             b.tvEkycStatus.setTextColor(ContextCompat.getColor(requireContext(), R.color.novapay_expense_negative));
+            b.tvEkycStatus.setBackgroundResource(R.drawable.bg_np_badge_locked);
             b.btnStartEkyc.setVisibility(user.getRole() == UserRole.CUSTOMER ? View.VISIBLE : View.GONE);
         } else {
             b.tvEkycStatus.setText(R.string.core_profile_ekyc_unverified);
             b.tvEkycStatus.setTextColor(ContextCompat.getColor(requireContext(), R.color.novapay_warning_pending));
+            b.tvEkycStatus.setBackgroundResource(R.drawable.bg_np_badge_pending);
             b.btnStartEkyc.setVisibility(user.getRole() == UserRole.CUSTOMER ? View.VISIBLE : View.GONE);
         }
 

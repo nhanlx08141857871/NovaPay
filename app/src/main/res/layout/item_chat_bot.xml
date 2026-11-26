@@ -5,25 +5,51 @@
     android:layout_height="wrap_content"
     android:gravity="start"
     android:orientation="vertical"
-    android:paddingVertical="4dp">
+    android:paddingVertical="5dp">
 
     <com.google.android.material.card.MaterialCardView
         style="@style/Widget.NovaPay.Card.Outlined"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginEnd="48dp"
+        android:layout_marginEnd="44dp"
         app:cardBackgroundColor="?attr/colorSurface"
-        app:contentPadding="12dp">
+        app:contentPadding="14dp">
 
         <LinearLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:orientation="vertical">
 
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="6dp"
+                android:gravity="center_vertical"
+                android:orientation="horizontal">
+
+                <ImageView
+                    android:layout_width="14dp"
+                    android:layout_height="14dp"
+                    android:importantForAccessibility="no"
+                    android:src="@drawable/ic_np_sparkle_ai"
+                    app:tint="@color/np_accent_emerald" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="5dp"
+                    android:text="@string/chatbot_bot_badge"
+                    android:textAppearance="?attr/textAppearanceLabelSmall"
+                    android:textColor="@color/np_accent_emerald"
+                    android:textStyle="bold" />
+            </LinearLayout>
+
             <TextView
                 android:id="@+id/tvBotMessageText"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:fontFeatureSettings="tnum"
+                android:lineSpacingExtra="2dp"
                 android:textAppearance="?attr/textAppearanceBodyMedium"
                 android:textColor="?attr/colorOnSurface" />
 
@@ -38,7 +64,8 @@
                 android:id="@+id/tvBotMessageTime"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="4dp"
+                android:layout_marginTop="6dp"
+                android:fontFeatureSettings="tnum"
                 android:textAppearance="?attr/textAppearanceLabelSmall"
                 android:textColor="?attr/colorOnSurfaceVariant" />
         </LinearLayout>

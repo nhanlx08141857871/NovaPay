@@ -10,44 +10,61 @@
         android:layout_height="match_parent"
         android:orientation="vertical">
 
-        <com.google.android.material.appbar.MaterialToolbar
-            android:id="@+id/toolbarCustomers"
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:background="?attr/colorSurface"
-            app:menu="@menu/menu_officer_refresh"
-            app:navigationContentDescription="@string/officer_action_back"
-            app:navigationIcon="@drawable/ic_modc_back"
-            app:title="@string/officer_customers_title"
-            app:titleTextColor="?attr/colorOnSurface" />
+            android:orientation="vertical"
+            android:paddingBottom="12dp">
 
-        <com.google.android.material.textfield.TextInputLayout
-            android:id="@+id/tilSearchCustomer"
-            style="@style/Widget.NovaPay.TextInputLayout"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginHorizontal="16dp"
-            android:layout_marginTop="12dp"
-            android:layout_marginBottom="8dp"
-            android:hint="@string/officer_customers_search_hint"
-            app:endIconMode="clear_text"
-            app:startIconDrawable="@drawable/ic_modc_search">
-
-            <com.google.android.material.textfield.TextInputEditText
-                android:id="@+id/etSearchCustomer"
+            <com.google.android.material.appbar.MaterialToolbar
+                android:id="@+id/toolbarCustomers"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:imeOptions="actionSearch"
-                android:inputType="text"
-                android:maxLines="1" />
-        </com.google.android.material.textfield.TextInputLayout>
+                android:background="?attr/colorSurface"
+                app:menu="@menu/menu_officer_refresh"
+                app:navigationContentDescription="@string/officer_action_back"
+                app:navigationIcon="@drawable/ic_modc_back"
+                app:navigationIconTint="?attr/colorOnSurface"
+                app:title="@string/officer_customers_title"
+                app:titleTextAppearance="?attr/textAppearanceTitleLarge"
+                app:titleTextColor="?attr/colorOnSurface" />
+
+            <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/tilSearchCustomer"
+                style="@style/Widget.NovaPay.TextInputLayout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginHorizontal="16dp"
+                android:layout_marginTop="4dp"
+                android:hint="@string/officer_customers_search_hint"
+                app:endIconMode="clear_text"
+                app:startIconDrawable="@drawable/ic_modc_search"
+                app:startIconTint="?attr/colorOnSurfaceVariant">
+
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/etSearchCustomer"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:imeOptions="actionSearch"
+                    android:inputType="text"
+                    android:maxLines="1" />
+            </com.google.android.material.textfield.TextInputLayout>
+        </LinearLayout>
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:background="@color/np_border_hairline" />
 
         <com.google.android.material.progressindicator.LinearProgressIndicator
             android:id="@+id/progressCustomerAction"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:indeterminate="true"
-            android:visibility="gone" />
+            android:visibility="gone"
+            app:indicatorColor="@color/np_accent_emerald"
+            app:trackColor="@color/np_border_hairline" />
 
         <FrameLayout
             android:id="@+id/layoutBodyContainer"
@@ -61,8 +78,8 @@
                 android:layout_height="match_parent"
                 android:clipToPadding="false"
                 android:paddingHorizontal="16dp"
-                android:paddingTop="4dp"
-                android:paddingBottom="88dp" />
+                android:paddingTop="14dp"
+                android:paddingBottom="92dp" />
 
             <include
                 android:id="@+id/stateLoading"
@@ -83,8 +100,11 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="bottom|end"
-        android:layout_margin="16dp"
+        android:layout_margin="18dp"
         android:contentDescription="@string/officer_create_customer_title"
-        app:srcCompat="@drawable/ic_modc_add" />
+        app:backgroundTint="@color/np_accent_emerald"
+        app:elevation="2dp"
+        app:srcCompat="@drawable/ic_modc_add"
+        app:tint="@color/white" />
 
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

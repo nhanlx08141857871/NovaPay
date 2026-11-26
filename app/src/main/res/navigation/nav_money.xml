@@ -59,7 +59,9 @@
         android:id="@+id/qrScannerFragment"
         android:name="com.novabank.novapay.presentation.customer.transfer.QrScannerFragment"
         android:label="@string/money_qr_title"
-        tools:layout="@layout/fragment_qr_scanner" />
+        tools:layout="@layout/fragment_qr_scanner">
+        <deepLink app:uri="novapay://qr" />
+    </fragment>
 
     <!-- 3. Biên lai giao dịch điện tử (E-Receipt PNG Share) -->
     <fragment
@@ -88,6 +90,7 @@
             android:defaultValue="@null"
             app:argType="string"
             app:nullable="true" />
+        <deepLink app:uri="novapay://deposit" />
     </fragment>
 
     <!-- 5. Thanh toán hóa đơn Điện / Nước -->

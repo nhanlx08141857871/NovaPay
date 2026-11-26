@@ -84,12 +84,14 @@ public final class CustomerAdapter extends ListAdapter<CustomerProfile, Customer
                 binding.tvCustomerStatusBadge.setTextColor(
                         ContextCompat.getColor(ctx, R.color.novapay_expense_negative)
                 );
+                binding.tvCustomerStatusBadge.setBackgroundResource(R.drawable.bg_np_badge_locked);
                 binding.btnToggleLock.setText(R.string.officer_customer_unlock_action);
             } else {
                 binding.tvCustomerStatusBadge.setText(R.string.officer_customer_status_active);
                 binding.tvCustomerStatusBadge.setTextColor(
                         ContextCompat.getColor(ctx, R.color.novapay_income_positive)
                 );
+                binding.tvCustomerStatusBadge.setBackgroundResource(R.drawable.bg_np_badge_verified);
                 binding.btnToggleLock.setText(R.string.officer_customer_lock_action);
             }
 
@@ -99,21 +101,25 @@ public final class CustomerAdapter extends ListAdapter<CustomerProfile, Customer
                 binding.tvCustomerEkycBadge.setTextColor(
                         ContextCompat.getColor(ctx, R.color.novapay_verified_badge)
                 );
+                binding.tvCustomerEkycBadge.setBackgroundResource(R.drawable.bg_np_badge_verified);
             } else if (Constants.EKYC_STATUS_PENDING.equalsIgnoreCase(ekycStatus)) {
                 binding.tvCustomerEkycBadge.setText(R.string.officer_customer_ekyc_pending);
                 binding.tvCustomerEkycBadge.setTextColor(
                         ContextCompat.getColor(ctx, R.color.novapay_warning_pending)
                 );
+                binding.tvCustomerEkycBadge.setBackgroundResource(R.drawable.bg_np_badge_pending);
             } else if (Constants.EKYC_STATUS_REJECTED.equalsIgnoreCase(ekycStatus)) {
                 binding.tvCustomerEkycBadge.setText(R.string.officer_customer_ekyc_rejected);
                 binding.tvCustomerEkycBadge.setTextColor(
                         ContextCompat.getColor(ctx, R.color.novapay_expense_negative)
                 );
+                binding.tvCustomerEkycBadge.setBackgroundResource(R.drawable.bg_np_badge_locked);
             } else {
                 binding.tvCustomerEkycBadge.setText(R.string.officer_customer_ekyc_none);
                 binding.tvCustomerEkycBadge.setTextColor(
                         ContextCompat.getColor(ctx, R.color.novapay_warning_pending)
                 );
+                binding.tvCustomerEkycBadge.setBackgroundResource(R.drawable.bg_np_badge_pending);
             }
 
             binding.btnEditCustomer.setOnClickListener(v -> listener.onEditCustomer(item));

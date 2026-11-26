@@ -15,18 +15,27 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical"
-            android:padding="16dp">
+            android:paddingHorizontal="@dimen/np_screen_padding"
+            android:paddingTop="14dp"
+            android:paddingBottom="24dp">
 
-            <!-- Header -->
+            <!-- Clean Top Bar -->
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:gravity="center_vertical"
                 android:orientation="horizontal">
 
+                <ImageView
+                    android:layout_width="36dp"
+                    android:layout_height="36dp"
+                    android:importantForAccessibility="no"
+                    android:src="@drawable/ic_np_logo_mark" />
+
                 <LinearLayout
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
+                    android:layout_marginStart="12dp"
                     android:layout_weight="1"
                     android:orientation="vertical">
 
@@ -34,7 +43,9 @@
                         android:id="@+id/tvGreeting"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:textAppearance="?attr/textAppearanceTitleLarge"
+                        android:ellipsize="end"
+                        android:maxLines="1"
+                        android:textAppearance="?attr/textAppearanceTitleMedium"
                         android:textColor="?attr/colorOnBackground"
                         android:textStyle="bold" />
 
@@ -49,31 +60,33 @@
                 <com.google.android.material.button.MaterialButton
                     android:id="@+id/btnProfile"
                     style="@style/Widget.Material3.Button.IconButton"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
+                    android:layout_width="42dp"
+                    android:layout_height="42dp"
                     android:contentDescription="@string/core_home_profile_desc"
-                    app:icon="@android:drawable/ic_menu_myplaces" />
+                    app:icon="@drawable/ic_np_user"
+                    app:iconTint="?attr/colorOnSurface" />
 
                 <com.google.android.material.button.MaterialButton
                     android:id="@+id/btnLogout"
                     style="@style/Widget.Material3.Button.IconButton"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
+                    android:layout_width="42dp"
+                    android:layout_height="42dp"
                     android:contentDescription="@string/core_home_logout_desc"
-                    app:icon="@android:drawable/ic_lock_power_off" />
+                    app:icon="@drawable/ic_modc_logout"
+                    app:iconTint="?attr/colorOnSurfaceVariant" />
             </LinearLayout>
 
-            <!-- Banner eKYC (hiển thị khi chưa VERIFIED) -->
+            <!-- eKYC Warning Banner (shown when NOT VERIFIED) -->
             <com.google.android.material.card.MaterialCardView
                 android:id="@+id/cardEkycBanner"
                 style="@style/Widget.NovaPay.Card.Outlined"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="12dp"
+                android:layout_marginTop="14dp"
                 android:visibility="gone"
-                app:cardBackgroundColor="?attr/colorTertiaryContainer"
+                app:cardBackgroundColor="@color/np_badge_pending_bg"
                 app:contentPadding="14dp"
-                app:strokeColor="@color/novapay_warning_pending">
+                app:strokeColor="@color/np_badge_pending_stroke">
 
                 <LinearLayout
                     android:layout_width="match_parent"
@@ -92,7 +105,7 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:textAppearance="?attr/textAppearanceTitleSmall"
-                            android:textColor="?attr/colorOnTertiaryContainer"
+                            android:textColor="@color/novapay_warning_pending"
                             android:textStyle="bold" />
 
                         <TextView
@@ -101,27 +114,29 @@
                             android:layout_height="wrap_content"
                             android:layout_marginTop="2dp"
                             android:textAppearance="?attr/textAppearanceBodySmall"
-                            android:textColor="?attr/colorOnTertiaryContainer" />
+                            android:textColor="?attr/colorOnSurface" />
                     </LinearLayout>
 
                     <com.google.android.material.button.MaterialButton
                         android:id="@+id/btnEkycBannerAction"
-                        style="@style/Widget.Material3.Button.TonalButton"
+                        style="@style/Widget.NovaPay.Button.Primary"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_marginStart="8dp"
+                        android:layout_marginStart="10dp"
+                        android:minHeight="40dp"
                         android:text="@string/core_home_ekyc_action_now" />
                 </LinearLayout>
             </com.google.android.material.card.MaterialCardView>
 
-            <!-- Thẻ Tổng tài sản -->
+            <!-- Hero Total Assets Card (Deep Navy #0F172A, Tabular Balance, Eye Toggle) -->
             <com.google.android.material.card.MaterialCardView
-                style="@style/Widget.NovaPay.Card.Elevated"
+                style="@style/Widget.NovaPay.Card.Outlined"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="16dp"
-                app:cardBackgroundColor="?attr/colorPrimary"
-                app:contentPadding="20dp">
+                app:cardBackgroundColor="@color/np_hero_navy_bg"
+                app:contentPadding="20dp"
+                app:strokeColor="@color/np_hero_navy_stroke">
 
                 <LinearLayout
                     android:layout_width="match_parent"
@@ -140,16 +155,17 @@
                             android:layout_weight="1"
                             android:text="@string/core_home_total_assets_label"
                             android:textAppearance="?attr/textAppearanceLabelLarge"
-                            android:textColor="?attr/colorOnPrimary" />
+                            android:textColor="@color/np_hero_navy_muted" />
 
                         <com.google.android.material.button.MaterialButton
                             android:id="@+id/btnToggleBalance"
                             style="@style/Widget.Material3.Button.IconButton"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
+                            android:layout_width="38dp"
+                            android:layout_height="38dp"
                             android:contentDescription="@string/core_home_toggle_balance_desc"
-                            app:icon="@android:drawable/ic_menu_view"
-                            app:iconTint="?attr/colorOnPrimary" />
+                            app:icon="@drawable/ic_np_eye_open"
+                            app:iconSize="20dp"
+                            app:iconTint="@color/np_hero_navy_text" />
                     </LinearLayout>
 
                     <TextView
@@ -157,124 +173,204 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="4dp"
+                        android:fontFeatureSettings="tnum"
+                        android:letterSpacing="-0.01"
                         android:textAppearance="?attr/textAppearanceHeadlineMedium"
-                        android:textColor="?attr/colorOnPrimary"
+                        android:textColor="@color/np_hero_navy_text"
                         android:textStyle="bold" />
+
+                    <LinearLayout
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="14dp"
+                        android:gravity="center_vertical"
+                        android:orientation="horizontal">
+
+                        <ImageView
+                            android:layout_width="14dp"
+                            android:layout_height="14dp"
+                            android:importantForAccessibility="no"
+                            android:src="@drawable/ic_np_shield_check"
+                            app:tint="#10B981" />
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="6dp"
+                            android:text="@string/core_home_verified_shield"
+                            android:textAppearance="?attr/textAppearanceLabelSmall"
+                            android:textColor="#10B981" />
+                    </LinearLayout>
                 </LinearLayout>
             </com.google.android.material.card.MaterialCardView>
 
-            <!-- Dịch vụ nhanh -->
+            <!-- Primary 4 Quick Actions Grid (Transfer • QR Scan • Deposit • Bills) -->
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="20dp"
                 android:text="@string/core_home_quick_actions_title"
+                android:textAppearance="?attr/textAppearanceTitleSmall"
+                android:textColor="?attr/colorOnBackground"
+                android:textStyle="bold" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:orientation="horizontal"
+                android:weightSum="4">
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/btnActionTransfer"
+                    style="@style/Widget.NovaPay.Button.QuickAction"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginEnd="4dp"
+                    android:layout_weight="1"
+                    android:maxLines="1"
+                    android:text="@string/core_home_action_transfer"
+                    app:icon="@drawable/ic_np_transfer" />
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/btnActionQrScan"
+                    style="@style/Widget.NovaPay.Button.QuickAction"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginHorizontal="4dp"
+                    android:layout_weight="1"
+                    android:maxLines="1"
+                    android:text="@string/core_home_action_qr"
+                    app:icon="@drawable/ic_np_qr_scan" />
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/btnActionDeposit"
+                    style="@style/Widget.NovaPay.Button.QuickAction"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginHorizontal="4dp"
+                    android:layout_weight="1"
+                    android:maxLines="1"
+                    android:text="@string/core_home_action_deposit"
+                    app:icon="@drawable/ic_np_wallet_plus" />
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/btnActionBills"
+                    style="@style/Widget.NovaPay.Button.QuickAction"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="4dp"
+                    android:layout_weight="1"
+                    android:maxLines="1"
+                    android:text="@string/core_home_action_bills"
+                    app:icon="@drawable/ic_np_bill" />
+            </LinearLayout>
+
+            <!-- Secondary 4 Explore & Utility Actions (Topup • Services • Branches • AI Chatbot) -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                android:gravity="center_vertical"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="@string/core_home_utilities_title"
+                    android:textAppearance="?attr/textAppearanceTitleSmall"
+                    android:textColor="?attr/colorOnBackground"
+                    android:textStyle="bold" />
+
+                <!-- Preserved ViewBinding ID for Profile quick shortcut -->
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/btnActionProfile"
+                    style="@style/Widget.Material3.Button.TextButton"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:minHeight="36dp"
+                    android:paddingHorizontal="8dp"
+                    android:text="@string/core_home_action_profile"
+                    android:textColor="?attr/colorSecondary"
+                    android:textSize="12sp" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="6dp"
+                android:orientation="horizontal"
+                android:weightSum="4">
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/btnActionTopup"
+                    style="@style/Widget.NovaPay.Button.QuickAction.Secondary"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginEnd="4dp"
+                    android:layout_weight="1"
+                    android:maxLines="1"
+                    android:text="@string/core_home_action_topup"
+                    app:icon="@drawable/ic_np_phone" />
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/btnActionServices"
+                    style="@style/Widget.NovaPay.Button.QuickAction.Secondary"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginHorizontal="4dp"
+                    android:layout_weight="1"
+                    android:maxLines="1"
+                    android:text="@string/core_home_action_services"
+                    app:icon="@drawable/ic_np_services" />
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/btnActionBranches"
+                    style="@style/Widget.NovaPay.Button.QuickAction.Secondary"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginHorizontal="4dp"
+                    android:layout_weight="1"
+                    android:maxLines="1"
+                    android:text="@string/core_home_action_branches"
+                    app:icon="@drawable/ic_np_map_pin" />
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/btnActionChatbot"
+                    style="@style/Widget.NovaPay.Button.QuickAction.Secondary"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="4dp"
+                    android:layout_weight="1"
+                    android:maxLines="1"
+                    android:text="@string/core_home_action_chatbot"
+                    app:icon="@drawable/ic_np_sparkle_ai" />
+            </LinearLayout>
+
+            <!-- Accounts List (Checking, Saving, Mortgage) -->
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="22dp"
+                android:text="@string/core_home_accounts_title"
                 android:textAppearance="?attr/textAppearanceTitleMedium"
                 android:textColor="?attr/colorOnBackground"
                 android:textStyle="bold" />
 
-            <GridLayout
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/rvAccounts"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="8dp"
-                android:columnCount="4"
-                android:useDefaultMargins="true">
+                android:layout_marginTop="10dp"
+                android:nestedScrollingEnabled="false" />
 
-                <com.google.android.material.button.MaterialButton
-                    android:id="@+id/btnActionTransfer"
-                    style="@style/Widget.Material3.Button.TonalButton"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_columnWeight="1"
-                    android:ellipsize="end"
-                    android:maxLines="2"
-                    android:text="@string/core_home_action_transfer"
-                    android:textSize="12sp" />
-
-                <com.google.android.material.button.MaterialButton
-                    android:id="@+id/btnActionBills"
-                    style="@style/Widget.Material3.Button.TonalButton"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_columnWeight="1"
-                    android:ellipsize="end"
-                    android:maxLines="2"
-                    android:text="@string/core_home_action_bills"
-                    android:textSize="12sp" />
-
-                <com.google.android.material.button.MaterialButton
-                    android:id="@+id/btnActionTopup"
-                    style="@style/Widget.Material3.Button.TonalButton"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_columnWeight="1"
-                    android:ellipsize="end"
-                    android:maxLines="2"
-                    android:text="@string/core_home_action_topup"
-                    android:textSize="12sp" />
-
-                <com.google.android.material.button.MaterialButton
-                    android:id="@+id/btnActionServices"
-                    style="@style/Widget.Material3.Button.TonalButton"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_columnWeight="1"
-                    android:ellipsize="end"
-                    android:maxLines="2"
-                    android:text="@string/core_home_action_services"
-                    android:textSize="12sp" />
-
-                <com.google.android.material.button.MaterialButton
-                    android:id="@+id/btnActionHistory"
-                    style="@style/Widget.Material3.Button.TonalButton"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_columnWeight="1"
-                    android:ellipsize="end"
-                    android:maxLines="2"
-                    android:text="@string/core_home_action_history"
-                    android:textSize="12sp" />
-
-                <com.google.android.material.button.MaterialButton
-                    android:id="@+id/btnActionBranches"
-                    style="@style/Widget.Material3.Button.TonalButton"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_columnWeight="1"
-                    android:ellipsize="end"
-                    android:maxLines="2"
-                    android:text="@string/core_home_action_branches"
-                    android:textSize="12sp" />
-
-                <com.google.android.material.button.MaterialButton
-                    android:id="@+id/btnActionChatbot"
-                    style="@style/Widget.Material3.Button.TonalButton"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_columnWeight="1"
-                    android:ellipsize="end"
-                    android:maxLines="2"
-                    android:text="@string/core_home_action_chatbot"
-                    android:textSize="12sp" />
-
-                <com.google.android.material.button.MaterialButton
-                    android:id="@+id/btnActionProfile"
-                    style="@style/Widget.Material3.Button.TonalButton"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_columnWeight="1"
-                    android:ellipsize="end"
-                    android:maxLines="2"
-                    android:text="@string/core_home_action_profile"
-                    android:textSize="12sp" />
-            </GridLayout>
-
-            <!-- Biểu đồ MPAndroidChart Thu / Chi trong tháng -->
+            <!-- Minimalist MPAndroidChart Cashflow Card -->
             <com.google.android.material.card.MaterialCardView
-                style="@style/Widget.NovaPay.Card.Elevated"
+                style="@style/Widget.NovaPay.Card.Outlined"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="16dp"
+                android:layout_marginTop="12dp"
                 app:contentPadding="16dp">
 
                 <LinearLayout
@@ -282,13 +378,32 @@
                     android:layout_height="wrap_content"
                     android:orientation="vertical">
 
-                    <TextView
-                        android:id="@+id/tvChartTitle"
-                        android:layout_width="wrap_content"
+                    <LinearLayout
+                        android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:textAppearance="?attr/textAppearanceTitleSmall"
-                        android:textColor="?attr/colorOnSurface"
-                        android:textStyle="bold" />
+                        android:gravity="center_vertical"
+                        android:orientation="horizontal">
+
+                        <TextView
+                            android:id="@+id/tvChartTitle"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:textAppearance="?attr/textAppearanceTitleSmall"
+                            android:textColor="?attr/colorOnSurface"
+                            android:textStyle="bold" />
+
+                        <com.google.android.material.button.MaterialButton
+                            android:id="@+id/btnActionHistory"
+                            style="@style/Widget.Material3.Button.TextButton"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:minHeight="36dp"
+                            android:paddingHorizontal="8dp"
+                            android:text="@string/core_home_view_all_history"
+                            android:textColor="?attr/colorSecondary"
+                            android:textSize="12sp" />
+                    </LinearLayout>
 
                     <LinearLayout
                         android:layout_width="match_parent"
@@ -301,6 +416,7 @@
                             android:layout_width="0dp"
                             android:layout_height="wrap_content"
                             android:layout_weight="1"
+                            android:fontFeatureSettings="tnum"
                             android:textAppearance="?attr/textAppearanceBodySmall"
                             android:textColor="@color/novapay_income_positive"
                             android:textStyle="bold" />
@@ -310,6 +426,7 @@
                             android:layout_width="0dp"
                             android:layout_height="wrap_content"
                             android:layout_weight="1"
+                            android:fontFeatureSettings="tnum"
                             android:gravity="end"
                             android:textAppearance="?attr/textAppearanceBodySmall"
                             android:textColor="@color/novapay_expense_negative"
@@ -319,27 +436,10 @@
                     <com.github.mikephil.charting.charts.BarChart
                         android:id="@+id/barChartCashflow"
                         android:layout_width="match_parent"
-                        android:layout_height="180dp"
-                        android:layout_marginTop="8dp" />
+                        android:layout_height="172dp"
+                        android:layout_marginTop="10dp" />
                 </LinearLayout>
             </com.google.android.material.card.MaterialCardView>
-
-            <!-- Danh sách tài khoản -->
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="20dp"
-                android:text="@string/core_home_accounts_title"
-                android:textAppearance="?attr/textAppearanceTitleMedium"
-                android:textColor="?attr/colorOnBackground"
-                android:textStyle="bold" />
-
-            <androidx.recyclerview.widget.RecyclerView
-                android:id="@+id/rvAccounts"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="8dp"
-                android:nestedScrollingEnabled="false" />
         </LinearLayout>
     </ScrollView>
 

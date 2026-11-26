@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- NovaPay Design System Geometry & Spacing Tokens -->
+    <dimen name="np_screen_padding">16dp</dimen>
+    <dimen name="np_screen_padding_lg">20dp</dimen>
+
+    <dimen name="np_card_radius">16dp</dimen>
+    <dimen name="np_control_radius">12dp</dimen>
+    <dimen name="np_badge_radius">999dp</dimen>
+
+    <dimen name="np_border_hairline">1dp</dimen>
+    <dimen name="np_button_height">50dp</dimen>
+    <dimen name="np_button_height_compact">42dp</dimen>
+    <dimen name="np_quick_action_icon_box">44dp</dimen>
+
+    <dimen name="np_space_2xs">2dp</dimen>
+    <dimen name="np_space_xs">4dp</dimen>
+    <dimen name="np_space_sm">8dp</dimen>
+    <dimen name="np_space_md">12dp</dimen>
+    <dimen name="np_space_lg">16dp</dimen>
+    <dimen name="np_space_xl">20dp</dimen>
+    <dimen name="np_space_2xl">24dp</dimen>
+    <dimen name="np_space_3xl">32dp</dimen>
+</resources>

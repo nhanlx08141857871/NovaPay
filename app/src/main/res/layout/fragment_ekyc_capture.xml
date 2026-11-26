@@ -10,7 +10,7 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:orientation="vertical"
-        android:padding="16dp">
+        android:padding="@dimen/np_screen_padding">
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -20,7 +20,7 @@
 
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/btnBack"
-                style="@style/Widget.Material3.Button.TextButton"
+                style="@style/Widget.NovaPay.Button.Back"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="@string/core_action_back" />
@@ -28,15 +28,18 @@
             <TextView
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
+                android:layout_marginStart="4dp"
                 android:layout_weight="1"
+                android:ellipsize="end"
+                android:maxLines="1"
                 android:text="@string/core_ekyc_title"
-                android:textAppearance="?attr/textAppearanceTitleLarge"
+                android:textAppearance="?attr/textAppearanceTitleMedium"
                 android:textColor="?attr/colorOnBackground"
                 android:textStyle="bold" />
 
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/btnSwitchCamera"
-                style="@style/Widget.Material3.Button.TonalButton"
+                style="@style/Widget.NovaPay.Button.Tonal"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="@string/core_ekyc_switch_camera" />
@@ -46,58 +49,73 @@
             android:id="@+id/tvSubtitle"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="4dp"
+            android:layout_marginTop="6dp"
             android:text="@string/core_ekyc_self_subtitle"
             android:textAppearance="?attr/textAppearanceBodyMedium"
             android:textColor="?attr/colorOnSurfaceVariant" />
 
-        <FrameLayout
+        <com.google.android.material.card.MaterialCardView
+            style="@style/Widget.NovaPay.Card.Outlined"
             android:layout_width="match_parent"
             android:layout_height="0dp"
-            android:layout_marginTop="12dp"
-            android:layout_weight="1">
+            android:layout_marginTop="14dp"
+            android:layout_weight="1"
+            app:strokeColor="@color/np_hero_navy_stroke">
 
-            <androidx.camera.view.PreviewView
-                android:id="@+id/previewView"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent" />
-
-            <!-- Yêu cầu quyền Camera nếu chưa cấp -->
-            <LinearLayout
-                android:id="@+id/layoutPermissionRationale"
+            <FrameLayout
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:background="?attr/colorSurface"
-                android:gravity="center"
-                android:orientation="vertical"
-                android:padding="24dp"
-                android:visibility="gone">
+                android:background="@color/np_hero_navy_bg">
 
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="@string/core_liveness_permission_title"
-                    android:textAppearance="?attr/textAppearanceTitleMedium"
-                    android:textStyle="bold" />
+                <androidx.camera.view.PreviewView
+                    android:id="@+id/previewView"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent" />
 
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="8dp"
+                <!-- Face Framing Guide -->
+                <View
+                    android:layout_width="230dp"
+                    android:layout_height="290dp"
+                    android:layout_gravity="center"
+                    android:background="@drawable/bg_np_camera_frame" />
+
+                <LinearLayout
+                    android:id="@+id/layoutPermissionRationale"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:background="?attr/colorSurface"
                     android:gravity="center"
-                    android:text="@string/core_liveness_permission_desc"
-                    android:textAppearance="?attr/textAppearanceBodyMedium"
-                    android:textColor="?attr/colorOnSurfaceVariant" />
+                    android:orientation="vertical"
+                    android:padding="24dp"
+                    android:visibility="gone">
 
-                <com.google.android.material.button.MaterialButton
-                    android:id="@+id/btnRequestCameraPermission"
-                    style="@style/Widget.NovaPay.Button.Primary"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="16dp"
-                    android:text="@string/core_liveness_permission_grant" />
-            </LinearLayout>
-        </FrameLayout>
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/core_liveness_permission_title"
+                        android:textAppearance="?attr/textAppearanceTitleMedium"
+                        android:textColor="?attr/colorOnSurface"
+                        android:textStyle="bold" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="8dp"
+                        android:gravity="center"
+                        android:text="@string/core_liveness_permission_desc"
+                        android:textAppearance="?attr/textAppearanceBodyMedium"
+                        android:textColor="?attr/colorOnSurfaceVariant" />
+
+                    <com.google.android.material.button.MaterialButton
+                        android:id="@+id/btnRequestCameraPermission"
+                        style="@style/Widget.NovaPay.Button.Primary"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="16dp"
+                        android:text="@string/core_liveness_permission_grant" />
+                </LinearLayout>
+            </FrameLayout>
+        </com.google.android.material.card.MaterialCardView>
 
         <com.google.android.material.card.MaterialCardView
             style="@style/Widget.NovaPay.Card.Outlined"
@@ -113,12 +131,13 @@
                 android:gravity="center"
                 android:text="@string/core_liveness_no_face"
                 android:textAppearance="?attr/textAppearanceTitleSmall"
+                android:textColor="?attr/colorOnSurface"
                 android:textStyle="bold" />
         </com.google.android.material.card.MaterialCardView>
 
         <com.google.android.material.button.MaterialButton
             android:id="@+id/btnCaptureEkyc"
-            style="@style/Widget.NovaPay.Button.Primary"
+            style="@style/Widget.NovaPay.Button.Accent"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="12dp"

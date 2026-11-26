@@ -15,7 +15,9 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical"
-            android:padding="16dp">
+            android:paddingHorizontal="@dimen/np_screen_padding"
+            android:paddingTop="12dp"
+            android:paddingBottom="24dp">
 
             <LinearLayout
                 android:layout_width="match_parent"
@@ -25,7 +27,7 @@
 
                 <com.google.android.material.button.MaterialButton
                     android:id="@+id/btnBack"
-                    style="@style/Widget.Material3.Button.TextButton"
+                    style="@style/Widget.NovaPay.Button.Back"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="@string/money_action_back" />
@@ -33,6 +35,7 @@
                 <TextView
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
+                    android:layout_marginStart="4dp"
                     android:layout_weight="1"
                     android:text="@string/money_bills_title"
                     android:textAppearance="?attr/textAppearanceTitleLarge"
@@ -41,16 +44,17 @@
             </LinearLayout>
 
             <com.google.android.material.textfield.TextInputLayout
-                style="@style/Widget.Material3.TextInputLayout.OutlinedBox.ExposedDropdownMenu"
+                style="@style/Widget.NovaPay.TextInputLayout.Dropdown"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="12dp"
+                android:layout_marginTop="14dp"
                 android:hint="@string/money_source_account_label">
 
                 <com.google.android.material.textfield.MaterialAutoCompleteTextView
                     android:id="@+id/actvSourceAccount"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:fontFeatureSettings="tnum"
                     android:inputType="none" />
             </com.google.android.material.textfield.TextInputLayout>
 
@@ -65,26 +69,29 @@
 
                 <com.google.android.material.button.MaterialButton
                     android:id="@+id/btnFilterAll"
-                    style="@style/Widget.Material3.Button.OutlinedButton"
+                    style="@style/Widget.NovaPay.Button.Outlined"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
+                    android:minHeight="44dp"
                     android:text="@string/money_bills_filter_all" />
 
                 <com.google.android.material.button.MaterialButton
                     android:id="@+id/btnFilterElectric"
-                    style="@style/Widget.Material3.Button.OutlinedButton"
+                    style="@style/Widget.NovaPay.Button.Outlined"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
+                    android:minHeight="44dp"
                     android:text="@string/money_bills_filter_electric" />
 
                 <com.google.android.material.button.MaterialButton
                     android:id="@+id/btnFilterWater"
-                    style="@style/Widget.Material3.Button.OutlinedButton"
+                    style="@style/Widget.NovaPay.Button.Outlined"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
+                    android:minHeight="44dp"
                     android:text="@string/money_bills_filter_water" />
             </com.google.android.material.button.MaterialButtonToggleGroup>
 
@@ -93,7 +100,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="14dp"
-                app:contentPadding="14dp">
+                app:contentPadding="16dp">
 
                 <LinearLayout
                     android:layout_width="match_parent"
@@ -104,12 +111,15 @@
                         style="@style/Widget.NovaPay.TextInputLayout"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:hint="@string/money_bills_customer_code_hint">
+                        android:hint="@string/money_bills_customer_code_hint"
+                        app:startIconDrawable="@drawable/ic_modc_search"
+                        app:startIconTint="?attr/colorOnSurfaceVariant">
 
                         <com.google.android.material.textfield.TextInputEditText
                             android:id="@+id/etCustomerCode"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
+                            android:fontFeatureSettings="tnum"
                             android:inputType="textCapCharacters" />
                     </com.google.android.material.textfield.TextInputLayout>
 
@@ -127,8 +137,9 @@
                 android:id="@+id/tvBillsEmptyHint"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="24dp"
+                android:layout_marginTop="28dp"
                 android:gravity="center"
+                android:paddingHorizontal="16dp"
                 android:text="@string/money_bills_empty_prompt"
                 android:textAppearance="?attr/textAppearanceBodyMedium"
                 android:textColor="?attr/colorOnSurfaceVariant" />

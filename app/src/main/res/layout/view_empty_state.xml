@@ -1,21 +1,39 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/layoutEmptyRoot"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:gravity="center"
     android:orientation="vertical"
-    android:padding="24dp"
+    android:padding="@dimen/np_space_2xl"
     android:visibility="gone">
+
+    <FrameLayout
+        android:layout_width="64dp"
+        android:layout_height="64dp"
+        android:background="@drawable/bg_np_circle_soft_neutral">
+
+        <ImageView
+            android:layout_width="28dp"
+            android:layout_height="28dp"
+            android:layout_gravity="center"
+            android:importantForAccessibility="no"
+            android:src="@drawable/ic_np_empty_box"
+            app:tint="?attr/colorOnSurfaceVariant" />
+    </FrameLayout>
 
     <TextView
         android:id="@+id/tvEmptyTitle"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
         android:gravity="center"
+        android:maxWidth="300dp"
         android:text="@string/state_empty_title"
         android:textAppearance="?attr/textAppearanceTitleMedium"
-        android:textColor="?attr/colorOnSurface" />
+        android:textColor="?attr/colorOnSurface"
+        android:textStyle="bold" />
 
     <TextView
         android:id="@+id/tvEmptySubtitle"
@@ -23,6 +41,8 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="6dp"
         android:gravity="center"
+        android:lineSpacingExtra="2dp"
+        android:maxWidth="300dp"
         android:text="@string/state_empty_subtitle"
         android:textAppearance="?attr/textAppearanceBodyMedium"
         android:textColor="?attr/colorOnSurfaceVariant" />

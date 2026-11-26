@@ -3,6 +3,7 @@ package com.novabank.novapay;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
+import android.view.View;
 
 import androidx.activity.EdgeToEdge;
 import androidx.annotation.NonNull;
@@ -26,8 +27,8 @@ import javax.inject.Inject;
 import dagger.hilt.android.AndroidEntryPoint;
 
 /**
- * Single-Activity trung tâm chứa NavHostFragment, bảo vệ DeepLink Auth/Role Guard
- * và xử lý cưỡng bức đăng xuất realtime khi tài khoản bị LOCKED (GEMINI.md §2.3, §4).
+ * Single-Activity trung tâm chứa NavHostFragment, thanh BottomNavigationView 4 tab cho Customer,
+ * bảo vệ DeepLink Auth/Role Guard và xử lý cưỡng bức đăng xuất realtime khi tài khoản bị LOCKED.
  */
 @AndroidEntryPoint
 public class MainActivity extends AppCompatActivity {
@@ -38,6 +39,7 @@ public class MainActivity extends AppCompatActivity {
     private ActivityMainBinding binding;
     private NavController navController;
     private boolean isRedirecting = false;
+    private boolean isSyncingBottomNav = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -49,10 +51,12 @@ public class MainActivity extends AppCompatActivity {
         ViewCompat.setOnApplyWindowInsetsListener(binding.main, (v, insets) -> {
             Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
+            binding.bottomNavCustomer.setPadding(0, 0, 0, 0);
             return insets;
         });
 
         setupNavigationAndGuards();
+        setupCustomerBottomNav();
         observeSessionLock();
         handleIncomingIntent(getIntent());
     }
@@ -74,20 +78,60 @@ public class MainActivity extends AppCompatActivity {
         navController.addOnDestinationChangedListener(this::enforceDestinationGuard);
     }
 
+    private void setupCustomerBottomNav() {
+        binding.bottomNavCustomer.setOnItemSelectedListener(item -> {
+            if (isSyncingBottomNav || navController == null || !sessionManager.isSignedIn()) {
+                return true;
+            }
+            int itemId = item.getItemId();
+            String targetDeepLink;
+            if (itemId == R.id.nav_tab_home) {
+                targetDeepLink = Constants.DEEPLINK_HOME;
+            } else if (itemId == R.id.nav_tab_transfer) {
+                targetDeepLink = Constants.DEEPLINK_TRANSFER;
+            } else if (itemId == R.id.nav_tab_history) {
+                targetDeepLink = Constants.DEEPLINK_TRANSACTIONS_MONTH;
+            } else if (itemId == R.id.nav_tab_profile) {
+                targetDeepLink = Constants.DEEPLINK_PROFILE;
+            } else {
+                return false;
+            }
+
+            NavOptions tabOptions = new NavOptions.Builder()
+                    .setLaunchSingleTop(true)
+                    .setRestoreState(true)
+                    .setPopUpTo(R.id.customerHomeFragment, false, true)
+                    .build();
+            isRedirecting = true;
+            try {
+                navController.navigate(Uri.parse(targetDeepLink), tabOptions);
+                return true;
+            } catch (IllegalArgumentException | IllegalStateException ex) {
+                showMessage(getString(R.string.core_guard_destination_unavailable));
+                return false;
+            } finally {
+                isRedirecting = false;
+            }
+        });
+
+        binding.bottomNavCustomer.setOnItemReselectedListener(item -> {
+            // Tránh tạo lại Fragment khi người dùng chạm lại tab đang mở
+        });
+    }
+
     private void enforceDestinationGuard(
             @NonNull NavController controller,
             @NonNull NavDestination destination,
             @Nullable Bundle arguments
     ) {
-        if (isRedirecting) {
-            return;
-        }
         int destId = destination.getId();
         if (destId == R.id.loginFragment) {
+            updateBottomNavState(destination, false, true);
             return;
         }
 
-        if (!sessionManager.isSignedIn()) {
+        if (!isRedirecting && !sessionManager.isSignedIn()) {
+            updateBottomNavState(destination, false, true);
             redirectToLogin();
             return;
         }
@@ -95,13 +139,14 @@ public class MainActivity extends AppCompatActivity {
         String role = sessionManager.getCachedRole();
         boolean isOfficer = Constants.ROLE_OFFICER.equalsIgnoreCase(role);
 
-        if (isOfficer && isCustomerOnlyDestination(destId)) {
+        if (!isRedirecting && isOfficer && isCustomerOnlyDestination(destId)) {
+            updateBottomNavState(destination, false, true);
             showMessage(getString(R.string.core_guard_role_denied));
             redirectToRoleHome(role);
             return;
         }
 
-        if (!isOfficer && destId == R.id.ekycCaptureFragment && arguments != null) {
+        if (!isRedirecting && !isOfficer && destId == R.id.ekycCaptureFragment && arguments != null) {
             String targetUid = arguments.getString("targetUid");
             if (targetUid == null) {
                 targetUid = arguments.getString(Constants.BUNDLE_TARGET_UID);
@@ -109,10 +154,56 @@ public class MainActivity extends AppCompatActivity {
             String currentUid = sessionManager.getCurrentUid();
             if (targetUid != null && !targetUid.trim().isEmpty()
                     && (currentUid == null || !targetUid.trim().equals(currentUid))) {
+                updateBottomNavState(destination, false, isOfficer);
                 showMessage(getString(R.string.core_guard_role_denied));
                 redirectToRoleHome(role);
+                return;
             }
         }
+
+        updateBottomNavState(destination, sessionManager.isSignedIn(), isOfficer);
+    }
+
+    private void updateBottomNavState(
+            @NonNull NavDestination destination,
+            boolean isSignedIn,
+            boolean isOfficer
+    ) {
+        if (binding == null) {
+            return;
+        }
+        int selectedTabId = resolveCustomerTabId(destination);
+        boolean showBottomNav = isSignedIn && !isOfficer && selectedTabId != 0;
+
+        int visibility = showBottomNav ? View.VISIBLE : View.GONE;
+        binding.bottomNavCustomer.setVisibility(visibility);
+        binding.viewBottomNavDivider.setVisibility(visibility);
+
+        if (showBottomNav && binding.bottomNavCustomer.getSelectedItemId() != selectedTabId) {
+            isSyncingBottomNav = true;
+            try {
+                binding.bottomNavCustomer.setSelectedItemId(selectedTabId);
+            } finally {
+                isSyncingBottomNav = false;
+            }
+        }
+    }
+
+    private int resolveCustomerTabId(@NonNull NavDestination destination) {
+        int destId = destination.getId();
+        if (destId == R.id.customerHomeFragment) {
+            return R.id.nav_tab_home;
+        }
+        if (destId == R.id.transactionHistoryFragment) {
+            return R.id.nav_tab_history;
+        }
+        if (destId == R.id.profileFragment) {
+            return R.id.nav_tab_profile;
+        }
+        if (destination.hasDeepLink(Uri.parse(Constants.DEEPLINK_TRANSFER))) {
+            return R.id.nav_tab_transfer;
+        }
+        return 0;
     }
 
     private boolean isCustomerOnlyDestination(int destId) {
@@ -194,6 +285,14 @@ public class MainActivity extends AppCompatActivity {
         isRedirecting = true;
         try {
             navController.navigate(uri);
+            if (navController.getCurrentDestination() != null) {
+                String role = sessionManager.getCachedRole();
+                updateBottomNavState(
+                        navController.getCurrentDestination(),
+                        sessionManager.isSignedIn(),
+                        Constants.ROLE_OFFICER.equalsIgnoreCase(role)
+                );
+            }
         } catch (IllegalArgumentException | IllegalStateException ex) {
             showMessage(getString(R.string.core_guard_destination_unavailable));
         } finally {

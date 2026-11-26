@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Adaptive Semantic Tokens for Dark Mode -->
+    <color name="novapay_income_positive">#FF22C55E</color>
+    <color name="novapay_expense_negative">#FFF87171</color>
+    <color name="novapay_warning_pending">#FFFBBF24</color>
+    <color name="novapay_verified_badge">#FF22C55E</color>
+
+    <color name="np_brand_navy">#FF1E293B</color>
+    <color name="np_accent_emerald">#FF10B981</color>
+    <color name="np_accent_emerald_soft">#FF064E3B</color>
+    <color name="np_accent_emerald_ink">#FFA7F3D0</color>
+
+    <color name="np_border_hairline">#FF1E293B</color>
+    <color name="np_border_control">#FF334155</color>
+    <color name="np_divider_subtle">#FF1E293B</color>
+    <color name="np_surface_subtle">#FF0F172A</color>
+    <color name="np_text_muted">#FF94A3B8</color>
+
+    <color name="np_hero_navy_bg">#FF0F172A</color>
+    <color name="np_hero_navy_stroke">#FF334155</color>
+    <color name="np_hero_navy_text">#FFF8FAFC</color>
+    <color name="np_hero_navy_muted">#FF94A3B8</color>
+    <color name="np_hero_emerald_bg">#FF064E3B</color>
+    <color name="np_hero_emerald_stroke">#FF059669</color>
+    <color name="np_hero_slate_bg">#FF1E293B</color>
+
+    <color name="np_badge_verified_bg">#FF052E16</color>
+    <color name="np_badge_verified_stroke">#FF166534</color>
+    <color name="np_badge_pending_bg">#FF451A03</color>
+    <color name="np_badge_pending_stroke">#FF92400E</color>
+    <color name="np_badge_locked_bg">#FF450A0A</color>
+    <color name="np_badge_locked_stroke">#FF991B1B</color>
+    <color name="np_badge_neutral_bg">#FF1E293B</color>
+    <color name="np_badge_neutral_stroke">#FF334155</color>
+</resources>

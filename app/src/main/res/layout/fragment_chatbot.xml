@@ -13,8 +13,15 @@
         android:background="?attr/colorSurface"
         app:navigationContentDescription="@string/officer_action_back"
         app:navigationIcon="@drawable/ic_modc_back"
+        app:navigationIconTint="?attr/colorOnSurface"
         app:title="@string/chatbot_title"
+        app:titleTextAppearance="?attr/textAppearanceTitleLarge"
         app:titleTextColor="?attr/colorOnSurface" />
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="@color/np_border_hairline" />
 
     <FrameLayout
         android:id="@+id/layoutBodyContainer"
@@ -27,7 +34,8 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:clipToPadding="false"
-            android:padding="12dp" />
+            android:paddingHorizontal="16dp"
+            android:paddingVertical="12dp" />
 
         <include
             android:id="@+id/stateLoading"
@@ -42,12 +50,18 @@
             layout="@layout/view_error_state" />
     </FrameLayout>
 
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="@color/np_border_hairline" />
+
     <HorizontalScrollView
         android:id="@+id/scrollChatbotSuggestions"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:paddingHorizontal="12dp"
-        android:paddingTop="6dp"
+        android:background="?attr/colorSurface"
+        android:paddingHorizontal="14dp"
+        android:paddingTop="8dp"
         android:scrollbars="none">
 
         <com.google.android.material.chip.ChipGroup
@@ -84,7 +98,9 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:indeterminate="true"
-        android:visibility="gone" />
+        android:visibility="gone"
+        app:indicatorColor="@color/np_accent_emerald"
+        app:trackColor="@color/np_border_hairline" />
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -92,7 +108,9 @@
         android:background="?attr/colorSurface"
         android:gravity="center_vertical"
         android:orientation="horizontal"
-        android:padding="12dp">
+        android:paddingHorizontal="14dp"
+        android:paddingTop="6dp"
+        android:paddingBottom="12dp">
 
         <com.google.android.material.textfield.TextInputLayout
             android:id="@+id/tilChatInput"
@@ -112,10 +130,11 @@
 
         <com.google.android.material.button.MaterialButton
             android:id="@+id/btnSendChat"
-            style="@style/Widget.NovaPay.Button.Primary"
+            style="@style/Widget.NovaPay.Button.Accent"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="8dp"
+            android:minHeight="52dp"
             android:text="@string/chatbot_send_action"
             app:icon="@drawable/ic_modc_send" />
     </LinearLayout>

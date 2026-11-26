@@ -13,7 +13,13 @@
         android:background="?attr/colorSurface"
         app:menu="@menu/menu_officer_dashboard"
         app:title="@string/officer_dashboard_title"
+        app:titleTextAppearance="?attr/textAppearanceTitleLarge"
         app:titleTextColor="?attr/colorOnSurface" />
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="@color/np_border_hairline" />
 
     <FrameLayout
         android:id="@+id/layoutBodyContainer"
@@ -31,43 +37,64 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="vertical"
-                android:padding="16dp">
+                android:paddingHorizontal="@dimen/np_screen_padding"
+                android:paddingTop="16dp"
+                android:paddingBottom="28dp">
 
+                <!-- Officer Identity Console Header (Deep Navy #0F172A) -->
                 <com.google.android.material.card.MaterialCardView
-                    style="@style/Widget.NovaPay.Card.Elevated"
+                    style="@style/Widget.NovaPay.Card.Outlined"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    app:cardBackgroundColor="?attr/colorPrimaryContainer"
-                    app:contentPadding="16dp">
+                    app:cardBackgroundColor="@color/np_hero_navy_bg"
+                    app:contentPadding="18dp"
+                    app:strokeColor="@color/np_hero_navy_stroke">
 
                     <LinearLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:orientation="vertical">
+                        android:gravity="center_vertical"
+                        android:orientation="horizontal">
 
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="@string/officer_dashboard_role_badge"
-                            android:textAppearance="?attr/textAppearanceLabelLarge"
-                            android:textColor="?attr/colorOnPrimaryContainer"
-                            android:textStyle="bold" />
+                        <ImageView
+                            android:layout_width="42dp"
+                            android:layout_height="42dp"
+                            android:importantForAccessibility="no"
+                            android:src="@drawable/ic_np_logo_mark" />
 
-                        <TextView
-                            android:id="@+id/tvOfficerEmail"
-                            android:layout_width="wrap_content"
+                        <LinearLayout
+                            android:layout_width="0dp"
                             android:layout_height="wrap_content"
-                            android:layout_marginTop="4dp"
-                            android:text="@string/officer_dashboard_email_fallback"
-                            android:textAppearance="?attr/textAppearanceBodyMedium"
-                            android:textColor="?attr/colorOnPrimaryContainer" />
+                            android:layout_marginStart="14dp"
+                            android:layout_weight="1"
+                            android:orientation="vertical">
+
+                            <TextView
+                                style="@style/Widget.NovaPay.StatusBadge"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:background="@drawable/bg_np_badge_verified"
+                                android:text="@string/officer_dashboard_role_badge"
+                                android:textColor="@color/novapay_income_positive" />
+
+                            <TextView
+                                android:id="@+id/tvOfficerEmail"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_marginTop="6dp"
+                                android:text="@string/officer_dashboard_email_fallback"
+                                android:textAppearance="?attr/textAppearanceBodyMedium"
+                                android:textColor="@color/np_hero_navy_text"
+                                android:textStyle="bold" />
+                        </LinearLayout>
                     </LinearLayout>
                 </com.google.android.material.card.MaterialCardView>
 
+                <!-- 3 KPI Stat Cards (Tabular Figures) -->
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="16dp"
+                    android:layout_marginTop="14dp"
                     android:orientation="horizontal"
                     android:weightSum="3">
 
@@ -77,31 +104,30 @@
                         android:layout_height="wrap_content"
                         android:layout_marginEnd="6dp"
                         android:layout_weight="1"
-                        app:contentPadding="12dp">
+                        app:contentPadding="14dp">
 
                         <LinearLayout
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:gravity="center_horizontal"
                             android:orientation="vertical">
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="@string/officer_stat_total_customers"
+                                android:textAppearance="?attr/textAppearanceLabelMedium"
+                                android:textColor="?attr/colorOnSurfaceVariant" />
 
                             <TextView
                                 android:id="@+id/tvTotalCustomersCount"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
-                                android:text="0"
+                                android:layout_marginTop="6dp"
+                                android:fontFeatureSettings="tnum"
+                                android:text="@string/officer_kpi_zero"
                                 android:textAppearance="?attr/textAppearanceHeadlineSmall"
-                                android:textColor="?attr/colorPrimary"
+                                android:textColor="?attr/colorOnSurface"
                                 android:textStyle="bold" />
-
-                            <TextView
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:layout_marginTop="4dp"
-                                android:gravity="center"
-                                android:text="@string/officer_stat_total_customers"
-                                android:textAppearance="?attr/textAppearanceLabelMedium"
-                                android:textColor="?attr/colorOnSurfaceVariant" />
                         </LinearLayout>
                     </com.google.android.material.card.MaterialCardView>
 
@@ -111,31 +137,30 @@
                         android:layout_height="wrap_content"
                         android:layout_marginHorizontal="3dp"
                         android:layout_weight="1"
-                        app:contentPadding="12dp">
+                        app:contentPadding="14dp">
 
                         <LinearLayout
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:gravity="center_horizontal"
                             android:orientation="vertical">
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="@string/officer_stat_pending_ekyc"
+                                android:textAppearance="?attr/textAppearanceLabelMedium"
+                                android:textColor="?attr/colorOnSurfaceVariant" />
 
                             <TextView
                                 android:id="@+id/tvPendingEkycCount"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
-                                android:text="0"
+                                android:layout_marginTop="6dp"
+                                android:fontFeatureSettings="tnum"
+                                android:text="@string/officer_kpi_zero"
                                 android:textAppearance="?attr/textAppearanceHeadlineSmall"
                                 android:textColor="@color/novapay_warning_pending"
                                 android:textStyle="bold" />
-
-                            <TextView
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:layout_marginTop="4dp"
-                                android:gravity="center"
-                                android:text="@string/officer_stat_pending_ekyc"
-                                android:textAppearance="?attr/textAppearanceLabelMedium"
-                                android:textColor="?attr/colorOnSurfaceVariant" />
                         </LinearLayout>
                     </com.google.android.material.card.MaterialCardView>
 
@@ -145,39 +170,39 @@
                         android:layout_height="wrap_content"
                         android:layout_marginStart="6dp"
                         android:layout_weight="1"
-                        app:contentPadding="12dp">
+                        app:contentPadding="14dp">
 
                         <LinearLayout
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:gravity="center_horizontal"
                             android:orientation="vertical">
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="@string/officer_stat_daily_tx"
+                                android:textAppearance="?attr/textAppearanceLabelMedium"
+                                android:textColor="?attr/colorOnSurfaceVariant" />
 
                             <TextView
                                 android:id="@+id/tvDailyTransactionsCount"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
-                                android:text="0"
+                                android:layout_marginTop="6dp"
+                                android:fontFeatureSettings="tnum"
+                                android:text="@string/officer_kpi_zero"
                                 android:textAppearance="?attr/textAppearanceHeadlineSmall"
-                                android:textColor="@color/novapay_verified_badge"
+                                android:textColor="@color/novapay_income_positive"
                                 android:textStyle="bold" />
-
-                            <TextView
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:layout_marginTop="4dp"
-                                android:gravity="center"
-                                android:text="@string/officer_stat_daily_tx"
-                                android:textAppearance="?attr/textAppearanceLabelMedium"
-                                android:textColor="?attr/colorOnSurfaceVariant" />
                         </LinearLayout>
                     </com.google.android.material.card.MaterialCardView>
                 </LinearLayout>
 
+                <!-- Admin Navigation Grid (2x2) -->
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="20dp"
+                    android:layout_marginTop="22dp"
                     android:text="@string/officer_quick_actions_title"
                     android:textAppearance="?attr/textAppearanceTitleMedium"
                     android:textColor="?attr/colorOnSurface"
@@ -186,38 +211,53 @@
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="8dp"
+                    android:layout_marginTop="10dp"
                     android:orientation="horizontal"
                     android:weightSum="2">
 
                     <com.google.android.material.card.MaterialCardView
                         android:id="@+id/cardNavCustomers"
-                        style="@style/Widget.NovaPay.Card.Elevated"
+                        style="@style/Widget.NovaPay.Card.Outlined"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_marginEnd="6dp"
                         android:layout_weight="1"
                         android:clickable="true"
                         android:focusable="true"
-                        app:contentPadding="14dp">
+                        app:contentPadding="16dp">
 
                         <LinearLayout
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:orientation="vertical">
 
+                            <FrameLayout
+                                android:layout_width="38dp"
+                                android:layout_height="38dp"
+                                android:background="@drawable/bg_np_circle_soft_neutral">
+
+                                <ImageView
+                                    android:layout_width="20dp"
+                                    android:layout_height="20dp"
+                                    android:layout_gravity="center"
+                                    android:importantForAccessibility="no"
+                                    android:src="@drawable/ic_np_customers"
+                                    app:tint="?attr/colorOnSurface" />
+                            </FrameLayout>
+
                             <TextView
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
+                                android:layout_marginTop="10dp"
                                 android:text="@string/officer_nav_customers_title"
                                 android:textAppearance="?attr/textAppearanceTitleSmall"
-                                android:textColor="?attr/colorPrimary"
+                                android:textColor="?attr/colorOnSurface"
                                 android:textStyle="bold" />
 
                             <TextView
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
-                                android:layout_marginTop="4dp"
+                                android:layout_marginTop="2dp"
                                 android:text="@string/officer_nav_customers_subtitle"
                                 android:textAppearance="?attr/textAppearanceBodySmall"
                                 android:textColor="?attr/colorOnSurfaceVariant" />
@@ -226,32 +266,47 @@
 
                     <com.google.android.material.card.MaterialCardView
                         android:id="@+id/cardNavEkycReview"
-                        style="@style/Widget.NovaPay.Card.Elevated"
+                        style="@style/Widget.NovaPay.Card.Outlined"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_marginStart="6dp"
                         android:layout_weight="1"
                         android:clickable="true"
                         android:focusable="true"
-                        app:contentPadding="14dp">
+                        app:contentPadding="16dp">
 
                         <LinearLayout
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:orientation="vertical">
 
+                            <FrameLayout
+                                android:layout_width="38dp"
+                                android:layout_height="38dp"
+                                android:background="@drawable/bg_np_circle_soft_emerald">
+
+                                <ImageView
+                                    android:layout_width="20dp"
+                                    android:layout_height="20dp"
+                                    android:layout_gravity="center"
+                                    android:importantForAccessibility="no"
+                                    android:src="@drawable/ic_np_ekyc_badge"
+                                    app:tint="@color/np_accent_emerald" />
+                            </FrameLayout>
+
                             <TextView
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
+                                android:layout_marginTop="10dp"
                                 android:text="@string/officer_nav_ekyc_title"
                                 android:textAppearance="?attr/textAppearanceTitleSmall"
-                                android:textColor="?attr/colorPrimary"
+                                android:textColor="?attr/colorOnSurface"
                                 android:textStyle="bold" />
 
                             <TextView
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
-                                android:layout_marginTop="4dp"
+                                android:layout_marginTop="2dp"
                                 android:text="@string/officer_nav_ekyc_subtitle"
                                 android:textAppearance="?attr/textAppearanceBodySmall"
                                 android:textColor="?attr/colorOnSurfaceVariant" />
@@ -268,32 +323,47 @@
 
                     <com.google.android.material.card.MaterialCardView
                         android:id="@+id/cardNavInterestRates"
-                        style="@style/Widget.NovaPay.Card.Elevated"
+                        style="@style/Widget.NovaPay.Card.Outlined"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_marginEnd="6dp"
                         android:layout_weight="1"
                         android:clickable="true"
                         android:focusable="true"
-                        app:contentPadding="14dp">
+                        app:contentPadding="16dp">
 
                         <LinearLayout
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:orientation="vertical">
 
+                            <FrameLayout
+                                android:layout_width="38dp"
+                                android:layout_height="38dp"
+                                android:background="@drawable/bg_np_circle_soft_emerald">
+
+                                <ImageView
+                                    android:layout_width="20dp"
+                                    android:layout_height="20dp"
+                                    android:layout_gravity="center"
+                                    android:importantForAccessibility="no"
+                                    android:src="@drawable/ic_np_trending_rate"
+                                    app:tint="@color/np_accent_emerald" />
+                            </FrameLayout>
+
                             <TextView
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
+                                android:layout_marginTop="10dp"
                                 android:text="@string/officer_nav_rates_title"
                                 android:textAppearance="?attr/textAppearanceTitleSmall"
-                                android:textColor="?attr/colorPrimary"
+                                android:textColor="?attr/colorOnSurface"
                                 android:textStyle="bold" />
 
                             <TextView
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
-                                android:layout_marginTop="4dp"
+                                android:layout_marginTop="2dp"
                                 android:text="@string/officer_nav_rates_subtitle"
                                 android:textAppearance="?attr/textAppearanceBodySmall"
                                 android:textColor="?attr/colorOnSurfaceVariant" />
@@ -302,32 +372,47 @@
 
                     <com.google.android.material.card.MaterialCardView
                         android:id="@+id/cardNavBranches"
-                        style="@style/Widget.NovaPay.Card.Elevated"
+                        style="@style/Widget.NovaPay.Card.Outlined"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_marginStart="6dp"
                         android:layout_weight="1"
                         android:clickable="true"
                         android:focusable="true"
-                        app:contentPadding="14dp">
+                        app:contentPadding="16dp">
 
                         <LinearLayout
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:orientation="vertical">
 
+                            <FrameLayout
+                                android:layout_width="38dp"
+                                android:layout_height="38dp"
+                                android:background="@drawable/bg_np_circle_soft_neutral">
+
+                                <ImageView
+                                    android:layout_width="20dp"
+                                    android:layout_height="20dp"
+                                    android:layout_gravity="center"
+                                    android:importantForAccessibility="no"
+                                    android:src="@drawable/ic_np_map_pin"
+                                    app:tint="?attr/colorOnSurface" />
+                            </FrameLayout>
+
                             <TextView
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
+                                android:layout_marginTop="10dp"
                                 android:text="@string/officer_nav_branches_title"
                                 android:textAppearance="?attr/textAppearanceTitleSmall"
-                                android:textColor="?attr/colorPrimary"
+                                android:textColor="?attr/colorOnSurface"
                                 android:textStyle="bold" />
 
                             <TextView
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
-                                android:layout_marginTop="4dp"
+                                android:layout_marginTop="2dp"
                                 android:text="@string/officer_nav_branches_subtitle"
                                 android:textAppearance="?attr/textAppearanceBodySmall"
                                 android:textColor="?attr/colorOnSurfaceVariant" />
@@ -335,10 +420,11 @@
                     </com.google.android.material.card.MaterialCardView>
                 </LinearLayout>
 
+                <!-- Post-Audit FaceCheck Queue -->
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="20dp"
+                    android:layout_marginTop="24dp"
                     android:gravity="center_vertical"
                     android:orientation="horizontal">
 
@@ -346,6 +432,7 @@
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
+                        android:fontFeatureSettings="tnum"
                         android:text="@string/officer_post_audit_title"
                         android:textAppearance="?attr/textAppearanceTitleMedium"
                         android:textColor="?attr/colorOnSurface"
@@ -353,25 +440,28 @@
 
                     <TextView
                         android:id="@+id/tvManualAuditCount"
+                        style="@style/Widget.NovaPay.StatusBadge"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:textAppearance="?attr/textAppearanceLabelMedium"
-                        android:textColor="@color/novapay_warning_pending"
-                        android:textStyle="bold" />
+                        android:background="@drawable/bg_np_badge_pending"
+                        android:fontFeatureSettings="tnum"
+                        android:textColor="@color/novapay_warning_pending" />
                 </LinearLayout>
 
                 <androidx.recyclerview.widget.RecyclerView
                     android:id="@+id/rvFaceCheckAudits"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="8dp"
+                    android:layout_marginTop="10dp"
                     android:nestedScrollingEnabled="false" />
 
                 <TextView
                     android:id="@+id/tvEmptyFaceAudits"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="8dp"
+                    android:layout_marginTop="10dp"
+                    android:background="@drawable/bg_np_badge_neutral"
+                    android:padding="14dp"
                     android:text="@string/officer_post_audit_empty"
                     android:textAppearance="?attr/textAppearanceBodyMedium"
                     android:textColor="?attr/colorOnSurfaceVariant"
@@ -382,13 +472,14 @@
                     style="@style/Widget.NovaPay.Button.Outlined"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="8dp"
+                    android:layout_marginTop="10dp"
                     android:text="@string/officer_post_audit_open_review" />
 
+                <!-- System Audit Logs -->
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="20dp"
+                    android:layout_marginTop="24dp"
                     android:text="@string/officer_audit_logs_title"
                     android:textAppearance="?attr/textAppearanceTitleMedium"
                     android:textColor="?attr/colorOnSurface"
@@ -398,14 +489,16 @@
                     android:id="@+id/rvAuditLogs"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="8dp"
+                    android:layout_marginTop="10dp"
                     android:nestedScrollingEnabled="false" />
 
                 <TextView
                     android:id="@+id/tvEmptyAuditLogs"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="8dp"
+                    android:layout_marginTop="10dp"
+                    android:background="@drawable/bg_np_badge_neutral"
+                    android:padding="14dp"
                     android:text="@string/officer_audit_logs_empty"
                     android:textAppearance="?attr/textAppearanceBodyMedium"
                     android:textColor="?attr/colorOnSurfaceVariant"

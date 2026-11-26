@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<selector xmlns:android="http://schemas.android.com/apk/res/android">
+    <item android:color="@color/np_accent_emerald" android:state_focused="true" />
+    <item android:color="@color/np_border_control" android:state_hovered="true" />
+    <item android:color="@color/np_border_hairline" android:state_enabled="false" />
+    <item android:color="@color/np_border_control" />
+</selector>

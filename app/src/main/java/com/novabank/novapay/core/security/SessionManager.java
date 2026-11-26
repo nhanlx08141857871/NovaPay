@@ -32,6 +32,8 @@ public class SessionManager {
 
     public static final String DEEPLINK_OFFICER = "novapay://officer";
     public static final String DEEPLINK_CHATBOT = "novapay://chatbot";
+    public static final String DEEPLINK_QR = "novapay://qr";
+    public static final String DEEPLINK_DEPOSIT = "novapay://deposit";
     public static final String DEEPLINK_FACE_CHECK_PREFIX = "novapay://face-check?draftId=";
 
     private final FirebaseAuth firebaseAuth;
@@ -204,6 +206,8 @@ public class SessionManager {
             case "accounts":
             case "transactions":
             case "transfer":
+            case "qr":
+            case "deposit":
             case "bills":
             case "topup":
             case "services":

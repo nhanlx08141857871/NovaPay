@@ -4,8 +4,8 @@
     style="@style/Widget.NovaPay.Card.Outlined"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:layout_marginBottom="12dp"
-    app:contentPadding="14dp">
+    android:layout_marginBottom="14dp"
+    app:contentPadding="16dp">
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -29,10 +29,10 @@
 
             <TextView
                 android:id="@+id/tvEkycStatusBadge"
+                style="@style/Widget.NovaPay.StatusBadge"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:textAppearance="?attr/textAppearanceLabelMedium"
-                android:textStyle="bold" />
+                android:layout_marginStart="8dp" />
         </LinearLayout>
 
         <TextView
@@ -40,78 +40,120 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="4dp"
+            android:fontFeatureSettings="tnum"
             android:textAppearance="?attr/textAppearanceBodySmall"
             android:textColor="?attr/colorOnSurfaceVariant" />
 
         <TextView
             android:id="@+id/tvManualAuditNotice"
-            android:layout_width="match_parent"
+            style="@style/Widget.NovaPay.StatusBadge"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="6dp"
+            android:layout_marginTop="8dp"
+            android:background="@drawable/bg_np_badge_pending"
             android:text="@string/officer_ekyc_manual_audit_badge"
-            android:textAppearance="?attr/textAppearanceLabelMedium"
             android:textColor="@color/novapay_warning_pending"
-            android:textStyle="bold"
             android:visibility="gone" />
 
+        <!-- Two-Frame Side-by-Side Photo Comparison -->
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="10dp"
+            android:layout_marginTop="12dp"
+            android:baselineAligned="false"
             android:orientation="horizontal">
 
+            <!-- Frame 1: Reference eKYC Portrait -->
             <LinearLayout
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
+                android:background="@drawable/bg_np_photo_frame"
                 android:gravity="center_horizontal"
-                android:orientation="vertical">
+                android:orientation="vertical"
+                android:padding="10dp">
 
-                <ImageView
-                    android:id="@+id/ivEkycPhoto"
-                    android:layout_width="112dp"
-                    android:layout_height="112dp"
-                    android:background="?attr/colorSurfaceVariant"
-                    android:contentDescription="@string/officer_ekyc_photo_label"
-                    android:scaleType="centerCrop"
-                    android:src="@drawable/ic_modc_person_placeholder" />
+                <com.google.android.material.card.MaterialCardView
+                    style="@style/Widget.NovaPay.Card.Outlined"
+                    android:layout_width="match_parent"
+                    android:layout_height="156dp"
+                    app:cardCornerRadius="10dp">
+
+                    <ImageView
+                        android:id="@+id/ivEkycPhoto"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:background="@color/np_surface_subtle"
+                        android:contentDescription="@string/officer_ekyc_photo_label"
+                        android:scaleType="centerCrop"
+                        android:src="@drawable/ic_modc_person_placeholder" />
+                </com.google.android.material.card.MaterialCardView>
 
                 <TextView
                     android:id="@+id/tvEkycPhotoCaption"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="4dp"
+                    android:layout_marginTop="6dp"
+                    android:gravity="center"
                     android:text="@string/officer_ekyc_photo_label"
-                    android:textAppearance="?attr/textAppearanceLabelSmall"
-                    android:textColor="?attr/colorOnSurfaceVariant" />
-            </LinearLayout>
-
-            <LinearLayout
-                android:id="@+id/layoutFaceCheckCompare"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="12dp"
-                android:layout_weight="1"
-                android:gravity="center_horizontal"
-                android:orientation="vertical"
-                android:visibility="gone">
-
-                <ImageView
-                    android:id="@+id/ivFaceCheckPhoto"
-                    android:layout_width="112dp"
-                    android:layout_height="112dp"
-                    android:background="?attr/colorSurfaceVariant"
-                    android:contentDescription="@string/officer_ekyc_facecheck_label"
-                    android:scaleType="centerCrop"
-                    android:src="@drawable/ic_modc_person_placeholder" />
+                    android:textAppearance="?attr/textAppearanceLabelMedium"
+                    android:textColor="?attr/colorOnSurface"
+                    android:textStyle="bold" />
 
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="4dp"
-                    android:text="@string/officer_ekyc_facecheck_label"
+                    android:text="@string/officer_ekyc_tap_to_zoom"
                     android:textAppearance="?attr/textAppearanceLabelSmall"
-                    android:textColor="@color/novapay_warning_pending" />
+                    android:textColor="?attr/colorOnSurfaceVariant" />
+            </LinearLayout>
+
+            <!-- Frame 2: Live FaceCheck Audit Capture -->
+            <LinearLayout
+                android:id="@+id/layoutFaceCheckCompare"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="10dp"
+                android:layout_weight="1"
+                android:background="@drawable/bg_np_photo_frame"
+                android:gravity="center_horizontal"
+                android:orientation="vertical"
+                android:padding="10dp"
+                android:visibility="gone">
+
+                <com.google.android.material.card.MaterialCardView
+                    style="@style/Widget.NovaPay.Card.Outlined"
+                    android:layout_width="match_parent"
+                    android:layout_height="156dp"
+                    app:cardCornerRadius="10dp"
+                    app:strokeColor="@color/np_badge_pending_stroke">
+
+                    <ImageView
+                        android:id="@+id/ivFaceCheckPhoto"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:background="@color/np_surface_subtle"
+                        android:contentDescription="@string/officer_ekyc_facecheck_label"
+                        android:scaleType="centerCrop"
+                        android:src="@drawable/ic_modc_person_placeholder" />
+                </com.google.android.material.card.MaterialCardView>
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="6dp"
+                    android:gravity="center"
+                    android:text="@string/officer_ekyc_facecheck_label"
+                    android:textAppearance="?attr/textAppearanceLabelMedium"
+                    android:textColor="@color/novapay_warning_pending"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/officer_ekyc_tap_to_zoom"
+                    android:textAppearance="?attr/textAppearanceLabelSmall"
+                    android:textColor="?attr/colorOnSurfaceVariant" />
             </LinearLayout>
         </LinearLayout>
 
@@ -119,34 +161,43 @@
             android:id="@+id/layoutApproveRejectRow"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="12dp"
+            android:layout_marginTop="14dp"
             android:orientation="horizontal">
 
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/btnRejectEkyc"
-                style="@style/Widget.NovaPay.Button.Outlined"
+                style="@style/Widget.NovaPay.Button.Outlined.Danger"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_marginEnd="8dp"
                 android:layout_weight="1"
+                android:minHeight="44dp"
                 android:text="@string/officer_ekyc_reject_action" />
 
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/btnApproveEkyc"
-                style="@style/Widget.NovaPay.Button.Primary"
+                style="@style/Widget.NovaPay.Button.Accent"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:text="@string/officer_ekyc_approve_action" />
+                android:minHeight="44dp"
+                android:text="@string/officer_ekyc_approve_action"
+                app:icon="@drawable/ic_np_check_circle"
+                app:iconGravity="textStart"
+                app:iconSize="18dp" />
         </LinearLayout>
 
         <com.google.android.material.button.MaterialButton
             android:id="@+id/btnCounterCapture"
-            style="@style/Widget.NovaPay.Button.Outlined"
+            style="@style/Widget.NovaPay.Button.Tonal"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="8dp"
-            android:text="@string/officer_ekyc_counter_capture_action" />
+            android:minHeight="44dp"
+            android:text="@string/officer_ekyc_counter_capture_action"
+            app:icon="@drawable/ic_np_ekyc_badge"
+            app:iconGravity="textStart"
+            app:iconSize="18dp" />
     </LinearLayout>
 
 </com.google.android.material.card.MaterialCardView>

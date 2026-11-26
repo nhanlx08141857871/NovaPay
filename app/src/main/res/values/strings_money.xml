@@ -2,7 +2,11 @@
 <resources>
     <!-- Chuỗi giao diện Phân hệ Giao dịch, Chuyển tiền, Stripe & Tiện ích (Owner: Thành viên B) -->
     <string name="money_section_title">Giao dịch &amp; Thanh toán</string>
-    <string name="money_action_back">← Quay lại</string>
+    <string name="money_action_back">Quay lại</string>
+    <string name="money_transfer_recipient_section">Thông tin người thụ hưởng</string>
+    <string name="money_transfer_amount_section">Số tiền &amp; Nội dung chuyển</string>
+    <string name="money_services_qty_minus_symbol">-</string>
+    <string name="money_services_qty_plus_symbol">+</string>
     <string name="money_source_account_label">Tài khoản thanh toán nguồn (CHECKING)</string>
     <string name="money_source_account_format">%1$s • Số dư: %2$s</string>
     <string name="money_no_active_checking_title">Chưa có tài khoản thanh toán</string>

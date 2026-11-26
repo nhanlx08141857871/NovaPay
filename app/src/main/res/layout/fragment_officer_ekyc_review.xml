@@ -14,14 +14,17 @@
         app:menu="@menu/menu_officer_refresh"
         app:navigationContentDescription="@string/officer_action_back"
         app:navigationIcon="@drawable/ic_modc_back"
+        app:navigationIconTint="?attr/colorOnSurface"
         app:title="@string/officer_ekyc_review_title"
+        app:titleTextAppearance="?attr/textAppearanceTitleLarge"
         app:titleTextColor="?attr/colorOnSurface" />
 
     <HorizontalScrollView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:background="?attr/colorSurface"
         android:paddingHorizontal="16dp"
-        android:paddingVertical="8dp"
+        android:paddingBottom="10dp"
         android:scrollbars="none">
 
         <com.google.android.material.chip.ChipGroup
@@ -55,12 +58,19 @@
         </com.google.android.material.chip.ChipGroup>
     </HorizontalScrollView>
 
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="@color/np_border_hairline" />
+
     <com.google.android.material.progressindicator.LinearProgressIndicator
         android:id="@+id/progressEkycAction"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:indeterminate="true"
-        android:visibility="gone" />
+        android:visibility="gone"
+        app:indicatorColor="@color/np_accent_emerald"
+        app:trackColor="@color/np_border_hairline" />
 
     <FrameLayout
         android:id="@+id/layoutBodyContainer"

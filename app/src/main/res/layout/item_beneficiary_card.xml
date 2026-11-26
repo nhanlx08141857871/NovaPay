@@ -2,9 +2,11 @@
 <com.google.android.material.card.MaterialCardView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     style="@style/Widget.NovaPay.Card.Outlined"
-    android:layout_width="200dp"
+    android:layout_width="212dp"
     android:layout_height="wrap_content"
     android:layout_marginEnd="10dp"
+    android:clickable="true"
+    android:focusable="true"
     app:contentPadding="12dp">
 
     <LinearLayout
@@ -33,11 +35,12 @@
                 android:id="@+id/btnDeleteBeneficiary"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:paddingStart="6dp"
+                android:paddingStart="8dp"
                 android:paddingEnd="2dp"
                 android:text="@string/money_transfer_beneficiary_delete"
                 android:textAppearance="?attr/textAppearanceLabelSmall"
-                android:textColor="?attr/colorError" />
+                android:textColor="@color/novapay_expense_negative"
+                android:textStyle="bold" />
         </LinearLayout>
 
         <TextView
@@ -46,19 +49,22 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="4dp"
             android:ellipsize="end"
+            android:fontFeatureSettings="tnum"
+            android:letterSpacing="0.03"
             android:maxLines="1"
             android:textAppearance="?attr/textAppearanceBodySmall"
             android:textColor="?attr/colorOnSurfaceVariant" />
 
         <TextView
             android:id="@+id/tvBeneficiaryBank"
-            android:layout_width="match_parent"
+            style="@style/Widget.NovaPay.StatusBadge"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="2dp"
+            android:layout_marginTop="8dp"
+            android:background="@drawable/bg_np_badge_verified"
             android:ellipsize="end"
             android:maxLines="1"
-            android:textAppearance="?attr/textAppearanceLabelSmall"
-            android:textColor="?attr/colorPrimary" />
+            android:textColor="@color/np_accent_emerald_ink" />
     </LinearLayout>
 
 </com.google.android.material.card.MaterialCardView>

@@ -1,6 +1,5 @@
 package com.novabank.novapay.presentation.customer.home;
 
-import android.net.Uri;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -15,6 +14,7 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 
 import com.github.mikephil.charting.charts.BarChart;
 import com.github.mikephil.charting.components.XAxis;
+import com.github.mikephil.charting.components.YAxis;
 import com.github.mikephil.charting.data.BarData;
 import com.github.mikephil.charting.data.BarDataSet;
 import com.github.mikephil.charting.data.BarEntry;
@@ -37,7 +37,8 @@ import dagger.hilt.android.AndroidEntryPoint;
 
 /**
  * Màn hình Trang chủ Khách hàng (novapay://home):
- * Tổng tài sản (long), banner eKYC, Dịch vụ nhanh, Biểu đồ thu/chi MPAndroidChart & Danh sách tài khoản.
+ * Tổng tài sản (long), banner eKYC, 4 tác vụ nhanh chính + 4 tiện ích mở rộng,
+ * Danh sách 3 loại tài khoản & Biểu đồ thu/chi MPAndroidChart tối giản.
  */
 @AndroidEntryPoint
 public class CustomerHomeFragment extends BaseFragment<FragmentCustomerHomeBinding> {
@@ -85,7 +86,10 @@ public class CustomerHomeFragment extends BaseFragment<FragmentCustomerHomeBindi
         b.btnEkycBannerAction.setOnClickListener(v -> safeNavigateDeepLink(Constants.DEEPLINK_EKYC));
 
         b.btnActionTransfer.setOnClickListener(v -> safeNavigateDeepLink(Constants.DEEPLINK_TRANSFER));
+        b.btnActionQrScan.setOnClickListener(v -> safeNavigateDeepLink(SessionManager.DEEPLINK_QR));
+        b.btnActionDeposit.setOnClickListener(v -> safeNavigateDeepLink(SessionManager.DEEPLINK_DEPOSIT));
         b.btnActionBills.setOnClickListener(v -> safeNavigateDeepLink(Constants.DEEPLINK_BILLS));
+
         b.btnActionTopup.setOnClickListener(v -> safeNavigateDeepLink(Constants.DEEPLINK_TOPUP));
         b.btnActionServices.setOnClickListener(v -> safeNavigateDeepLink(Constants.DEEPLINK_SERVICES));
         b.btnActionHistory.setOnClickListener(v -> safeNavigateDeepLink(Constants.DEEPLINK_TRANSACTIONS_MONTH));
@@ -122,8 +126,10 @@ public class CustomerHomeFragment extends BaseFragment<FragmentCustomerHomeBindi
 
         if (data.isBalanceHidden()) {
             b.tvTotalBalance.setText(R.string.core_home_masked_balance);
+            b.btnToggleBalance.setIconResource(R.drawable.ic_np_eye_off);
         } else {
             b.tvTotalBalance.setText(CurrencyFormatter.formatVnd(data.getTotalLiquidAssets()));
+            b.btnToggleBalance.setIconResource(R.drawable.ic_np_eye_open);
         }
 
         renderEkycBanner(user);
@@ -155,18 +161,33 @@ public class CustomerHomeFragment extends BaseFragment<FragmentCustomerHomeBindi
     }
 
     private void configureChartAppearance(@NonNull BarChart chart) {
+        int mutedTextColor = ContextCompat.getColor(requireContext(), R.color.np_text_muted);
+        int hairlineColor = ContextCompat.getColor(requireContext(), R.color.np_border_hairline);
+
         chart.getDescription().setEnabled(false);
         chart.getLegend().setEnabled(false);
         chart.setDrawGridBackground(false);
+        chart.setDrawBorders(false);
         chart.setPinchZoom(false);
         chart.setScaleEnabled(false);
+        chart.setExtraBottomOffset(6f);
         chart.getAxisRight().setEnabled(false);
-        chart.getAxisLeft().setAxisMinimum(0f);
+
+        YAxis leftAxis = chart.getAxisLeft();
+        leftAxis.setAxisMinimum(0f);
+        leftAxis.setDrawAxisLine(false);
+        leftAxis.setGridColor(hairlineColor);
+        leftAxis.setGridLineWidth(0.8f);
+        leftAxis.setTextColor(mutedTextColor);
+        leftAxis.setLabelCount(4, false);
 
         XAxis xAxis = chart.getXAxis();
         xAxis.setPosition(XAxis.XAxisPosition.BOTTOM);
         xAxis.setGranularity(1f);
         xAxis.setDrawGridLines(false);
+        xAxis.setAxisLineColor(hairlineColor);
+        xAxis.setTextColor(mutedTextColor);
+        xAxis.setTextSize(12f);
         xAxis.setValueFormatter(new IndexAxisValueFormatter(Arrays.asList(
                 getString(R.string.core_home_chart_label_in),
                 getString(R.string.core_home_chart_label_out)
@@ -194,9 +215,10 @@ public class CustomerHomeFragment extends BaseFragment<FragmentCustomerHomeBindi
                 ContextCompat.getColor(requireContext(), R.color.novapay_expense_negative)
         );
         dataSet.setDrawValues(false);
+        dataSet.setHighLightAlpha(0);
 
         BarData barData = new BarData(Collections.singletonList(dataSet));
-        barData.setBarWidth(0.45f);
+        barData.setBarWidth(0.38f);
         b.barChartCashflow.setData(barData);
         b.barChartCashflow.invalidate();
     }

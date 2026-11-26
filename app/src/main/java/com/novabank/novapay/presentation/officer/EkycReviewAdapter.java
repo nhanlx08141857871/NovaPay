@@ -95,21 +95,25 @@ public final class EkycReviewAdapter
                 binding.tvEkycStatusBadge.setTextColor(
                         ContextCompat.getColor(ctx, R.color.novapay_verified_badge)
                 );
+                binding.tvEkycStatusBadge.setBackgroundResource(R.drawable.bg_np_badge_verified);
             } else if (Constants.EKYC_STATUS_PENDING.equalsIgnoreCase(ekycStatus)) {
                 binding.tvEkycStatusBadge.setText(R.string.officer_customer_ekyc_pending);
                 binding.tvEkycStatusBadge.setTextColor(
                         ContextCompat.getColor(ctx, R.color.novapay_warning_pending)
                 );
+                binding.tvEkycStatusBadge.setBackgroundResource(R.drawable.bg_np_badge_pending);
             } else if (Constants.EKYC_STATUS_REJECTED.equalsIgnoreCase(ekycStatus)) {
                 binding.tvEkycStatusBadge.setText(R.string.officer_customer_ekyc_rejected);
                 binding.tvEkycStatusBadge.setTextColor(
                         ContextCompat.getColor(ctx, R.color.novapay_expense_negative)
                 );
+                binding.tvEkycStatusBadge.setBackgroundResource(R.drawable.bg_np_badge_locked);
             } else {
                 binding.tvEkycStatusBadge.setText(R.string.officer_customer_ekyc_none);
                 binding.tvEkycStatusBadge.setTextColor(
                         ContextCompat.getColor(ctx, R.color.novapay_warning_pending)
                 );
+                binding.tvEkycStatusBadge.setBackgroundResource(R.drawable.bg_np_badge_pending);
             }
 
             Bitmap ekycBmp = Base64ImageDecoder.decode(item.getEkycImageBase64(), 360);
