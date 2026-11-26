@@ -17,6 +17,7 @@ import com.novabank.novapay.domain.model.utility.ServiceItem;
 import com.novabank.novapay.domain.model.utility.UtilityBill;
 import com.novabank.novapay.domain.model.utility.UtilityBillStatus;
 import com.novabank.novapay.domain.model.utility.UtilityBillType;
+import com.novabank.novapay.presentation.customer.transfer.ReceiptDisplayFormatter;
 
 import org.junit.Test;
 
@@ -81,6 +82,80 @@ public class MoneyMappersTest {
         assertEquals("bill-01", tx.getMeta().getBillId());
         assertTrue(tx.isFaceChecked());
         assertEquals(Instant.ofEpochSecond(1_763_440_000L, 500_000_000), tx.getCreatedAt());
+        assertNull(tx.getFromAccountNumber());
+        assertEquals("acc-chk-1", ReceiptDisplayFormatter.formatFromAccount(tx));
+        assertEquals("Phạm Minh Tuấn • VCB (0071000123456)", ReceiptDisplayFormatter.formatTargetSummary(tx));
+    }
+
+    @Test
+    public void transactionMapper_andReceiptFormatter_preferAccountNumbersAndOwnerNameWithFallback() {
+        Map<String, Object> internalDoc = new HashMap<>();
+        internalDoc.put("type", "TRANSFER_INTERNAL");
+        internalDoc.put("fromAccountId", "acc_member_nhan_checking");
+        internalDoc.put("fromAccountNumber", "1001000001");
+        internalDoc.put("toAccountId", "acc_member_dat_checking");
+        internalDoc.put("toAccountNumber", "1001000002");
+        internalDoc.put("toOwnerName", "Nguyễn Thành Đạt");
+        internalDoc.put("amount", 1_500_000L);
+        internalDoc.put("fee", 0L);
+        internalDoc.put("note", "Chuyển tiền nhóm");
+        internalDoc.put("status", "SUCCESS");
+        internalDoc.put("initiatedBy", "uid_member_nhan_01");
+        internalDoc.put("createdAt", new Timestamp(1_763_440_000L, 0));
+
+        Transaction internalTx = TransactionMapper.fromFirestoreMap("tx-int-1", internalDoc);
+        assertNotNull(internalTx);
+        assertEquals("1001000001", internalTx.getFromAccountNumber());
+        assertEquals("1001000002", internalTx.getToAccountNumber());
+        assertEquals("Nguyễn Thành Đạt", internalTx.getToOwnerName());
+        assertEquals("1001000001", ReceiptDisplayFormatter.formatFromAccount(internalTx));
+        assertEquals("Nguyễn Thành Đạt (1001000002)", ReceiptDisplayFormatter.formatTargetSummary(internalTx));
+
+        Map<String, Object> legacyDoc = new HashMap<>();
+        legacyDoc.put("type", "TRANSFER_INTERNAL");
+        legacyDoc.put("fromAccountId", "acc_cust1_checking");
+        legacyDoc.put("toAccountId", "acc_cust2_checking");
+        legacyDoc.put("amount", 500_000L);
+        legacyDoc.put("fee", 0L);
+        legacyDoc.put("status", "SUCCESS");
+        legacyDoc.put("createdAt", new Timestamp(1_763_440_000L, 0));
+
+        Transaction legacyTx = TransactionMapper.fromFirestoreMap("tx-legacy-1", legacyDoc);
+        assertNotNull(legacyTx);
+        assertEquals("acc_cust1_checking", ReceiptDisplayFormatter.formatFromAccount(legacyTx));
+        assertEquals("acc_cust2_checking", ReceiptDisplayFormatter.formatTargetSummary(legacyTx));
+
+        Map<String, Object> gatewayDoc = new HashMap<>();
+        gatewayDoc.put("type", "GATEWAY");
+        gatewayDoc.put("fromAccountId", "acc_member_nhan_checking");
+        gatewayDoc.put("fromAccountNumber", "1001000001");
+        gatewayDoc.put("toAccountNumber", "1001000001");
+        gatewayDoc.put("toOwnerName", "Nguyễn Phan Nhân");
+        gatewayDoc.put("amount", 2_000_000L);
+        gatewayDoc.put("fee", 0L);
+        gatewayDoc.put("status", "SUCCESS");
+        gatewayDoc.put("createdAt", new Timestamp(1_763_440_000L, 0));
+
+        Transaction gatewayTx = TransactionMapper.fromFirestoreMap("tx-gw-1", gatewayDoc);
+        assertNotNull(gatewayTx);
+        assertEquals("1001000001", ReceiptDisplayFormatter.formatFromAccount(gatewayTx));
+        assertEquals("Stripe • Nguyễn Phan Nhân (1001000001)", ReceiptDisplayFormatter.formatTargetSummary(gatewayTx));
+
+        Map<String, Object> billDoc = new HashMap<>();
+        billDoc.put("type", "BILL");
+        billDoc.put("fromAccountId", "acc_member_nhan_checking");
+        billDoc.put("fromAccountNumber", "1001000001");
+        billDoc.put("toAccountNumber", "PE0100001234");
+        billDoc.put("toOwnerName", "EVN TP.HCM");
+        billDoc.put("amount", 850_000L);
+        billDoc.put("fee", 0L);
+        billDoc.put("status", "SUCCESS");
+        billDoc.put("createdAt", new Timestamp(1_763_440_000L, 0));
+
+        Transaction billTx = TransactionMapper.fromFirestoreMap("tx-bill-1", billDoc);
+        assertNotNull(billTx);
+        assertEquals("1001000001", ReceiptDisplayFormatter.formatFromAccount(billTx));
+        assertEquals("EVN TP.HCM • PE0100001234", ReceiptDisplayFormatter.formatTargetSummary(billTx));
     }
 
     @Test

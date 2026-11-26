@@ -42,6 +42,12 @@ async function createTestHarness(): Promise<TestHarness> {
     status: "ACTIVE",
     ekyc: { status: "VERIFIED" },
   });
+  db.seed("users/uid_2", {
+    fullName: "Lê Thị Thu Hà",
+    email: "ha@novapay.vn",
+    status: "ACTIVE",
+    ekyc: { status: "VERIFIED" },
+  });
   db.seed("ekyc_images/uid_1", {
     imageBase64: "EKYC_REF_IMAGE_BASE64",
   });
@@ -282,6 +288,12 @@ describe("Transactions Routes", () => {
     assert.equal(h.db.getRaw("accounts/acc_chk_1")?.balance, 48_000_000);
     assert.equal(h.db.getRaw("accounts/acc_chk_2")?.balance, 7_000_000);
 
+    // Verify receipt snapshot fields persisted in transactions/{txId}
+    const savedTx = h.db.getRaw(`transactions/${confirmJson.txId}`);
+    assert.equal(savedTx?.fromAccountNumber, "10000001");
+    assert.equal(savedTx?.toAccountNumber, "10000002");
+    assert.equal(savedTx?.toOwnerName, "Lê Thị Thu Hà");
+
     const fromLedger = h.db.listCollection("accounts/acc_chk_1/ledger");
     const toLedger = h.db.listCollection("accounts/acc_chk_2/ledger");
     assert.equal(fromLedger.length, 1);
@@ -399,6 +411,10 @@ describe("Transactions Routes", () => {
     assert.equal(okJson.status, "SUCCESS");
     assert.equal(h.db.getRaw(`face_checks/${initJson.draftId}`)?.txId, okJson.txId);
     assert.equal(h.db.getRaw("accounts/acc_chk_1")?.balance, 44_000_000);
+    const interbankTx = h.db.getRaw(`transactions/${okJson.txId}`);
+    assert.equal(interbankTx?.fromAccountNumber, "10000001");
+    assert.equal(interbankTx?.toAccountNumber, "0071000999888");
+    assert.equal(interbankTx?.toOwnerName, "Lê Hoàng Nam");
   });
 
   it("keeps draft PENDING_OTP on OTP_EXPIRED so /resend-otp succeeds, and locks after 5 wrong attempts", async () => {
@@ -482,7 +498,12 @@ describe("Transactions Routes", () => {
       body: JSON.stringify({ draftId: billDraft, otp: h.sentEmails[0].otp, biometricPassed: false }),
     });
     assert.equal(billConfirm.status, 200);
+    const billConfirmJson = (await billConfirm.json()) as { txId: string };
     assert.equal(h.db.getRaw("utility_bills/bill_1")?.status, "PAID");
+    const billTx = h.db.getRaw(`transactions/${billConfirmJson.txId}`);
+    assert.equal(billTx?.fromAccountNumber, "10000001");
+    assert.equal(billTx?.toAccountNumber, "PE01001");
+    assert.equal(billTx?.toOwnerName, "EVN HCMC");
 
     // 2. SERVICE_PAYMENT
     const svcInit = await fetch(`${h.baseUrl}/transactions/initiate`, {
@@ -503,12 +524,17 @@ describe("Transactions Routes", () => {
       body: JSON.stringify({ draftId: svcDraft, otp: h.sentEmails[1].otp, biometricPassed: false }),
     });
     assert.equal(svcConfirm.status, 200);
+    const svcConfirmJson = (await svcConfirm.json()) as { txId: string };
     const orders = h.db.listCollection("orders");
     assert.equal(orders.length, 1);
     assert.equal(orders[0].data.uid, "uid_1");
     assert.equal(orders[0].data.quantity, 2);
     assert.equal(orders[0].data.totalAmount, 3_000_000);
     assert.equal(orders[0].data.status, "PAID");
+    const svcTx = h.db.getRaw(`transactions/${svcConfirmJson.txId}`);
+    assert.equal(svcTx?.fromAccountNumber, "10000001");
+    assert.equal(svcTx?.toAccountNumber, orders[0].id);
+    assert.equal(svcTx?.toOwnerName, "SGN -> HAN");
 
     // 3. MORTGAGE_PAYMENT BIWEEKLY full payoff -> CLOSED
     const mortInit = await fetch(`${h.baseUrl}/transactions/initiate`, {
@@ -529,10 +555,15 @@ describe("Transactions Routes", () => {
       body: JSON.stringify({ draftId: mortDraft, otp: h.sentEmails[2].otp, biometricPassed: false }),
     });
     assert.equal(mortConfirm.status, 200);
+    const mortConfirmJson = (await mortConfirm.json()) as { txId: string };
     const mortAcc = h.db.getRaw("accounts/acc_mort_biweekly");
     assert.equal(mortAcc?.status, "CLOSED");
     assert.equal((mortAcc?.mortgage as { outstandingBalance: number }).outstandingBalance, 0);
     assert.equal(h.db.listCollection("accounts/acc_mort_biweekly/ledger").length, 1);
+    const mortTx = h.db.getRaw(`transactions/${mortConfirmJson.txId}`);
+    assert.equal(mortTx?.fromAccountNumber, "10000001");
+    assert.equal(mortTx?.toAccountNumber, "30000002");
+    assert.equal(mortTx?.toOwnerName, "Trần Thị Lan");
   });
 
   it("rejects DEPOSIT, non-CHECKING source, self-transfer, and daily limit overflow", async () => {

@@ -27,35 +27,52 @@ public class FaceCheckViewModel extends ViewModel {
                     new FaceCheckUiState(false, R.string.core_liveness_no_face)
             ));
     private final SingleLiveEvent<Long> faceCheckPassedEvent = new SingleLiveEvent<>();
+    private final SingleLiveEvent<String> retryErrorEvent = new SingleLiveEvent<>();
+    private String lastInlineError;
 
     @Inject
     public FaceCheckViewModel(SubmitFaceCheckUseCase submitFaceCheckUseCase) {
         this.submitFaceCheckUseCase = submitFaceCheckUseCase;
     }
 
+    public static boolean isTerminalErrorCode(String errorCode) {
+        if (errorCode == null) {
+            return false;
+        }
+        String normalized = errorCode.trim().toUpperCase();
+        return "TOO_MANY_ATTEMPTS".equals(normalized)
+                || "DRAFT_EXPIRED".equals(normalized)
+                || "EKYC_REQUIRED".equals(normalized)
+                || "PERMISSION_DENIED".equals(normalized);
+    }
+
     public void onLivenessUpdated(FaceLivenessEvaluator.LivenessVerdict verdict) {
         UiState<FaceCheckUiState> current = uiState.getValue();
-        if (current != null && current.getStatus() == UiState.Status.LOADING) {
+        if (current != null && (current.getStatus() == UiState.Status.LOADING
+                || current.getStatus() == UiState.Status.ERROR)) {
             return;
         }
         boolean passed = verdict == FaceLivenessEvaluator.LivenessVerdict.READY;
         uiState.setValue(UiState.success(new FaceCheckUiState(
                 passed,
-                FaceLivenessEvaluator.toGuideMessageRes(verdict)
+                FaceLivenessEvaluator.toGuideMessageRes(verdict),
+                lastInlineError
         )));
     }
 
     public void verifyFace(String draftId, String imageBase64) {
+        lastInlineError = null;
         uiState.setValue(UiState.loading());
         disposables.add(
                 submitFaceCheckUseCase.execute(draftId, imageBase64)
                         .observeOn(AndroidSchedulers.mainThread())
                         .subscribe(this::handleVerifyResult, throwable ->
-                                uiState.setValue(UiState.error(throwable.getMessage())))
+                                emitRetryableFailure(throwable != null ? throwable.getMessage() : null))
         );
     }
 
     public void resetReady() {
+        lastInlineError = null;
         uiState.setValue(UiState.success(
                 new FaceCheckUiState(false, R.string.core_liveness_no_face)
         ));
@@ -63,10 +80,30 @@ public class FaceCheckViewModel extends ViewModel {
 
     private void handleVerifyResult(AppResult<Long> result) {
         if (result.isSuccess() && result.getData() != null) {
+            lastInlineError = null;
             faceCheckPassedEvent.setValue(result.getData());
-        } else {
-            uiState.setValue(UiState.error(result.getMessage()));
+            return;
         }
+        if (isTerminalErrorCode(result.getErrorCode())) {
+            lastInlineError = null;
+            uiState.setValue(UiState.error(result.getMessage()));
+        } else {
+            emitRetryableFailure(result.getMessage());
+        }
+    }
+
+    private void emitRetryableFailure(String message) {
+        lastInlineError = (message != null && !message.trim().isEmpty())
+                ? message.trim()
+                : null;
+        if (lastInlineError != null) {
+            retryErrorEvent.setValue(lastInlineError);
+        }
+        uiState.setValue(UiState.success(new FaceCheckUiState(
+                false,
+                R.string.core_liveness_no_face,
+                lastInlineError
+        )));
     }
 
     public LiveData<UiState<FaceCheckUiState>> getUiState() {
@@ -75,6 +112,10 @@ public class FaceCheckViewModel extends ViewModel {
 
     public SingleLiveEvent<Long> getFaceCheckPassedEvent() {
         return faceCheckPassedEvent;
+    }
+
+    public SingleLiveEvent<String> getRetryErrorEvent() {
+        return retryErrorEvent;
     }
 
     @Override

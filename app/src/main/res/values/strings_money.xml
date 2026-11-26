@@ -133,7 +133,7 @@
     <string name="money_bills_filter_all">Tất cả</string>
     <string name="money_bills_filter_electric">Tiền điện</string>
     <string name="money_bills_filter_water">Tiền nước</string>
-    <string name="money_bills_customer_code_hint">Mã khách hàng (VD: PE010001, WA010001)</string>
+    <string name="money_bills_customer_code_hint">Mã khách hàng (VD: PE0100001234, NU0700005678)</string>
     <string name="money_bills_search_action">Tra cứu hóa đơn</string>
     <string name="money_bills_empty_prompt">Nhập mã khách hàng để tra cứu hóa đơn Điện / Nước chưa thanh toán.</string>
     <string name="money_bills_empty_result">Không có hóa đơn nợ cước nào cho mã khách hàng này.</string>

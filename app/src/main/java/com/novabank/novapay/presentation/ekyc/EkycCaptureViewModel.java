@@ -35,7 +35,8 @@ public class EkycCaptureViewModel extends ViewModel {
 
     public void onLivenessUpdated(FaceLivenessEvaluator.LivenessVerdict verdict) {
         UiState<EkycCaptureUiState> current = uiState.getValue();
-        if (current != null && current.getStatus() == UiState.Status.LOADING) {
+        if (current != null && (current.getStatus() == UiState.Status.LOADING
+                || current.getStatus() == UiState.Status.ERROR)) {
             return;
         }
         boolean passed = verdict == FaceLivenessEvaluator.LivenessVerdict.READY;

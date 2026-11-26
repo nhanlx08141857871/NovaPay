@@ -1,6 +1,8 @@
 package com.novabank.novapay.presentation.ekyc;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 
 import org.junit.Test;
 
@@ -36,5 +38,18 @@ public class FaceLivenessEvaluatorTest {
                 FaceLivenessEvaluator.LivenessVerdict.READY,
                 FaceLivenessEvaluator.evaluateMetrics(1, 0.7f, 0.7f, 15.0f, -15.0f)
         );
+    }
+
+    @Test
+    public void faceCheckViewModel_isTerminalErrorCode_allowsRetryOnFaceMismatch() {
+        assertFalse(FaceCheckViewModel.isTerminalErrorCode("FACE_MISMATCH"));
+        assertFalse(FaceCheckViewModel.isTerminalErrorCode("NETWORK_ERROR"));
+        assertFalse(FaceCheckViewModel.isTerminalErrorCode("EMAIL_SEND_FAILED"));
+        assertFalse(FaceCheckViewModel.isTerminalErrorCode(null));
+
+        assertTrue(FaceCheckViewModel.isTerminalErrorCode("TOO_MANY_ATTEMPTS"));
+        assertTrue(FaceCheckViewModel.isTerminalErrorCode("DRAFT_EXPIRED"));
+        assertTrue(FaceCheckViewModel.isTerminalErrorCode("EKYC_REQUIRED"));
+        assertTrue(FaceCheckViewModel.isTerminalErrorCode("PERMISSION_DENIED"));
     }
 }

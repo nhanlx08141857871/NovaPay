@@ -28,3 +28,4 @@ server/dist/
 *.jks
 *.keystore
 /lamviec
+.agents/

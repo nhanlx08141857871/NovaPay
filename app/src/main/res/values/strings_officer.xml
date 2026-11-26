@@ -117,7 +117,7 @@
     <string name="officer_ekyc_review_approved">Đã phê duyệt eKYC cho khách hàng.</string>
     <string name="officer_ekyc_review_rejected">Đã từ chối hồ sơ eKYC.</string>
     <string name="officer_ekyc_capture_returned">Đã nhận kết quả chụp hộ eKYC tại quầy, đang tải lại danh sách.</string>
-    <string name="officer_ekyc_capture_unavailable">Màn hình chụp hộ eKYC (novapay://ekyc) thuộc phân hệ A và chưa được tích hợp trên nhánh này.</string>
+    <string name="officer_ekyc_capture_unavailable">Không thể mở màn hình chụp hộ eKYC lúc này. Vui lòng thử lại.</string>
     <string name="officer_ekyc_zoom_title">Kiểm tra ảnh khuôn mặt</string>
 
     <!-- Màn hình 5: InterestRateManagementFragment -->
@@ -162,7 +162,7 @@
     <string name="chatbot_input_hint">Nhập câu hỏi cho trợ lý NovaPay…</string>
     <string name="chatbot_send_action">Gửi</string>
     <string name="chatbot_empty_message_warning">Vui lòng nhập nội dung tin nhắn.</string>
-    <string name="chatbot_deeplink_unavailable">Màn hình đích (%1$s) chưa khả dụng trên nhánh độc lập này.</string>
+    <string name="chatbot_deeplink_unavailable">Không thể mở chức năng được yêu cầu (%1$s).</string>
     <string name="chatbot_send_failed">Không thể gửi tin nhắn tới trợ lý AI. Vui lòng thử lại.</string>
     <string name="chatbot_suggestion_balance">Kiểm tra số dư</string>
     <string name="chatbot_suggestion_bills">Thanh toán hóa đơn</string>

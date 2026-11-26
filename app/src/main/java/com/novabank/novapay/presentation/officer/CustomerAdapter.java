@@ -2,6 +2,7 @@ package com.novabank.novapay.presentation.officer;
 
 import android.content.Context;
 import android.view.LayoutInflater;
+import android.view.View;
 import android.view.ViewGroup;
 
 import androidx.annotation.NonNull;
@@ -22,6 +23,7 @@ public final class CustomerAdapter extends ListAdapter<CustomerProfile, Customer
     public interface OnCustomerActionListener {
         void onEditCustomer(@NonNull CustomerProfile customer);
         void onToggleLock(@NonNull CustomerProfile customer);
+        void onCounterCaptureEkyc(@NonNull CustomerProfile customer);
     }
 
     private static final DiffUtil.ItemCallback<CustomerProfile> DIFF_CALLBACK =
@@ -116,6 +118,8 @@ public final class CustomerAdapter extends ListAdapter<CustomerProfile, Customer
 
             binding.btnEditCustomer.setOnClickListener(v -> listener.onEditCustomer(item));
             binding.btnToggleLock.setOnClickListener(v -> listener.onToggleLock(item));
+            binding.btnCounterCaptureEkyc.setVisibility(item.isLocked() ? View.GONE : View.VISIBLE);
+            binding.btnCounterCaptureEkyc.setOnClickListener(v -> listener.onCounterCaptureEkyc(item));
         }
     }
 }

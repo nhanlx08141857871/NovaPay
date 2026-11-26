@@ -182,6 +182,10 @@ describe("Stripe GATEWAY 2-Phase Flow & Idempotent /payments/finalize", () => {
     assert.equal(db.getRaw("accounts/acc_chk_gw")?.balance, 11_000_000);
     assert.equal(db.listCollection("accounts/acc_chk_gw/ledger").length, 1);
     assert.equal(db.listCollection("accounts/acc_chk_gw/ledger")[0].data.direction, "IN");
+    const gwTx = db.getRaw(`transactions/${fin1Json.txId}`);
+    assert.equal(gwTx?.fromAccountNumber, "10009999");
+    assert.equal(gwTx?.toAccountNumber, "10009999");
+    assert.equal(gwTx?.toOwnerName, "Phạm Quốc Bảo");
 
     // 5. Retry finalize -> idempotent, identical txId, NO double-crediting!
     const fin2Res = await fetch(`${baseUrl}/payments/finalize`, {

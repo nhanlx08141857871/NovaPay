@@ -1,5 +1,6 @@
 package com.novabank.novapay.presentation.officer;
 
+import android.net.Uri;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.LayoutInflater;
@@ -14,6 +15,7 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.novabank.novapay.R;
+import com.novabank.novapay.core.common.Constants;
 import com.novabank.novapay.core.common.UiState;
 import com.novabank.novapay.core.ui.BaseFragment;
 import com.novabank.novapay.core.ui.StateLayoutHelper;
@@ -65,9 +67,23 @@ public class CustomerManagementFragment extends BaseFragment<FragmentCustomerMan
             public void onToggleLock(@NonNull CustomerProfile customer) {
                 showToggleLockConfirmation(customer);
             }
+
+            @Override
+            public void onCounterCaptureEkyc(@NonNull CustomerProfile customer) {
+                launchCounterCapture(customer.getUid());
+            }
         });
         b.contentContainer.setLayoutManager(new LinearLayoutManager(requireContext()));
         b.contentContainer.setAdapter(adapter);
+
+        getParentFragmentManager().setFragmentResultListener(
+                Constants.REQ_EKYC_CAPTURE,
+                getViewLifecycleOwner(),
+                (requestKey, result) -> {
+                    showSnackbar(getString(R.string.officer_ekyc_capture_returned));
+                    viewModel.loadCustomers();
+                }
+        );
 
         b.toolbarCustomers.setNavigationOnClickListener(v ->
                 NavHostFragment.findNavController(this).popBackStack()
@@ -132,6 +148,15 @@ public class CustomerManagementFragment extends BaseFragment<FragmentCustomerMan
                 showSnackbar(getString(resId));
             }
         });
+    }
+
+    private void launchCounterCapture(@NonNull String targetUid) {
+        try {
+            Uri uri = Uri.parse(Constants.DEEPLINK_EKYC + "?targetUid=" + Uri.encode(targetUid));
+            NavHostFragment.findNavController(this).navigate(uri);
+        } catch (IllegalArgumentException | IllegalStateException ex) {
+            showSnackbar(getString(R.string.officer_ekyc_capture_unavailable));
+        }
     }
 
     private void showToggleLockConfirmation(@NonNull CustomerProfile customer) {

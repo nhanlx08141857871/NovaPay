@@ -34,6 +34,7 @@ import com.google.mlkit.vision.face.FaceDetector;
 import com.google.mlkit.vision.face.FaceDetectorOptions;
 import com.novabank.novapay.R;
 import com.novabank.novapay.core.common.Constants;
+import com.novabank.novapay.core.common.UiState;
 import com.novabank.novapay.core.ui.StateLayoutHelper;
 import com.novabank.novapay.core.util.ImageCompressor;
 import com.novabank.novapay.databinding.DialogFaceCheckBinding;
@@ -114,6 +115,7 @@ public class FaceCheckDialogFragment extends AppCompatDialogFragment {
         }
 
         binding.stateLoading.tvLoadingMessage.setText(R.string.core_face_check_verifying);
+        binding.stateError.btnRetry.setText(R.string.core_face_check_cancel_action);
         stateLayoutHelper = new StateLayoutHelper(
                 binding.contentContainer,
                 binding.stateLoading,
@@ -121,7 +123,8 @@ public class FaceCheckDialogFragment extends AppCompatDialogFragment {
                 binding.stateError,
                 () -> {
                     isCapturing = false;
-                    viewModel.resetReady();
+                    deliverResult(false, 0L);
+                    dismiss();
                 }
         );
 
@@ -157,6 +160,9 @@ public class FaceCheckDialogFragment extends AppCompatDialogFragment {
             if (state == null || binding == null) {
                 return;
             }
+            if (state.getStatus() != UiState.Status.LOADING) {
+                isCapturing = false;
+            }
             stateLayoutHelper.render(state);
             FaceCheckUiState data = state.getData();
             if (data != null) {
@@ -167,7 +173,23 @@ public class FaceCheckDialogFragment extends AppCompatDialogFragment {
                                 ? R.color.novapay_income_positive
                                 : R.color.novapay_warning_pending
                 ));
+                String inlineError = data.getInlineError();
+                if (inlineError != null && !inlineError.isEmpty()) {
+                    binding.tvFaceCheckError.setText(inlineError);
+                    binding.tvFaceCheckError.setVisibility(View.VISIBLE);
+                } else {
+                    binding.tvFaceCheckError.setVisibility(View.GONE);
+                }
                 binding.btnVerifyFace.setEnabled(data.isLivenessPassed() && !isCapturing);
+            }
+        });
+
+        viewModel.getRetryErrorEvent().observe(getViewLifecycleOwner(), message -> {
+            isCapturing = false;
+            if (message != null && !message.isEmpty()) {
+                showMessage(message);
+            } else {
+                showMessage(getString(R.string.core_face_check_mismatch));
             }
         });
 

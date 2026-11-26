@@ -12,7 +12,10 @@ public final class Transaction {
     private final String txId;
     private final TransactionType type;
     private final String fromAccountId;
+    private final String fromAccountNumber;
     private final String toAccountId;
+    private final String toAccountNumber;
+    private final String toOwnerName;
     private final ExternalRecipient toExternal;
     private final long amount;
     private final long fee;
@@ -44,10 +47,57 @@ public final class Transaction {
             String initiatedBy,
             Instant createdAt
     ) {
+        this(
+                txId,
+                type,
+                fromAccountId,
+                null,
+                toAccountId,
+                null,
+                null,
+                toExternal,
+                amount,
+                fee,
+                note,
+                status,
+                requiresBiometric,
+                biometricPassed,
+                otpVerified,
+                faceChecked,
+                meta,
+                initiatedBy,
+                createdAt
+        );
+    }
+
+    public Transaction(
+            String txId,
+            TransactionType type,
+            String fromAccountId,
+            String fromAccountNumber,
+            String toAccountId,
+            String toAccountNumber,
+            String toOwnerName,
+            ExternalRecipient toExternal,
+            long amount,
+            long fee,
+            String note,
+            TransactionStatus status,
+            boolean requiresBiometric,
+            boolean biometricPassed,
+            boolean otpVerified,
+            boolean faceChecked,
+            TransactionMeta meta,
+            String initiatedBy,
+            Instant createdAt
+    ) {
         this.txId = Objects.requireNonNull(txId, "txId must not be null");
         this.type = Objects.requireNonNull(type, "type must not be null");
         this.fromAccountId = fromAccountId;
+        this.fromAccountNumber = trimToNull(fromAccountNumber);
         this.toAccountId = toAccountId;
+        this.toAccountNumber = trimToNull(toAccountNumber);
+        this.toOwnerName = trimToNull(toOwnerName);
         this.toExternal = toExternal;
         this.amount = amount;
         this.fee = fee;
@@ -62,6 +112,14 @@ public final class Transaction {
         this.createdAt = createdAt;
     }
 
+    private static String trimToNull(String value) {
+        if (value == null) {
+            return null;
+        }
+        String trimmed = value.trim();
+        return trimmed.isEmpty() ? null : trimmed;
+    }
+
     public String getTxId() {
         return txId;
     }
@@ -74,8 +132,20 @@ public final class Transaction {
         return fromAccountId;
     }
 
+    public String getFromAccountNumber() {
+        return fromAccountNumber;
+    }
+
     public String getToAccountId() {
         return toAccountId;
+    }
+
+    public String getToAccountNumber() {
+        return toAccountNumber;
+    }
+
+    public String getToOwnerName() {
+        return toOwnerName;
     }
 
     public ExternalRecipient getToExternal() {

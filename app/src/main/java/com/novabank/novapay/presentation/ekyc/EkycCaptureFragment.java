@@ -31,6 +31,7 @@ import com.google.mlkit.vision.face.FaceDetector;
 import com.google.mlkit.vision.face.FaceDetectorOptions;
 import com.novabank.novapay.R;
 import com.novabank.novapay.core.common.Constants;
+import com.novabank.novapay.core.common.UiState;
 import com.novabank.novapay.core.ui.BaseFragment;
 import com.novabank.novapay.core.ui.StateLayoutHelper;
 import com.novabank.novapay.core.util.ImageCompressor;
@@ -145,6 +146,9 @@ public class EkycCaptureFragment extends BaseFragment<FragmentEkycCaptureBinding
         viewModel.getUiState().observe(getViewLifecycleOwner(), state -> {
             if (state == null) {
                 return;
+            }
+            if (state.getStatus() != UiState.Status.LOADING) {
+                isCapturing = false;
             }
             stateLayoutHelper.render(state);
             EkycCaptureUiState data = state.getData();

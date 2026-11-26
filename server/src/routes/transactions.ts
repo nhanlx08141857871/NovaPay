@@ -1112,6 +1112,13 @@ export function createTransactionsRouter(deps?: TransactionsRouteDeps): Router {
         const toAccountId = asTrimmedString(payload.toAccountId);
         const toAccRef = toAccountId ? db.collection("accounts").doc(toAccountId) : null;
         const toAccSnap = toAccRef ? await tx.get(toAccRef) : null;
+        const toOwnerUid =
+          type === "TRANSFER_INTERNAL" && toAccSnap?.exists
+            ? asTrimmedString(toAccSnap.data()?.ownerUid)
+            : "";
+        const toOwnerSnap = toOwnerUid
+          ? await tx.get(db.collection("users").doc(toOwnerUid))
+          : null;
 
         const billId = asTrimmedString(meta.billId);
         const billRef = type === "BILL" && billId ? db.collection("utility_bills").doc(billId) : null;
@@ -1291,11 +1298,39 @@ export function createTransactionsRouter(deps?: TransactionsRouteDeps): Router {
           });
         }
 
+        const fromAccountNumber = asTrimmedString(fromAccData.accountNumber);
         const toExternal = payload.toExternal ? asPlainObject(payload.toExternal) : null;
+        let toAccountNumber = "";
+        let toOwnerName = "";
+
+        if (type === "TRANSFER_INTERNAL" && toAccSnap?.exists) {
+          toAccountNumber = asTrimmedString(toAccSnap.data()?.accountNumber);
+          toOwnerName = toOwnerSnap?.exists ? asTrimmedString(toOwnerSnap.data()?.fullName) : "";
+        } else if (type === "TRANSFER_INTERBANK" && toExternal) {
+          toAccountNumber = asTrimmedString(toExternal.accountNumber);
+          toOwnerName = asTrimmedString(toExternal.name);
+        } else if (type === "BILL" && billSnap?.exists) {
+          const billData = billSnap.data() ?? {};
+          toAccountNumber =
+            asTrimmedString(billData.customerCode) || asTrimmedString(meta.billCode);
+          toOwnerName = asTrimmedString(billData.providerName);
+        } else if (type === "TOPUP") {
+          toAccountNumber = asTrimmedString(meta.phone);
+        } else if (type === "SERVICE_PAYMENT" && itemSnap?.exists) {
+          toAccountNumber = asTrimmedString(meta.orderId);
+          toOwnerName = asTrimmedString(itemSnap.data()?.title);
+        } else if (type === "MORTGAGE_PAYMENT" && mortAccSnap?.exists) {
+          toAccountNumber = asTrimmedString(mortAccSnap.data()?.accountNumber);
+          toOwnerName = asTrimmedString(freshUser.fullName);
+        }
+
         tx.set(txRef, {
           type,
           fromAccountId,
+          ...(fromAccountNumber ? { fromAccountNumber } : {}),
           ...(toAccountId ? { toAccountId } : {}),
+          ...(toAccountNumber ? { toAccountNumber } : {}),
+          ...(toOwnerName ? { toOwnerName } : {}),
           ...(toExternal ? { toExternal } : {}),
           amount,
           fee,

@@ -98,6 +98,14 @@
                 android:layout_weight="1"
                 android:text="@string/officer_customer_lock_action" />
         </LinearLayout>
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btnCounterCaptureEkyc"
+            style="@style/Widget.NovaPay.Button.Outlined"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:text="@string/officer_ekyc_counter_capture_action" />
     </LinearLayout>
 
 </com.google.android.material.card.MaterialCardView>

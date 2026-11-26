@@ -25,9 +25,7 @@ import com.novabank.novapay.core.ui.StateLayoutHelper;
 import com.novabank.novapay.core.util.CurrencyFormatter;
 import com.novabank.novapay.core.util.DateUtils;
 import com.novabank.novapay.databinding.FragmentReceiptBinding;
-import com.novabank.novapay.domain.model.transaction.ExternalRecipient;
 import com.novabank.novapay.domain.model.transaction.Transaction;
-import com.novabank.novapay.domain.model.transaction.TransactionMeta;
 import com.novabank.novapay.domain.model.transaction.TransactionStatus;
 import com.novabank.novapay.domain.model.transaction.TransactionType;
 
@@ -125,8 +123,8 @@ public class ReceiptFragment extends BaseFragment<FragmentReceiptBinding> {
                 ? DateUtils.formatDateTime(tx.getCreatedAt())
                 : "-");
         b.tvReceiptType.setText(resolveTypeLabel(tx.getType()));
-        b.tvReceiptFromAccount.setText(tx.getFromAccountId() != null ? tx.getFromAccountId() : "-");
-        b.tvReceiptTarget.setText(resolveTargetSummary(tx));
+        b.tvReceiptFromAccount.setText(ReceiptDisplayFormatter.formatFromAccount(tx));
+        b.tvReceiptTarget.setText(ReceiptDisplayFormatter.formatTargetSummary(tx));
         b.tvReceiptFee.setText(tx.getFee() <= 0L
                 ? getString(R.string.money_receipt_free_fee)
                 : CurrencyFormatter.formatVnd(tx.getFee()));
@@ -149,41 +147,6 @@ public class ReceiptFragment extends BaseFragment<FragmentReceiptBinding> {
             case SERVICE_PAYMENT -> getString(R.string.money_tx_type_service);
             case MORTGAGE_PAYMENT -> getString(R.string.money_tx_type_mortgage);
         };
-    }
-
-    @NonNull
-    private String resolveTargetSummary(@NonNull Transaction tx) {
-        ExternalRecipient ext = tx.getToExternal();
-        if (ext != null && !ext.getAccountNumber().isEmpty()) {
-            return ext.getName() + " • " + ext.getBankCode() + " (" + ext.getAccountNumber() + ")";
-        }
-        if (tx.getToAccountId() != null && !tx.getToAccountId().isEmpty()) {
-            return tx.getToAccountId();
-        }
-        TransactionMeta meta = tx.getMeta();
-        if (meta != null) {
-            if (meta.getBillCode() != null) {
-                return meta.getBillCode();
-            }
-            if (meta.getBillId() != null) {
-                return meta.getBillId();
-            }
-            if (meta.getPhone() != null) {
-                return meta.getPhone();
-            }
-            if (meta.getMortgageAccountId() != null) {
-                return meta.getMortgageAccountId();
-            }
-            if (meta.getItemId() != null) {
-                return meta.getOrderId() != null
-                        ? meta.getItemId() + " (" + meta.getOrderId() + ")"
-                        : meta.getItemId();
-            }
-            if (meta.getGatewayRef() != null) {
-                return "Stripe • " + meta.getGatewayRef();
-            }
-        }
-        return tx.getFromAccountId() != null ? tx.getFromAccountId() : "-";
     }
 
     private void exportAndShareReceiptPng() {

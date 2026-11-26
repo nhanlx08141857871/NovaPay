@@ -154,6 +154,7 @@ export function createPaymentsRouter(deps?: PaymentsRouteDeps): Router {
 
         const accRef = db.collection("accounts").doc(fromAccountId);
         const accSnap = await tx.get(accRef);
+        const userSnap = await tx.get(db.collection("users").doc(uid));
         if (!accSnap.exists) {
           throw new PaymentApiError(404, "ACCOUNT_NOT_FOUND", "Không tìm thấy tài khoản nhận tiền.");
         }
@@ -172,6 +173,12 @@ export function createPaymentsRouter(deps?: PaymentsRouteDeps): Router {
         const txRef = db.collection("transactions").doc();
         const txId = txRef.id;
         const nowTs = admin.firestore.FieldValue.serverTimestamp();
+        const fromAccountNumber =
+          typeof accData.accountNumber === "string" ? accData.accountNumber.trim() : "";
+        const toOwnerName =
+          userSnap.exists && typeof userSnap.data()?.fullName === "string"
+            ? String(userSnap.data()?.fullName).trim()
+            : "";
 
         tx.update(accRef, { balance: newBalance });
         tx.set(accRef.collection("ledger").doc(), {
@@ -185,6 +192,10 @@ export function createPaymentsRouter(deps?: PaymentsRouteDeps): Router {
         tx.set(txRef, {
           type: "GATEWAY",
           fromAccountId,
+          ...(fromAccountNumber
+            ? { fromAccountNumber, toAccountNumber: fromAccountNumber }
+            : {}),
+          ...(toOwnerName ? { toOwnerName } : {}),
           amount,
           fee: 0,
           note,
