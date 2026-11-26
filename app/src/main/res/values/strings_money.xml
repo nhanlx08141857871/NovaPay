@@ -35,7 +35,7 @@
     <string name="money_transfer_chip_100k">100.000 ₫</string>
     <string name="money_transfer_chip_500k">500.000 ₫</string>
     <string name="money_transfer_chip_1m">1.000.000 ₫</string>
-    <string name="money_transfer_chip_6m">6.000.000 ₫ (&gt;5M)</string>
+    <string name="money_transfer_chip_6m">6.000.000 ₫</string>
     <string name="money_transfer_note_hint">Nội dung chuyển tiền</string>
     <string name="money_transfer_default_note">Chuyen tien NovaPay</string>
     <string name="money_transfer_save_beneficiary">Lưu người nhận vào danh bạ thụ hưởng</string>
@@ -47,19 +47,19 @@
     <string name="money_qr_subtitle">Đưa mã QR NovaPay hoặc mã tài khoản vào khung hình để tự động điền thông tin người nhận.</string>
     <string name="money_qr_permission_message">Ứng dụng cần quyền Camera để quét mã QR thanh toán.</string>
     <string name="money_qr_permission_grant">Cấp quyền Camera</string>
-    <string name="money_qr_manual_title">Hoặc dán nội dung mã QR (hỗ trợ kiểm thử máy ảo)</string>
+    <string name="money_qr_manual_title">Hoặc nhập / dán mã thanh toán QR</string>
     <string name="money_qr_manual_hint">novapay://transfer?accountNumber=... hoặc số TK</string>
     <string name="money_qr_manual_apply">Áp dụng mã QR</string>
     <string name="money_qr_invalid_payload">Mã QR không hợp lệ hoặc không chứa số tài khoản nhận tiền.</string>
     <string name="money_qr_applied_success">Đã điền thông tin người nhận từ mã QR.</string>
 
-    <!-- Nạp / Rút tiền Stripe & Trả nợ vay (DepositWithdrawFragment) -->
+    <!-- Nạp / Rút tiền trực tuyến & Trả nợ vay (DepositWithdrawFragment) -->
     <string name="money_dw_title">Nạp / Rút tiền &amp; Trả nợ vay</string>
-    <string name="money_dw_tab_deposit">Nạp Stripe</string>
+    <string name="money_dw_tab_deposit">Nạp trực tuyến</string>
     <string name="money_dw_tab_withdraw">Rút tiền</string>
     <string name="money_dw_tab_mortgage">Trả nợ vay</string>
     <string name="money_dw_deposit_Account_label">Tài khoản CHECKING nhận tiền nạp</string>
-    <string name="money_dw_deposit_subtitle">Nạp tiền qua cổng quốc tế Stripe PaymentSheet (Test Mode). Xác thực OTP Email 2FA, miễn FaceCheck &gt; 5M.</string>
+    <string name="money_dw_deposit_subtitle">Nạp tiền trực tuyến tức thì qua cổng thanh toán thẻ quốc tế. Bảo mật bằng mã xác thực OTP Email 2FA.</string>
     <string name="money_dw_withdraw_subtitle">Rút tiền từ tài khoản CHECKING về thẻ/ngân hàng liên kết (áp dụng xác thực 3 lớp nếu trên 5.000.000 ₫).</string>
     <string name="money_dw_withdraw_dest_hint">Số thẻ / Tài khoản ngân hàng liên kết nhận tiền rút</string>
     <string name="money_dw_mortgage_select_hint">Chọn hợp đồng vay thế chấp (MORTGAGE)</string>
@@ -73,15 +73,15 @@
     <string name="money_dw_chip_2m">2.000.000 ₫</string>
     <string name="money_dw_chip_10m">10.000.000 ₫</string>
     <string name="money_dw_note_hint">Ghi chú giao dịch</string>
-    <string name="money_dw_action_deposit">Tiếp tục nạp tiền qua Stripe</string>
+    <string name="money_dw_action_deposit">Tiếp tục nạp tiền trực tuyến</string>
     <string name="money_dw_action_withdraw">Tiếp tục rút tiền</string>
     <string name="money_dw_action_mortgage">Thanh toán kỳ hạn khoản vay</string>
-    <string name="money_stripe_merchant_name">NovaPay Digital Banking (Sandbox)</string>
-    <string name="money_stripe_publishable_key" translatable="false">pk_test_51NovaPaySandboxReplaceWithRealTestKey000000</string>
-    <string name="money_stripe_canceled">Bạn đã hủy phiên thanh toán trên Stripe PaymentSheet.</string>
-    <string name="money_stripe_failed">Thanh toán Stripe không thành công: %1$s</string>
-    <string name="money_stripe_finalizing">Đang xác nhận giao dịch với cổng Stripe…</string>
-    <string name="money_stripe_key_unconfigured">Chưa cấu hình khóa công khai Stripe (pk_test_…) hợp lệ để mở PaymentSheet.</string>
+    <string name="money_stripe_merchant_name">Ngân hàng số NovaBank — NovaPay</string>
+    <string name="money_stripe_publishable_key" translatable="false">pk_test_51NovaPayCommercialGatewayConfig000000</string>
+    <string name="money_stripe_canceled">Giao dịch nạp tiền trực tuyến đã được hủy theo yêu cầu của bạn.</string>
+    <string name="money_stripe_failed">Giao dịch thanh toán trực tuyến không thành công: %1$s</string>
+    <string name="money_stripe_finalizing">Đang xác nhận giao dịch nạp tiền trực tuyến…</string>
+    <string name="money_stripe_key_unconfigured">Cổng thanh toán thẻ quốc tế hiện chưa sẵn sàng kết nối. Vui lòng thử lại sau.</string>
 
     <!-- Xác thực OTP 2FA & Điều phối 3 lớp (OtpVerificationDialogFragment) -->
     <string name="money_otp_dialog_title">Xác thực bảo mật giao dịch</string>
@@ -124,7 +124,7 @@
     <string name="money_receipt_export_failed">Không thể xuất ảnh biên lai lúc này.</string>
     <string name="money_tx_type_internal">Chuyển tiền nội bộ NovaPay</string>
     <string name="money_tx_type_interbank">Chuyển tiền liên ngân hàng 24/7</string>
-    <string name="money_tx_type_gateway">Nạp tiền qua cổng Stripe</string>
+    <string name="money_tx_type_gateway">Nạp tiền trực tuyến</string>
     <string name="money_tx_type_deposit">Nạp tiền tài khoản</string>
     <string name="money_tx_type_withdraw">Rút tiền về tài khoản liên kết</string>
     <string name="money_tx_type_bill">Thanh toán hóa đơn Điện / Nước</string>

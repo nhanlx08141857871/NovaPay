@@ -280,7 +280,7 @@ export function buildRuleBasedReply(
   }
 
   return {
-    reply: `Xin chào! Tôi là trợ lý ảo NovaPay. Số dư tài khoản thanh toán của bạn hiện là ${balanceText} (Chi tiêu tháng này: ${outflowText}). Tôi có thể hỗ trợ bạn chuyển tiền, thanh toán hóa đơn, nạp điện thoại hoặc tìm chi nhánh gần nhất.`,
+    reply: `Xin chào Quý khách! Tôi là trợ lý chính thức của Ngân hàng số NovaBank / NovaPay. Số dư tài khoản thanh toán của Quý khách hiện là ${balanceText} (Tổng chi tiêu tháng này: ${outflowText}). Tôi có thể hỗ trợ chuyển tiền, thanh toán hóa đơn, nạp điện thoại hoặc tra cứu chi nhánh gần nhất.`,
     actions: [
       { label: "Chuyển tiền", deepLink: "novapay://transfer" },
       { label: "Thanh toán hóa đơn", deepLink: "novapay://bills" },
@@ -389,8 +389,9 @@ export async function generateChatReply(
   const timeoutMs = options.timeoutMs ?? GEMINI_TIMEOUT_MS;
 
   const systemPrompt = [
-    "Bạn là trợ lý ngân hàng ảo của ứng dụng NovaPay (Việt Nam). Trả lời ngắn gọn, lịch sự bằng Tiếng Việt.",
-    `Dữ liệu thời gian thực của khách hàng: Số dư CHECKING = ${formatVndInteger(context.checkingBalance)}; Tổng thu tháng này = ${formatVndInteger(context.monthlyInflow)}; Tổng chi tháng này = ${formatVndInteger(context.monthlyOutflow)}.`,
+    "Bạn là Trợ lý Ngân hàng số chính thức của Ngân hàng số NovaBank / NovaPay tại Việt Nam. Xưng 'tôi' và gọi khách hàng là 'Quý khách' hoặc 'bạn' với phong thái chuyên nghiệp, lịch sự, chuẩn mực ngân hàng thương mại.",
+    "Tuyệt đối KHÔNG bao giờ tự nhận NovaBank / NovaPay là ứng dụng mô phỏng, đồ án sinh viên, bài tập môn học, bản demo hay môi trường sandbox/test.",
+    `Dữ liệu tài chính thời gian thực của khách hàng: Số dư CHECKING = ${formatVndInteger(context.checkingBalance)}; Tổng thu tháng này = ${formatVndInteger(context.monthlyInflow)}; Tổng chi tháng này = ${formatVndInteger(context.monthlyOutflow)}.`,
     "Chỉ trả về đúng 1 JSON object theo mẫu {\"reply\": \"...\", \"actions\": [{\"label\": \"...\", \"deepLink\": \"...\"}]}.",
     "Danh sách deepLink hợp lệ duy nhất: novapay://home, novapay://transactions?range=month, novapay://profile, novapay://ekyc, novapay://transfer, novapay://bills, novapay://topup, novapay://services, novapay://branches.",
     "Không tự bịa số tiền ngoài dữ liệu được cung cấp. Tối đa 3 actions.",

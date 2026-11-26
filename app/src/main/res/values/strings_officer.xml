@@ -7,7 +7,7 @@
     <string name="state_error_title">Đã xảy ra lỗi</string>
     <string name="state_error_default_message">Không thể tải thông tin lúc này. Vui lòng thử lại.</string>
     <string name="state_action_retry">Thử lại</string>
-    <string name="map_tdtu_fallback_notice">Không lấy được GPS tại TP.HCM — đang sử dụng vị trí mặc định ĐH Tôn Đức Thắng (Quận 7).</string>
+    <string name="map_tdtu_fallback_notice">Không xác định được tín hiệu GPS hiện tại — đang hiển thị khu vực trung tâm Nam Sài Gòn (Quận 7, TP.HCM).</string>
 
     <!-- OpenRouteService API key (để trống mặc định; nạp cục bộ khi cần định tuyến đi bộ trực tuyến) -->
     <string name="openroute_api_key" translatable="false"></string>
@@ -145,7 +145,7 @@
     <string name="map_branches_title">Chi nhánh &amp; ATM NovaPay</string>
     <string name="map_my_location_action">Vị trí của tôi</string>
     <string name="map_user_marker_title">Vị trí của bạn</string>
-    <string name="map_tdtu_marker_title">ĐH Tôn Đức Thắng (Vị trí mặc định)</string>
+    <string name="map_tdtu_marker_title">Trung tâm Quận 7, TP.HCM (Vị trí mặc định)</string>
     <string name="map_type_branch">Chi nhánh</string>
     <string name="map_type_atm">Máy ATM</string>
     <string name="map_nearest_badge">Gần nhất</string>

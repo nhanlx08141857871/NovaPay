@@ -66,7 +66,7 @@ function buildOtpEmailHtml(params: SendOtpEmailParams): string {
     `<p>Mã OTP xác thực giao dịch của bạn là:</p>`,
     `<div style="font-size: 28px; font-weight: bold; letter-spacing: 6px; color: #0f4c81; padding: 12px 16px; background: #f3f6fa; display: inline-block; border-radius: 8px;">${safeOtp}</div>`,
     `<p>Mã OTP có hiệu lực trong <strong>${expiresIn} giây</strong>. Tuyệt đối không chia sẻ mã này cho bất kỳ ai.</p>`,
-    `<p style="color: #6b7280; font-size: 12px;">NovaPay Digital Banking (Academic Sandbox Simulation)</p>`,
+    `<p style="color: #6b7280; font-size: 12px;">Ngân hàng số NovaBank — Hệ thống Thanh toán Điện tử NovaPay</p>`,
     "</div>",
   ].join("");
 }

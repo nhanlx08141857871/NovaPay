@@ -51,15 +51,6 @@
                 android:textAppearance="?attr/textAppearanceBodyMedium"
                 android:textColor="?attr/colorOnSurfaceVariant" />
 
-            <TextView
-                style="@style/Widget.NovaPay.StatusBadge"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="12dp"
-                android:background="@drawable/bg_np_badge_verified"
-                android:text="@string/core_login_sandbox_badge"
-                android:textColor="@color/np_accent_emerald_ink" />
-
             <!-- Crisp White Login Card (1dp #E2E8F0 hairline, 0dp shadow) -->
             <com.google.android.material.card.MaterialCardView
                 style="@style/Widget.NovaPay.Card.Outlined"
@@ -132,17 +123,6 @@
                 android:layout_width="match_parent"
                 android:layout_height="0dp"
                 android:layout_weight="1" />
-
-            <TextView
-                android:id="@+id/tvAcademicDisclaimer"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="28dp"
-                android:gravity="center"
-                android:lineSpacingExtra="2dp"
-                android:text="@string/core_academic_sandbox_disclaimer"
-                android:textAppearance="?attr/textAppearanceLabelSmall"
-                android:textColor="?attr/colorOnSurfaceVariant" />
         </LinearLayout>
     </ScrollView>
 

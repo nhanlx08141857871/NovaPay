@@ -686,7 +686,7 @@ async function runSeed(): Promise<void> {
         direction: "OUT",
         amount: 2_000_000,
         balanceAfter: member.checkingBalance,
-        description: "Chi tiêu tiện ích mẫu trong tháng",
+        description: "Thanh toán dịch vụ tiện ích trực tuyến",
         createdAt: dayOffsetMs(14),
         type: "SERVICE_PAYMENT",
       },
@@ -755,7 +755,7 @@ async function runSeed(): Promise<void> {
   const branches = [
     {
       id: "br_tdtu_q7",
-      name: "NovaBank PGD ĐH Tôn Đức Thắng",
+      name: "NovaBank PGD Nguyễn Hữu Thọ — Quận 7",
       address: "19 Nguyễn Hữu Thọ, Tân Phong, Quận 7, TP.HCM",
       lat: 10.7326,
       lng: 106.6998,
@@ -887,7 +887,7 @@ async function runSeed(): Promise<void> {
       type: "ELECTRIC",
       providerName: "EVN TP.HCM",
       customerCode: "PE0100009999",
-      customerName: "Công ty TNHH NovaDemo",
+      customerName: "Công ty TNHH Thương mại Nam Sài Gòn",
       period: "Tháng hiện tại",
       amount: 6_200_000,
       status: "UNPAID",
@@ -977,7 +977,7 @@ async function runSeed(): Promise<void> {
       category: "HOTEL",
       title: "Resort Phú Quốc Sunset 5* (1 đêm)",
       price: 5_800_000,
-      details: "Biệt thự hướng biển (kích hoạt xác thực 3 lớp > 5M)",
+      details: "Biệt thự hướng biển riêng tư, bao gồm đưa đón sân bay & buffet sáng",
       imageUrl: "",
     },
     {
