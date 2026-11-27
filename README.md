@@ -298,10 +298,17 @@ NovaPay/
 ├── docs/
 │   ├── TEST_ACCOUNTS.md                # Hướng dẫn 4 tài khoản Gmail thật & mã dữ liệu kiểm thử nhanh
 │   ├── SPEC_CHOT.md                    # Đặc tả kiến trúc & quy tắc nghiệp vụ cốt lõi
-│   └── report/                         # Trọn bộ Hồ sơ Thiết kế & Báo cáo Kỹ thuật chuẩn PlantUML:
-│       ├── 01_SYSTEM_ARCHITECTURE_AND_ERD.md       # Kiến trúc Hybrid Cloud, Deployment & Sơ đồ ERD 15 Collections
-│       ├── 02_CLASS_DIAGRAMS.md                    # 10 Sơ đồ lớp PlantUML toàn hệ thống (Android & Backend)
-│       ├── 03_SEQUENCE_DIAGRAMS.md                 # 5 Sơ đồ tuần tự nghiệp vụ trọng tâm (FaceCheck, Stripe, Push...)
+│   ├── diagrams/                       # 8 tệp sơ đồ PlantUML cốt lõi ánh xạ 1-1 theo docs/MARKING.md (.puml)
+│   │   ├── 01_system_architecture.puml # Kiến trúc tổng thể Hybrid Cloud & Clean Architecture
+│   │   ├── 02_use_case.puml            # Use Case tổng quan 2 phân hệ Customer & Officer
+│   │   ├── 03..05_class_*.puml         # 3 Sơ đồ lớp UML (Domain Model, Android Clean MVVM, Backend Server)
+│   │   ├── 06_database_erd.puml        # Sơ đồ ERD Cloud Firestore (15 Collections + 3 Subcollections)
+│   │   └── 07..08_seq_*.puml           # 2 Sơ đồ tuần tự trọng tâm (Bảo mật 3 lớp > 5M & Stripe Idempotent)
+│   └── report/                         # Bộ Hồ sơ Thuyết minh Báo cáo Kỹ thuật (liên kết trực tiếp tới docs/diagrams/*.puml):
+│       ├── BAO_CAO.md                              # Khung báo cáo tổng hợp theo mẫu Khoa CNTT TDTU
+│       ├── 01_SYSTEM_ARCHITECTURE_AND_ERD.md       # Thuyết minh Hybrid Cloud, Ma trận firestore.rules & 5 Indexes
+│       ├── 02_CLASS_DIAGRAMS.md                    # Thuyết minh 3 Sơ đồ lớp UML cô đọng toàn hệ thống
+│       ├── 03_SEQUENCE_DIAGRAMS.md                 # Phân tích 2 luồng tuần tự trọng tâm & các luồng bổ trợ
 │       ├── 04_DEFENSE_QA_AND_DEMO.md               # Bảng tự đánh giá, 13 câu hỏi phản biện & Kịch bản Demo 10 phút
 │       └── 05_TECH_STACK_AND_IMPLEMENTATION.md     # Thống kê chi tiết thư viện, phiên bản & Ma trận lựa chọn công nghệ
 ├── GEMINI.md                           # Quy chuẩn kỹ thuật bắt buộc của dự án (Single Source of Truth)

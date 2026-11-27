@@ -1,0 +1,169 @@
+@startuml NovaPay_Class_Backend_Server
+skinparam backgroundColor #FFFFFF
+skinparam shadowing false
+skinparam roundcorner 8
+skinparam defaultFontName "Segoe UI"
+skinparam defaultFontSize 10
+skinparam ArrowColor #334155
+skinparam ClassBorderColor #7C2D12
+skinparam ClassBackgroundColor #F8FAFC
+skinparam ClassHeaderBackgroundColor #FFEDD5
+skinparam PackageBorderColor #64748B
+
+title Sơ Đồ Lớp 3/3: Kiến Trúc Máy Chủ Backend Node.js 20 + TypeScript + Express (8 Routers & 8 Services)
+
+package "Config & Security Middleware (server/src)" {
+  class AppConfig {
+    + port : number
+    + firebaseProjectId : string
+    + brevoApiKey : string
+    + stripeSecretKey : string
+    + geminiApiKey : string
+    + geminiModel : string
+    --
+    + {static} initFirebaseAdmin() : void
+    + {static} normalizePrivateKey(raw: string) : string
+  }
+
+  class AuthMiddleware {
+    + {static} requireAuth(req, res, next) : Promise<void>
+    + {static} requireOfficer(req, res, next) : void
+    + {static} sendApiError(res, status, code, msg) : void
+  }
+
+  class RateLimiter {
+    - hits : Map<string, HitEntry>
+    --
+    + {static} createRateLimiter(options) : RequestHandler
+  }
+}
+
+package "8 Express REST Routers (server/src/routes)" {
+  class AccountsRouter {
+    + GET_lookup(accountNumber) : AccountLookupJson
+  }
+
+  class TransactionsRouter {
+    + POST_initiate(payload) : DraftResponse
+    + POST_faceCheck(draftId, imageBase64) : FaceCheckResponse
+    + POST_resendOtp(draftId) : ResendOtpResponse
+    + POST_confirm(draftId, otp, biometricPassed) : ConfirmResponse
+    + {static} getHoChiMinhDayBounds(nowMs) : DayBounds
+  }
+
+  class PaymentsRouter {
+    + POST_finalize(draftId) : FinalizeResponse
+  }
+
+  class SavingsRouter {
+    + POST_open(fromCheckingId, termMonths, principal, pin?) : OpenSavingResponse
+    + POST_settle(savingId, toCheckingId, pin?) : SettleSavingResponse
+    + {static} computeSavingsSettlementAmounts(params) : SettlementAmounts
+  }
+
+  class SecurityRouter {
+    + GET_status() : PinStatusResult
+    + POST_pinSet(currentPin?, newPin) : OkPinResponse
+    + PATCH_accountControls(accountId, status?, limits?, pin?) : AccountControlResponse
+  }
+
+  class EkycRouter {
+    + POST_submit(imageBase64, targetUid?) : SubmitResponse
+    + POST_review(uid, decision) : ReviewResponse
+  }
+
+  class OfficerRouter {
+    + POST_customers(input) : CreateCustomerResponse
+    + PATCH_customerByUid(uid, input) : OkResponse
+    + POST_interestRates(input) : RateIdResponse
+  }
+
+  class AiRouter {
+    + POST_chat(message) : ChatReply
+  }
+}
+
+package "8 Domain Services (server/src/services)" {
+  class OtpService {
+    + generateOtpCode() : string
+    + hashOtp(otp, salt) : string
+    + verifyOtpHash(otp, hash, salt) : boolean
+  }
+
+  class PinService {
+    + hashPin(pin, uid) : string
+    + getPinStatus(db, uid, nowMs) : Promise<PinStatusResult>
+    + setOrChangePin(db, uid, params, nowMs) : Promise<SetPinResult>
+    + verifyTransactionPin(db, uid, pin, nowMs) : Promise<PinVerificationResult>
+  }
+
+  class EmailService {
+    + sendOtpEmail(params) : Promise<void>
+  }
+
+  class FaceCheckService {
+    + verifyFaceMatch(ekycBase64, liveBase64) : Promise<FaceCheckResult>
+    + {static} isPlaceholderOrEmptyEkycImage(raw) : boolean
+  }
+
+  class StripeService {
+    + createPaymentIntent(params) : Promise<CreatePaymentIntentResult>
+    + retrievePaymentIntent(id) : Promise<RetrievedPaymentIntent>
+  }
+
+  class NotificationsService {
+    + {static} enqueueUserNotification(tx, db, uid, payload) : string
+    + {static} enqueueTransactionNotifications(tx, db, params) : SenderRecipientNotifIds
+    + {static} createUserNotification(db, uid, payload) : Promise<string>
+  }
+
+  class OfficerAuditService {
+    + {static} createCustomerWithAudit(actorUid, input) : Promise<CreateCustomerResponse>
+    + {static} updateCustomerWithAudit(actorUid, input) : Promise<OkResponse>
+    + {static} upsertInterestRateWithAudit(actorUid, input) : Promise<RateIdResponse>
+  }
+
+  class ChatbotService {
+    + {static} ALLOWED_CHAT_DEEPLINKS : Set<string>
+    + {static} generateChatReply(msg, ctx) : Promise<ChatReply>
+    + {static} buildRuleBasedReply(msg, ctx) : ChatReply
+    + {static} handleChatAndPersist(uid, msg) : Promise<ChatReply>
+  }
+}
+
+AccountsRouter --> AuthMiddleware
+TransactionsRouter --> AuthMiddleware
+TransactionsRouter --> RateLimiter
+TransactionsRouter --> OtpService
+TransactionsRouter --> EmailService
+TransactionsRouter --> FaceCheckService
+TransactionsRouter --> StripeService
+TransactionsRouter --> NotificationsService
+
+PaymentsRouter --> AuthMiddleware
+PaymentsRouter --> StripeService
+PaymentsRouter --> NotificationsService
+
+SavingsRouter --> AuthMiddleware
+SavingsRouter --> PinService : "TOCTOU-safe tx.get(user_secrets)"
+SavingsRouter --> NotificationsService
+
+SecurityRouter --> AuthMiddleware
+SecurityRouter --> PinService
+SecurityRouter --> NotificationsService
+
+EkycRouter --> AuthMiddleware
+EkycRouter --> NotificationsService
+
+OfficerRouter --> AuthMiddleware
+OfficerRouter --> OfficerAuditService
+
+AiRouter --> AuthMiddleware
+AiRouter --> ChatbotService
+
+EmailService --> AppConfig
+FaceCheckService --> AppConfig
+StripeService --> AppConfig
+ChatbotService --> AppConfig
+
+@enduml

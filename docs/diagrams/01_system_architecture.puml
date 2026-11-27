@@ -1,0 +1,88 @@
+@startuml NovaPay_System_Architecture
+skinparam backgroundColor #FFFFFF
+skinparam shadowing false
+skinparam roundcorner 8
+skinparam defaultFontName "Segoe UI"
+skinparam defaultFontSize 11
+skinparam ArrowColor #334155
+skinparam PackageBorderColor #64748B
+skinparam PackageBackgroundColor #F8FAFC
+skinparam ComponentBorderColor #0F4C81
+skinparam ComponentBackgroundColor #EFF6FF
+skinparam DatabaseBorderColor #047857
+skinparam DatabaseBackgroundColor #ECFDF5
+
+title Sơ Đồ Kiến Trúc Tổng Thể Hybrid Cloud & Clean Architecture — NovaPay
+
+package "Android Native Client (100% Java 17 — API 26–35, Single-Activity MVVM)" {
+  package "Presentation Layer (28 Màn hình MVVM + Material 3 + ViewBinding)" {
+    [MainActivity\n(Auth & Bidirectional Role Guard\nDeepLink novapay://)] as MainAct
+    [Customer & iBanking UI\n(Home, Checking/Saving/Mortgage,\nOpenSaving, Notifications, Security,\nTransfer, QR, Stripe, Bills, Services)] as CustUI
+    [eKYC & Auth Dialogs\n(EkycCapture, FaceCheckDialog,\nOtpVerificationDialog)] as SecUI
+    [Officer, Map & AI UI\n(Dashboard, Customers, Rates,\nBranchMap osmdroid, Chatbot)] as OffUI
+  }
+
+  package "Core Layer (Hạ tầng Dùng chung & Phần cứng)" {
+    [SessionManager & Alerts\n(Realtime Lock + BalanceAlertSubscriber\nSystemNotificationHelper)] as SessMgr
+    [Hardware Security & Edge AI\n(BiometricHelper, AndroidKeyStore AES,\nCameraX + ML Kit, QrBitmapEncoder, PDF)] as BioEdge
+    [Hilt DI Qualifiers\n(@BackendRetrofit / @OpenRouteRetrofit)] as HiltDI
+  }
+
+  package "Domain Layer (Pure Java 17 — 0 Android Imports)" {
+    [50+ Domain UseCases\n(Tx, Savings, Security, Notifications,\nBranch Haversine, Officer, Chat)] as UseCases
+    [17 Repository Interfaces\n& Domain Models (long VND, Instant)] as DomainContracts
+  }
+
+  package "Data Layer (Repositories, Mappers & Remote Sources)" {
+    [17 *RepositoryImpl & Mappers] as RepoImpls
+    [AuthInterceptor\n(Bearer Firebase ID Token)] as AuthInt
+    [Firestore DataSources\n(Realtime SnapshotListeners)] as FsDS
+    [OpenRouteServiceApi\n(foot-walking GeoJSON)] as OrsApi
+  }
+}
+
+package "Backend Server — Render Cloud HTTPS (Node.js >= 20 + TypeScript + Express)" {
+  [Security Pipeline\n(Helmet, CORS, RateLimit,\nverifyIdToken(checkRevoked=true) + RBAC)] as AuthMW
+  [8 Express REST Routers\n(/accounts, /transactions, /payments,\n/savings, /security, /ekyc, /officer, /ai)] as Routes
+  [Core Banking Services\n(Otp SHA-256, Pin HMAC-SHA256, Stripe,\nFaceCheck >=0.80, Email, Notifications, AI)] as SvcLayer
+}
+
+cloud "Google Firebase Cloud (novapay-71326)" {
+  [Firebase Authentication\n(JWT + Custom Claim: role)] as FbAuth
+  database "Cloud Firestore\n(15 Collections + 3 Subcollections\nfirestore.rules + 5 Composite Indexes)" as FirestoreDB
+}
+
+cloud "External Cloud Services (HTTPS TLS 1.3)" {
+  [Stripe API\n(PaymentIntents VND)] as StripeCloud
+  [Brevo REST API\n(Port 443 OTP Email)] as BrevoCloud
+  [Google Gemini 2.5 Flash\n(FaceCheck & AI Chat)] as GeminiCloud
+  [OpenRouteService API\n(Walking Directions)] as OrsCloud
+}
+
+MainAct --> SessMgr
+CustUI --> UseCases
+SecUI --> UseCases
+SecUI --> BioEdge
+OffUI --> UseCases
+UseCases --> DomainContracts
+RepoImpls ..|> DomainContracts
+RepoImpls --> AuthInt : "@BackendRetrofit (HTTPS)"
+RepoImpls --> FsDS : "Kênh 1: Realtime Read"
+RepoImpls --> OrsApi : "@OpenRouteRetrofit (No Token)"
+
+SessMgr --> FbAuth : "Auth State & Claims"
+SessMgr --> FirestoreDB : "Listen users/{uid} & notifications"
+FsDS --> FirestoreDB : "SnapshotListener (firestore.rules)"
+OrsApi --> OrsCloud : "POST /v2/directions/foot-walking"
+
+AuthInt --> AuthMW : "Kênh 2: Bearer <ID_Token>"
+AuthMW --> FbAuth : "verifyIdToken(token, true)"
+AuthMW --> Routes
+Routes --> SvcLayer
+Routes --> FirestoreDB : "Admin SDK 2-Phase ACID runTransaction()"
+
+SvcLayer --> StripeCloud : "STRIPE_SECRET_KEY"
+SvcLayer --> BrevoCloud : "BREVO_API_KEY"
+SvcLayer --> GeminiCloud : "GEMINI_API_KEY"
+
+@enduml

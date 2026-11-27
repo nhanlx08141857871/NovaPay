@@ -1,0 +1,275 @@
+@startuml NovaPay_Firestore_ERD
+skinparam backgroundColor #FFFFFF
+skinparam shadowing false
+skinparam roundcorner 8
+skinparam defaultFontName "Segoe UI"
+skinparam defaultFontSize 11
+skinparam linetype ortho
+skinparam ArrowColor #334155
+skinparam ClassBorderColor #0F4C81
+skinparam ClassBackgroundColor #F8FAFC
+skinparam ClassHeaderBackgroundColor #DBEAFE
+
+hide circle
+hide methods
+
+title Sơ Đồ Thực Thể Liên Kết (ERD) 15 Collections & 3 Subcollections Cloud Firestore — NovaPay
+
+entity "1. users\n(users/{uid})" as users {
+  * **uid** : String <<PK>>
+  --
+  * role : String ("CUSTOMER" | "OFFICER")
+  * fullName : String
+  * email : String <<Unique>>
+  * phone : String
+  * nationalId : String
+  * dob : String (YYYY-MM-DD)
+  * address : String
+  avatarUrl : String
+  * status : String ("ACTIVE" | "LOCKED")
+  * ekyc : Map {status, verifiedBy, verifiedAt}
+  security : Map? {hasTransactionPin, pinUpdatedAt}
+  createdBy : String <<FK -> users.uid>>
+  * createdAt : Timestamp
+  * updatedAt : Timestamp
+}
+
+entity "1a. beneficiaries\n(users/{uid}/beneficiaries/{id})" as beneficiaries {
+  * **id** : String <<PK, Subcollection>>
+  --
+  * name : String
+  * accountNumber : String
+  * bankCode : String
+  alias : String
+}
+
+entity "1b. notifications\n(users/{uid}/notifications/{notifId})" as notifications {
+  * **notifId** : String <<PK, Subcollection>>
+  --
+  * category : String ("BALANCE" | "SECURITY"\n  | "SAVING" | "EKYC")
+  direction : String? ("IN" | "OUT")
+  * title : String
+  * body : String
+  amount : Long? (VND)
+  balanceAfter : Long? (VND)
+  accountNumber : String?
+  txId : String? <<FK -> transactions.txId>>
+  deepLink : String?
+  * read : Boolean
+  * createdAt : Timestamp
+}
+
+entity "2. ekyc_images\n(ekyc_images/{uid})" as ekyc_images {
+  * **uid** : String <<PK, FK -> users.uid>>
+  --
+  * imageBase64 : String (JPEG < 200KB)
+  * capturedAt : Timestamp
+  * capturedBy : String <<FK -> users.uid>>
+}
+
+entity "3. accounts\n(accounts/{accountId})" as accounts {
+  * **accountId** : String <<PK>>
+  --
+  * ownerUid : String <<FK -> users.uid>>
+  * type : String ("CHECKING" | "SAVING" | "MORTGAGE")
+  * accountNumber : String <<Unique>>
+  * status : String ("ACTIVE" | "FROZEN" | "CLOSED")
+  * balance : Long (VND)
+  * currency : String ("VND")
+  * perTxnLimit : Long (VND)
+  * dailyLimit : Long (VND)
+  saving : Map? {termMonths, principal,\n  interestRateId, openedAt, maturityDate,\n  settledAt?, settledTxId?}
+  mortgage : Map? {loanAmount, outstandingBalance,\n  termMonths, annualRate, paymentFrequency,\n  installmentAmount, nextDueDate}
+  * createdAt : Timestamp
+}
+
+entity "3a. ledger\n(accounts/{accountId}/ledger/{entryId})" as ledger {
+  * **entryId** : String <<PK, Subcollection>>
+  --
+  * txId : String <<FK -> transactions.txId>>
+  * direction : String ("IN" | "OUT")
+  * amount : Long (VND)
+  * balanceAfter : Long (VND)
+  * description : String
+  * createdAt : Timestamp
+}
+
+entity "4. transactions\n(transactions/{txId})" as transactions {
+  * **txId** : String <<PK>>
+  --
+  * type : String (9 TransactionTypes)
+  * fromAccountId : String <<FK -> accounts.accountId>>
+  fromAccountNumber : String?
+  toAccountId : String? <<FK -> accounts.accountId>>
+  toAccountNumber : String?
+  toOwnerName : String?
+  toExternal : Map? {bankCode, accountNumber, name}
+  * amount : Long (VND)
+  * fee : Long (VND)
+  note : String
+  * status : String ("SUCCESS" | "FAILED")
+  * requiresBiometric : Boolean
+  * biometricPassed : Boolean
+  * otpVerified : Boolean
+  * faceChecked : Boolean
+  meta : Map {billId?, billCode?, phone?,\n  itemId?, orderId?, quantity?,\n  mortgageAccountId?, gatewayRef?}
+  * initiatedBy : String <<FK -> users.uid>>
+  * createdAt : Timestamp
+}
+
+entity "5. transaction_drafts\n(transaction_drafts/{draftId})" as drafts {
+  * **draftId** : String <<PK>>
+  --
+  * uid : String <<FK -> users.uid>>
+  * payload : Map
+  * status : String ("PENDING_FACE" | "PENDING_OTP"\n  | "PENDING_PAYMENT" | "CONFIRMED" | "EXPIRED")
+  * requiresBiometric : Boolean
+  * requiresFace : Boolean
+  otpHash : String? (SHA-256 + salt)
+  otpExpiresAt : Long? (Epoch ms)
+  otpSentAt : Long?
+  * resendCount : Integer
+  faceAttempts : Integer?
+  * attempts : Integer (Max 5)
+  * faceChecked : Boolean
+  stripeIntentId : String?
+  txId : String? <<FK -> transactions.txId>>
+  * createdAt : Timestamp
+  * expireAt : Timestamp (TTL +24h)
+}
+
+entity "6. face_checks\n(face_checks/{draftId})" as face_checks {
+  * **draftId** : String <<PK, FK -> drafts.draftId>>
+  --
+  * uid : String <<FK -> users.uid>>
+  txId : String? <<FK -> transactions.txId>>
+  * imageBase64 : String (JPEG < 200KB)
+  * manualAuditRequired : Boolean
+  * createdAt : Timestamp
+}
+
+entity "7. interest_rates\n(interest_rates/{rateId})" as interest_rates {
+  * **rateId** : String <<PK>>
+  --
+  * termMonths : Integer (0..120)
+  * annualRate : Double (%/year)
+  * effectiveFrom : Timestamp
+  * updatedBy : String <<FK -> users.uid>>
+  * updatedAt : Timestamp
+}
+
+entity "8. banks\n(banks/{bankCode})" as banks {
+  * **bankCode** : String <<PK>>
+  --
+  * name : String
+  logoUrl : String
+  * napasCode : String
+}
+
+entity "9. branches\n(branches/{branchId})" as branches {
+  * **branchId** : String <<PK>>
+  --
+  * name : String
+  * address : String
+  * location : GeoPoint (lat, lng)
+  * phone : String
+  * openHours : String
+  * type : String ("BRANCH" | "ATM")
+}
+
+entity "10. utility_bills\n(utility_bills/{billId})" as utility_bills {
+  * **billId** : String <<PK>>
+  --
+  * type : String ("ELECTRIC" | "WATER")
+  * providerName : String
+  * customerCode : String
+  * customerName : String
+  * period : String
+  * amount : Long (VND)
+  * dueDate : Timestamp
+  * status : String ("UNPAID" | "PAID")
+  txId : String? <<FK -> transactions.txId>>
+}
+
+entity "11. service_catalog\n(service_catalog/{itemId})" as service_catalog {
+  * **itemId** : String <<PK>>
+  --
+  * category : String ("FLIGHT" | "MOVIE"\n  | "HOTEL" | "PRODUCT")
+  * title : String
+  * price : Long (VND)
+  * details : String
+  imageUrl : String
+}
+
+entity "12. orders\n(orders/{orderId})" as orders {
+  * **orderId** : String <<PK>>
+  --
+  * uid : String <<FK -> users.uid>>
+  * itemId : String <<FK -> service_catalog.itemId>>
+  * category : String
+  * quantity : Integer
+  * totalAmount : Long (VND)
+  * status : String ("PAID")
+  * txId : String <<FK -> transactions.txId>>
+  * createdAt : Timestamp
+}
+
+entity "13. chat_sessions/messages\n(chat_sessions/{uid}/messages/{msgId})" as chat_messages {
+  * **uid / msgId** : String <<PK, Subcollection>>
+  --
+  * role : String ("USER" | "BOT")
+  * text : String
+  * actions : List<Map {label, deepLink}>
+  * createdAt : Timestamp
+}
+
+entity "14. audit_logs\n(audit_logs/{logId})" as audit_logs {
+  * **logId** : String <<PK>>
+  --
+  * actorUid : String <<FK -> users.uid>>
+  * action : String
+  * targetId : String
+  * details : Map
+  * createdAt : Timestamp
+}
+
+entity "15. user_secrets\n(user_secrets/{uid})" as user_secrets {
+  * **uid** : String <<PK, FK -> users.uid>>
+  --
+  * pinHash : String (HMAC-SHA256)
+  * pinSalt : String
+  * failedAttempts : Integer (Max 5)
+  * lockUntil : Long (Epoch ms)
+  * createdAt : Timestamp
+  * updatedAt : Timestamp
+}
+
+' --- Quan hệ thực thể (Crow's Foot Notation) ---
+users ||--o{ beneficiaries : "owns subcollection"
+users ||--o{ notifications : "owns subcollection"
+users ||--o| user_secrets : "1:1 server-only PIN"
+users ||--o| ekyc_images : "1:1 reference photo"
+users ||--o{ accounts : "ownerUid"
+users ||--o{ transactions : "initiatedBy"
+users ||--o{ drafts : "uid"
+users ||--o{ face_checks : "uid"
+users ||--o{ orders : "uid"
+users ||--o{ chat_messages : "chat_sessions/{uid}"
+users ||--o{ audit_logs : "actorUid (Officer)"
+users ||--o{ interest_rates : "updatedBy (Officer)"
+
+accounts ||--o{ ledger : "owns subcollection"
+accounts ||--o{ transactions : "fromAccountId / toAccountId"
+interest_rates |o..o{ accounts : "saving.termMonths / interestRateId"
+banks |o..o{ beneficiaries : "bankCode"
+banks |o..o{ transactions : "toExternal.bankCode"
+
+transactions ||--o{ ledger : "txId"
+drafts ||--o| transactions : "confirms into txId"
+drafts ||--o| face_checks : "1:1 draftId"
+utility_bills |o--o| transactions : "meta.billId / txId"
+service_catalog ||--o{ orders : "itemId"
+transactions ||--o| orders : "txId"
+transactions |o--o{ notifications : "txId (OUT / IN)"
+
+@enduml

@@ -1,0 +1,80 @@
+@startuml NovaPay_Seq_Stripe_Gateway_Idempotent
+skinparam backgroundColor #FFFFFF
+skinparam shadowing false
+skinparam roundcorner 8
+skinparam defaultFontName "Segoe UI"
+skinparam defaultFontSize 11
+skinparam ArrowColor #334155
+skinparam SequenceLifeLineBorderColor #64748B
+skinparam ParticipantBorderColor #1E3A8A
+skinparam ParticipantBackgroundColor #EFF6FF
+skinparam DatabaseBorderColor #047857
+skinparam DatabaseBackgroundColor #ECFDF5
+
+autonumber
+title Sơ Đồ Tuần Tự 2/2: Nạp Tiền Trực Tuyến Stripe PaymentSheet (2-Phase & Idempotent Finalize)
+
+actor "Khách hàng" as Cust
+participant "DepositWithdrawFragment &\nOtpVerificationDialog" as AppUI
+participant "StripeGatewayHelper\n(Stripe Android SDK)" as Sheet
+participant "NovaPay Server\n(/transactions & /payments)" as Server
+participant "Brevo API\n(Email OTP)" as Brevo
+participant "Stripe Cloud API\n(PaymentIntents)" as StripeAPI
+database "Cloud Firestore" as FS
+
+Cust -> AppUI : Chọn Tab "Nạp trực tuyến", nhập số tiền (VD: 2.000.000 ₫)
+AppUI -> Server : POST /transactions/initiate {type: "GATEWAY", fromAccountId, amount: 2000000}
+activate Server
+note right of Server
+  Giao dịch GATEWAY nạp tiền vào CHECKING:
+  Bắt buộc OTP 2FA, miễn FaceCheck & Biometric kể cả > 5M
+end note
+Server -> FS : Tạo transaction_drafts/{draftId} {status: "PENDING_OTP", otpHash, otpExpiresAt}
+Server -> Brevo : Gửi mã OTP 6 số (hiệu lực 180s)
+Server --> AppUI : 200 {draftId, requiresFace: false, requiresBiometric: false, otpExpiresAt}
+deactivate Server
+
+Cust -> AppUI : Nhập mã OTP 6 chữ số vào OtpVerificationDialog
+AppUI -> Server : POST /transactions/confirm {draftId, otp, biometricPassed: false}
+activate Server
+Server -> Server : Xác thực SHA-256 OTP hợp lệ & còn hạn
+Server -> StripeAPI : paymentIntents.create({amount: 2000000, currency: "vnd"},\n{idempotencyKey: "novapay_draft_" + draftId})
+activate StripeAPI
+StripeAPI --> Server : PaymentIntent {id: "pi_...", client_secret: "pi_..._secret_..."}
+deactivate StripeAPI
+Server -> FS : Cập nhật draft -> {status: "PENDING_PAYMENT", stripeIntentId: "pi_..."}\n(CHƯA cộng tiền vào accounts!)
+Server --> AppUI : 200 {txId: null, status: "PENDING_PAYMENT", clientSecret}
+deactivate Server
+
+AppUI -> Sheet : presentPaymentSheet(STRIPE_PUBLISHABLE_KEY, clientSecret)
+activate Sheet
+Cust -> Sheet : Nhập thẻ quốc tế kiểm thử (4242...) & Xác nhận thanh toán
+Sheet -> StripeAPI : Xác thực thẻ PCI-DSS trực tiếp tới Stripe
+activate StripeAPI
+StripeAPI --> Sheet : PaymentSheetResult.Completed
+deactivate StripeAPI
+Sheet --> AppUI : onPaymentCompleted(draftId)
+deactivate Sheet
+
+AppUI -> Server : POST /payments/finalize {draftId}
+activate Server
+Server -> FS : Đọc transaction_drafts/{draftId}
+alt Gọi lặp lại khi mạng chập chờn (draft.status == "CONFIRMED")
+  Server --> AppUI : 200 {txId: draft.txId, status: "CONFIRMED"} (Không cộng tiền lần 2)
+else Lần chốt thanh toán đầu tiên (draft.status == "PENDING_PAYMENT")
+  Server -> StripeAPI : paymentIntents.retrieve(stripeIntentId)
+  activate StripeAPI
+  StripeAPI --> Server : {status: "succeeded", amount: 2000000, currency: "vnd"}
+  deactivate StripeAPI
+  Server -> Server : Đối chiếu status == "succeeded" & khớp đúng amountVnd
+  Server -> FS : runTransaction():\n1. Kiểm tra lại freshDraft == "PENDING_PAYMENT", user == "ACTIVE" & acc.ownerUid == uid\n2. Cộng accounts/{fromAccountId}.balance += 2.000.000 ₫\n3. Ghi ledger (IN), transactions (GATEWAY), users/{uid}/notifications (BALANCE IN)\n4. Khóa draft -> {status: "CONFIRMED", txId}
+  activate FS
+  FS --> Server : Commit thành công
+  deactivate FS
+  Server --> AppUI : 200 {txId, status: "CONFIRMED"}
+end
+deactivate Server
+
+AppUI --> Cust : Mở ReceiptFragment hiển thị biên lai nạp tiền thành công
+
+@enduml

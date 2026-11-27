@@ -1,0 +1,88 @@
+@startuml NovaPay_UseCase_Diagram
+skinparam backgroundColor #FFFFFF
+skinparam shadowing false
+skinparam roundcorner 8
+skinparam defaultFontName "Segoe UI"
+skinparam defaultFontSize 11
+skinparam ArrowColor #334155
+skinparam ActorBorderColor #0F4C81
+skinparam ActorBackgroundColor #EFF6FF
+skinparam UsecaseBorderColor #0F4C81
+skinparam UsecaseBackgroundColor #F8FAFC
+skinparam RectangleBorderColor #64748B
+
+left to right direction
+title Sơ Đồ Use Case Tổng Quan Hệ Thống Ngân Hàng Số NovaPay
+
+actor "Khách hàng\n(CUSTOMER)" as Cust
+actor "Nhân viên Ngân hàng\n(OFFICER)" as Off
+
+rectangle "Hệ thống Ngân hàng Số NovaPay" {
+
+  package "Xác thực & Định danh" {
+    usecase "Đăng nhập / Quên MK /\nSinh trắc học nhanh" as UC_Auth
+    usecase "Định danh khuôn mặt eKYC\n(CameraX + ML Kit)" as UC_Ekyc
+    usecase "Cập nhật hồ sơ cá nhân" as UC_Profile
+    usecase "Quản trị bảo mật\n(Đổi MK, Smart PIN 6 số,\nHạn mức & Khóa khẩn cấp)" as UC_Sec
+  }
+
+  package "Quản lý Tài khoản & Tiết kiệm" {
+    usecase "Xem Checking, Saving,\nMortgage & Biểu đồ Thu/Chi" as UC_Acc
+    usecase "Xem lãi tiết kiệm realtime\n& Mở / Tất toán sổ trực tuyến" as UC_Saving
+    usecase "Xem lịch sử giao dịch,\nLọc đa chiều & Xuất Sao kê PDF" as UC_History
+    usecase "Nhận Thông báo biến động 2 chiều\n& System Push Notification" as UC_Notif
+  }
+
+  package "Giao dịch Tài chính & Tiện ích" {
+    usecase "Chuyển tiền nội bộ,\nLiên ngân hàng & Quét/Tạo QR" as UC_Transfer
+    usecase "Nạp tiền Stripe PaymentSheet,\nRút tiền & Trả nợ vay" as UC_Pay
+    usecase "Thanh toán Hóa đơn Điện/Nước,\nNạp ĐT & Đặt vé / Dịch vụ" as UC_Util
+    usecase "Xác thực 2FA OTP Email\n(180s SHA-256)" as UC_Otp
+    usecase "Xác thực 3 lớp > 5.000.000 ₫\n(FaceCheck >= 0.80 + Biometric + OTP)" as UC_3Layer
+    usecase "Xem & Chia sẻ Biên lai PNG/PDF" as UC_Receipt
+  }
+
+  package "Bản đồ & Trợ lý AI" {
+    usecase "Tìm Chi nhánh/ATM gần nhất\n& Chỉ đường đi bộ (osmdroid/ORS)" as UC_Map
+    usecase "Trò chuyện Trợ lý AI Gemini\n& Điều hướng DeepLink" as UC_AI
+  }
+
+  package "Quản trị Nhân viên Ngân hàng (Bank Officer Portal)" {
+    usecase "Xem Dashboard KPI &\nNhật ký kiểm toán (audit_logs)" as UO_Dash
+    usecase "Tạo, sửa & Khóa/Mở khóa KH\n(Cưỡng bức đăng xuất realtime)" as UO_Cust
+    usecase "Chụp hộ & Duyệt hồ sơ eKYC /\nHậu kiểm FaceCheck" as UO_Ekyc
+    usecase "Điều chỉnh Biểu lãi suất\ntiết kiệm realtime" as UO_Rate
+  }
+}
+
+Cust --> UC_Auth
+Cust --> UC_Ekyc
+Cust --> UC_Profile
+Cust --> UC_Sec
+Cust --> UC_Acc
+Cust --> UC_Saving
+Cust --> UC_History
+Cust --> UC_Notif
+Cust --> UC_Transfer
+Cust --> UC_Pay
+Cust --> UC_Util
+Cust --> UC_Map
+Cust --> UC_AI
+
+UC_Transfer ..> UC_Otp : <<include>>
+UC_Pay ..> UC_Otp : <<include>>
+UC_Util ..> UC_Otp : <<include>>
+UC_3Layer ..> UC_Otp : <<extend>>
+UC_Transfer ..> UC_Receipt : <<extend>>
+UC_Pay ..> UC_Receipt : <<extend>>
+UC_Util ..> UC_Receipt : <<extend>>
+
+Off --> UC_Auth
+Off --> UC_Profile
+Off --> UC_Map
+Off --> UO_Dash
+Off --> UO_Cust
+Off --> UO_Ekyc
+Off --> UO_Rate
+
+@enduml

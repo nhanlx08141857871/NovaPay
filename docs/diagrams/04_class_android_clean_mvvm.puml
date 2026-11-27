@@ -1,0 +1,225 @@
+@startuml NovaPay_Class_Android_Clean_MVVM
+skinparam backgroundColor #FFFFFF
+skinparam shadowing false
+skinparam roundcorner 8
+skinparam defaultFontName "Segoe UI"
+skinparam defaultFontSize 10
+skinparam ArrowColor #334155
+skinparam ClassBorderColor #1E3A8A
+skinparam ClassBackgroundColor #F8FAFC
+skinparam ClassHeaderBackgroundColor #DBEAFE
+skinparam PackageBorderColor #64748B
+
+title Sơ Đồ Lớp 2/3: Kiến Trúc 4 Tầng Android Clean Architecture + MVVM (Java 17 & Hilt DI)
+
+package "Core Infrastructure (com.novabank.novapay.core)" {
+  abstract class "BaseFragment<VB>" as BaseFragment {
+    # binding : VB
+    # disposables : CompositeDisposable
+    --
+    # {abstract} inflateBinding(inflater, container) : VB
+    # navigateDeepLink(uri: String) : void
+  }
+
+  class "UiState<T>" as UiState {
+    - status : Status {LOADING, SUCCESS, EMPTY, ERROR}
+    - data : T
+    - errorMessage : String
+  }
+
+  class "SingleLiveEvent<T>" as SingleLiveEvent {
+    - pending : AtomicBoolean
+  }
+
+  class "AppResult<T>" as AppResult {
+    - success : boolean
+    - data : T
+    - errorCode : String
+  }
+
+  class SessionManager {
+    - accountLockedEvent : SingleLiveEvent<Boolean>
+    --
+    + startUserSession() : void
+    + signOut() : void
+    + isDeepLinkAllowedForRole(uri: String, role: UserRole) : boolean
+  }
+
+  class BiometricHelper {
+    + canAuthenticate(ctx: Context) : boolean
+    + authenticate(fragment: Fragment, cb: AuthCallback) : void
+  }
+
+  class BiometricQuickLoginStore {
+    + saveCredentials(email: String, password: String) : boolean
+    + readCredentials() : Credentials
+  }
+
+  class BalanceAlertSubscriber {
+    - baselinePrimed : boolean
+    - seenIds : Set<String>
+    --
+    + start(uid: String) : void
+    + stop() : void
+  }
+
+  class SystemNotificationHelper {
+    + ensureChannel() : void
+    + showNotification(n: AppNotification) : void
+  }
+
+  class StatementPdfExporter {
+    + {static} exportStatementPdf(...) : File
+  }
+
+  class QrBitmapEncoder {
+    + {static} encodeMatrix(content: String) : boolean[][]
+  }
+}
+
+package "Presentation Layer — MVVM (28 Màn hình: Customer, eKYC, Officer)" {
+  class MainActivity {
+    + enforceDestinationGuard() : void
+    + navigateDeepLink(uri: String) : void
+  }
+
+  class CustomerHomeFragment
+  class CustomerHomeViewModel {
+    - uiState : MutableLiveData<UiState<CustomerHomeUiState>>
+    + loadHome() : void
+  }
+  class AccountCardAdapter
+
+  class TransferFragment
+  class TransferViewModel {
+    - uiState : MutableLiveData<UiState<TransferUiState>>
+    - draftEvent : SingleLiveEvent<TransactionDraft>
+    + lookupRecipient(accountNumber: String) : void
+    + initiateTransfer(...) : void
+  }
+
+  class OtpVerificationDialogFragment
+  class FaceCheckDialogFragment
+  class OpenSavingFragment
+  class NotificationCenterFragment
+  class SecuritySettingsFragment
+  class BranchMapFragment
+  class ChatbotFragment
+  class OfficerDashboardFragment
+}
+
+package "Domain Layer — Pure Java 17 (17 Repos & 50+ UseCases)" {
+  interface AccountRepository
+  interface TransactionRepository
+  interface SavingsRepository
+  interface SecurityRepository
+  interface NotificationRepository
+  interface BranchRepository
+  interface ChatRepository
+  interface OfficerRepository
+
+  class ObserveSavingProjectionUseCase
+  class InitiateTransactionUseCase
+  class ConfirmTransactionUseCase
+  class OpenSavingAccountUseCase
+  class UpdateCheckingControlsUseCase
+  class ObserveNotificationsUseCase
+  class FindNearestBranchUseCase
+  class SendChatMessageUseCase
+  class ReviewEkycUseCase
+}
+
+package "Data Layer (17 RepositoryImpl, Retrofit APIs & Firestore)" {
+  class AuthInterceptor {
+    + intercept(chain: Chain) : Response
+  }
+
+  interface TransactionApi
+  interface SavingsApi
+  interface SecurityApi
+  interface OpenRouteServiceApi
+  interface AiApi
+  interface OfficerApi
+
+  class FirestoreAccountDataSource
+  class FirestoreNotificationDataSource
+  class MoneyFirestoreDataSource
+
+  class AccountRepositoryImpl
+  class TransactionRepositoryImpl
+  class SavingsRepositoryImpl
+  class SecurityRepositoryImpl
+  class NotificationRepositoryImpl
+  class BranchRepositoryImpl
+  class ChatRepositoryImpl
+  class OfficerRepositoryImpl
+}
+
+MainActivity --> SessionManager
+MainActivity --> BalanceAlertSubscriber
+BalanceAlertSubscriber --> SystemNotificationHelper
+BalanceAlertSubscriber --> NotificationRepository
+
+CustomerHomeFragment --|> BaseFragment
+TransferFragment --|> BaseFragment
+OpenSavingFragment --|> BaseFragment
+NotificationCenterFragment --|> BaseFragment
+SecuritySettingsFragment --|> BaseFragment
+BranchMapFragment --|> BaseFragment
+ChatbotFragment --|> BaseFragment
+OfficerDashboardFragment --|> BaseFragment
+
+CustomerHomeFragment o-- AccountCardAdapter
+CustomerHomeFragment --> CustomerHomeViewModel
+TransferFragment --> TransferViewModel
+OtpVerificationDialogFragment --> BiometricHelper
+SecuritySettingsFragment --> BiometricQuickLoginStore
+
+CustomerHomeViewModel *-- UiState
+TransferViewModel *-- UiState
+TransferViewModel *-- SingleLiveEvent
+
+CustomerHomeViewModel --> ObserveSavingProjectionUseCase
+CustomerHomeViewModel --> ObserveNotificationsUseCase
+TransferViewModel --> InitiateTransactionUseCase
+OtpVerificationDialogFragment --> ConfirmTransactionUseCase
+OpenSavingFragment --> OpenSavingAccountUseCase
+SecuritySettingsFragment --> UpdateCheckingControlsUseCase
+BranchMapFragment --> FindNearestBranchUseCase
+ChatbotFragment --> SendChatMessageUseCase
+OfficerDashboardFragment --> ReviewEkycUseCase
+
+ObserveSavingProjectionUseCase --> AccountRepository
+InitiateTransactionUseCase --> TransactionRepository
+ConfirmTransactionUseCase --> TransactionRepository
+OpenSavingAccountUseCase --> SavingsRepository
+UpdateCheckingControlsUseCase --> SecurityRepository
+ObserveNotificationsUseCase --> NotificationRepository
+FindNearestBranchUseCase --> BranchRepository
+SendChatMessageUseCase --> ChatRepository
+ReviewEkycUseCase --> OfficerRepository
+
+AccountRepositoryImpl ..|> AccountRepository
+TransactionRepositoryImpl ..|> TransactionRepository
+SavingsRepositoryImpl ..|> SavingsRepository
+SecurityRepositoryImpl ..|> SecurityRepository
+NotificationRepositoryImpl ..|> NotificationRepository
+BranchRepositoryImpl ..|> BranchRepository
+ChatRepositoryImpl ..|> ChatRepository
+OfficerRepositoryImpl ..|> OfficerRepository
+
+AccountRepositoryImpl --> FirestoreAccountDataSource
+NotificationRepositoryImpl --> FirestoreNotificationDataSource
+TransactionRepositoryImpl --> TransactionApi
+TransactionRepositoryImpl --> MoneyFirestoreDataSource
+SavingsRepositoryImpl --> SavingsApi
+SecurityRepositoryImpl --> SecurityApi
+BranchRepositoryImpl --> OpenRouteServiceApi
+ChatRepositoryImpl --> AiApi
+OfficerRepositoryImpl --> OfficerApi
+
+TransactionApi ..> AuthInterceptor : "@BackendRetrofit"
+SavingsApi ..> AuthInterceptor : "@BackendRetrofit"
+SecurityApi ..> AuthInterceptor : "@BackendRetrofit"
+
+@enduml

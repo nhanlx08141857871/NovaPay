@@ -1,0 +1,251 @@
+@startuml NovaPay_Class_Domain_Model
+skinparam backgroundColor #FFFFFF
+skinparam shadowing false
+skinparam roundcorner 8
+skinparam defaultFontName "Segoe UI"
+skinparam defaultFontSize 10
+skinparam ArrowColor #334155
+skinparam ClassBorderColor #047857
+skinparam ClassBackgroundColor #F8FAFC
+skinparam ClassHeaderBackgroundColor #D1FAE5
+skinparam PackageBorderColor #64748B
+
+title Sơ Đồ Lớp 1/3: Toàn Bộ Thực Thể Domain Model & Quy Tắc Nghiệp Vụ (Pure Java 17)
+
+package "User, Security & Notifications" {
+  class User {
+    - uid : String
+    - role : UserRole
+    - fullName : String
+    - email : String
+    - phone : String
+    - nationalId : String
+    - status : UserStatus
+    - ekyc : EkycInfo
+    - security : UserSecurityInfo
+    - createdAt : Instant
+    --
+    + isActive() : boolean
+    + isEkycVerified() : boolean
+  }
+
+  class EkycInfo {
+    - status : EkycStatus
+    - verifiedBy : String
+    - verifiedAt : Instant
+  }
+
+  class UserSecurityInfo {
+    - hasPin : boolean
+    - pinUpdatedAt : Instant
+  }
+
+  class SecurityStatus {
+    - hasTransactionPin : boolean
+    - pinLockedUntil : Instant
+    --
+    + isPinLockedNow(now: Instant) : boolean
+  }
+
+  class AppNotification {
+    - notifId : String
+    - category : NotificationCategory
+    - direction : String
+    - title : String
+    - amount : Long
+    - balanceAfter : Long
+    - txId : String
+    - deepLink : String
+    - read : boolean
+    - createdAt : Instant
+  }
+
+  class Beneficiary {
+    - id : String
+    - name : String
+    - accountNumber : String
+    - bankCode : String
+    - alias : String
+  }
+}
+
+package "Accounts, Savings & Mortgage" {
+  class Account {
+    - accountId : String
+    - ownerUid : String
+    - type : AccountType
+    - accountNumber : String
+    - status : AccountStatus
+    - balance : long
+    - perTxnLimit : long
+    - dailyLimit : long
+    - saving : SavingInfo
+    - mortgage : MortgageInfo
+    --
+    + isActiveChecking() : boolean
+  }
+
+  class SavingInfo {
+    - termMonths : int
+    - principal : long
+    - interestRateId : String
+    - openedAt : Instant
+    - maturityDate : Instant
+    --
+    + {static} calculateMonthlyProfit(balance: long, rate: double) : long
+  }
+
+  class SavingCalculator {
+    + {static} calculateMaturityInterest(principal: long, rate: double, months: int) : long
+    + {static} calculateEarlyInterest(principal: long, demandRate: double, days: long) : long
+    + {static} previewSettlement(acc: Account, rate: double, demandRate: double, now: Instant) : SavingSettlementPreview
+  }
+
+  class MortgageInfo {
+    - loanAmount : long
+    - outstandingBalance : long
+    - termMonths : int
+    - annualRate : double
+    - paymentFrequency : String
+    - installmentAmount : long
+    - nextDueDate : Instant
+  }
+
+  class InterestRate {
+    - rateId : String
+    - termMonths : int
+    - annualRate : double
+    - effectiveFrom : Instant
+  }
+}
+
+package "Transactions, Ledger & Utilities" {
+  class Transaction {
+    - txId : String
+    - type : TransactionType
+    - fromAccountId : String
+    - toAccountId : String
+    - toExternal : ExternalRecipient
+    - amount : long
+    - fee : long
+    - status : TransactionStatus
+    - faceChecked : boolean
+    - otpVerified : boolean
+    - meta : TransactionMeta
+    - createdAt : Instant
+  }
+
+  class TransactionDraft {
+    - draftId : String
+    - requiresFace : boolean
+    - requiresBiometric : boolean
+    - otpExpiresAt : Instant
+  }
+
+  class LedgerEntry {
+    - entryId : String
+    - txId : String
+    - direction : LedgerDirection
+    - amount : long
+    - balanceAfter : long
+    - description : String
+    - createdAt : Instant
+  }
+
+  class UtilityBill {
+    - billId : String
+    - type : UtilityBillType
+    - customerCode : String
+    - amount : long
+    - status : UtilityBillStatus
+  }
+
+  class ServiceItem {
+    - itemId : String
+    - category : ServiceCategory
+    - title : String
+    - price : long
+  }
+
+  class Order {
+    - orderId : String
+    - uid : String
+    - itemId : String
+    - quantity : int
+    - totalAmount : long
+    - txId : String
+  }
+}
+
+package "Branch GIS, AI Chat & Officer Audit" {
+  class Branch {
+    - branchId : String
+    - name : String
+    - address : String
+    - location : GeoLocation
+    - type : BranchType
+  }
+
+  class GeoLocation {
+    - lat : double
+    - lng : double
+    --
+    + distanceMetersTo(other: GeoLocation) : double
+  }
+
+  class ChatMessage {
+    - msgId : String
+    - role : ChatRole
+    - text : String
+    - actions : List<ChatAction>
+    - createdAt : Instant
+  }
+
+  class ChatAction {
+    - label : String
+    - deepLink : String
+  }
+
+  class AuditLog {
+    - logId : String
+    - actorUid : String
+    - action : String
+    - targetId : String
+    - createdAt : Instant
+  }
+
+  class FaceCheckAudit {
+    - draftId : String
+    - uid : String
+    - txId : String
+    - manualAuditRequired : boolean
+  }
+}
+
+User "1" *-- "1" EkycInfo
+User "1" *-- "0..1" UserSecurityInfo
+User "1" --> "0..*" Account : owns
+User "1" --> "0..*" Beneficiary
+User "1" --> "0..*" AppNotification
+User "1" --> "0..*" Order
+User "1" --> "0..*" AuditLog : actorUid (Officer)
+
+Account "1" *-- "0..1" SavingInfo
+Account "1" *-- "0..1" MortgageInfo
+Account "1" --> "0..*" LedgerEntry
+Account "1" --> "0..*" Transaction : from / to
+SavingInfo --> InterestRate : termMonths
+SavingCalculator ..> Account : computes
+
+Transaction "1" --> "1..2" LedgerEntry : txId
+TransactionDraft "1" --> "0..1" Transaction : confirms
+TransactionDraft "1" --> "0..1" FaceCheckAudit : draftId
+Transaction "0..1" --> "0..1" UtilityBill : billId
+Transaction "0..1" --> "0..1" Order : txId
+Transaction "0..1" --> "0..2" AppNotification : OUT / IN
+Order "*" --> "1" ServiceItem : itemId
+
+Branch "1" *-- "1" GeoLocation
+ChatMessage "1" *-- "0..*" ChatAction
+
+@enduml

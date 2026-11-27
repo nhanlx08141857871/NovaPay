@@ -10,7 +10,7 @@
 | Tiêu chí (`MARKING.md`) | Thang điểm | Điểm dự kiến | Bằng chứng thực tế trong mã nguồn (`app/`, `server/`, `firestore.rules`) | Điểm trừ tiềm ẩn / Lỗ hổng phát hiện & Trạng thái khắc phục |
 | :--- | :---: | :---: | :--- | :--- |
 | **1. Architecture**<br>Thiết kế kiến trúc hệ thống, công nghệ sử dụng, lý giải lựa chọn | **1.00** | **1.00 / 1.00** | • **Clean Architecture 3 tầng nghiêm ngặt** (`presentation → domain ← data`): kiểm tra tự động xác nhận **0 lệnh import** `android.*`, `com.google.firebase.*`, `retrofit2.*` trong toàn bộ `domain/`, **0 lệnh gọi trực tiếp** `data` từ `presentation/`, **100% Java 17** (`0` file `.kt` trong `app/src`).<br>• **Hybrid Cloud:** Tách 2 Hilt Qualifiers `@BackendRetrofit` (đính kèm `AuthInterceptor` + timeout 30s) và `@OpenRouteRetrofit` (không gửi token ngân hàng ra ngoài) tại `NetworkModule.java`.<br>• **Không lộ Secret Key trên APK:** `app/build.gradle.kts` chỉ nạp `STRIPE_PUBLISHABLE_KEY` (`pk_...`), `ORS_API_KEY`, `BACKEND_BASE_URL`; mọi khóa nhạy cảm nằm trên `server/src/config.ts`. | • **Phát hiện khi rà soát:** `NetworkModule.java` để `HttpLoggingInterceptor.Level.BASIC` cố định cả ở bản Release (có nguy cơ ghi URL `?accountNumber=...` ra Logcat).<br>• **Đã vá tự động:** Tự động chuyển sang `Level.NONE` khi `!BuildConfig.DEBUG`. |
-| **2.1 Analysis & Design — Class Diagrams** | **1.00** | **1.00 / 1.00** | • Toàn bộ **28 màn hình** tuân thủ đúng bộ 3 lớp MVVM (`*Fragment`, `*ViewModel`, `*UiState`), **53 lớp `UseCase`**, **17 Repository interfaces** tại `domain/repository/` đối xứng 1–1 với **17 `*RepositoryImpl`** tại `data/repository/` (bổ sung trọn vẹn Notification, Savings trực tuyến, Security PIN/Limits).<br>• Bộ **10 sơ đồ lớp PlantUML** đầy đủ thuộc tính, kiểu dữ liệu (`long`, `Instant`, `GeoLocation`), phương thức và 5 loại quan hệ UML (`--|>`, `..|>`, `*--`, `o--`, `-->`) cho cả `Domain`, `Data`, `Presentation`, `iBanking Extensions` và `Backend Server` tại `docs/report/02_CLASS_DIAGRAMS.md` (đã biên dịch kiểm chứng 100% qua trình kết xuất SVG PlantUML). | • **Lưu ý khi nộp báo cáo Word:** Nhóm chỉ cần xuất ảnh độ phân giải cao (SVG/PNG 300 DPI) từ 10 sơ đồ PlantUML trong `docs/report/02_CLASS_DIAGRAMS.md` để chữ sắc nét tuyệt đối trên khổ A4. |
+| **2.1 Analysis & Design — Class Diagrams** | **1.00** | **1.00 / 1.00** | • Toàn bộ **28 màn hình** tuân thủ đúng bộ 3 lớp MVVM (`*Fragment`, `*ViewModel`, `*UiState`), **50+ lớp `UseCase`**, **17 Repository interfaces** tại `domain/repository/` đối xứng 1–1 với **17 `*RepositoryImpl`** tại `data/repository/`.<br>• Cô đọng thành **3 sơ đồ lớp PlantUML sắc nét** (Domain Model, Android Clean Architecture + MVVM 4 tầng, Backend Server) đầy đủ thuộc tính (`long`, `Instant`, `GeoLocation`), phương thức và 5 quan hệ UML (`--|>`, `..|>`, `*--`, `o--`, `-->`) tại `docs/diagrams/03..05_class_*.puml` (thuyết minh tại `docs/report/02_CLASS_DIAGRAMS.md`, kiểm chứng SVG 100%). | • **Ưu điểm bố cục báo cáo:** Tinh gọn đúng 3 sơ đồ lớp cốt lõi (trong tổng 8 sơ đồ toàn báo cáo) giúp hình nét căng trên khổ A4 mà không làm loãng tài liệu Word. |
 | **2.2 Analysis & Design — UI / UX** | **1.00** | **1.00 / 1.00** | • **100% XML Layouts + ViewBinding** (`0` lệnh `findViewById` thủ công, `0` chuỗi hardcode trong `res/layout/*.xml`), thiết kế chuẩn Ngân hàng số thương mại hiện đại (*Clean Fintech Minimalism*) trên Material Design 3.<br>• **100% Tiếng Việt** phân tách sạch theo 3 tệp `strings_core.xml`, `strings_money.xml`, `strings_officer.xml` (`strings.xml` chỉ giữ `app_name`; phần tuyên bố học thuật đặt tại `README.md` và mô tả *Google Play Store* để giữ giao diện thương mại chân thực).<br>• `StateLayoutHelper.java` đồng bộ 4 trạng thái `LOADING`, `SUCCESS`, `EMPTY`, `ERROR` kèm nút Thử lại (`btnRetry`), có biểu đồ cột `MPAndroidChart` thu/chi tháng và huy hiệu chuông thông báo trên `CustomerHomeFragment`. | • **Phát hiện khi rà soát:** Một số chuỗi ghi chú giao dịch mặc định trong `strings_money.xml` và `DepositWithdrawViewModel.java` còn viết Tiếng Việt không dấu.<br>• **Đã vá tự động:** Chuẩn hóa 100% Tiếng Việt có dấu đồng bộ trên toàn bộ giao diện thương mại của ứng dụng. |
 | **2.3 Analysis & Design — Database Design** | **1.00** | **1.00 / 1.00** | • Thiết kế chuẩn hóa **15 collections + 3 subcollections** (`beneficiaries`, `notifications`, `ledger`, cộng `user_secrets` khóa kín phía Server), mô tả chi tiết khóa chính, khóa ngoại và 5 Composite Indexes trong `firestore.indexes.json`.<br>• Tiền tệ dùng 100% số nguyên `long` (VNĐ), thời gian tầng `domain` dùng `java.time.Instant`, tọa độ dùng `GeoLocation`.<br>• `firestore.rules` khóa chặt quyền ghi toàn bộ dữ liệu tài chính, kiểm toán và `user_secrets` về phía Admin SDK. | • **Phát hiện khi rà soát lần cuối:** `users/{uid}/notifications/{notifId}` `allow update` chưa kiểm tra `isActiveUserDoc(uid)` để chặn user bị `LOCKED`.<br>• **Đã vá & triển khai tự động:** Bổ sung `&& isActiveUserDoc(uid)` vào `notifications` `allow update`, khóa kín `user_secrets` (`allow read, write: if false`) và chạy `npm run deploy:rules` trực tiếp lên Cloud Firestore. |
 | **3.1 Features — User Profiles** | **1.00** | **1.00 / 1.00** | • Hỗ trợ đầy đủ 2 vai trò `CUSTOMER` và `OFFICER` qua Firebase Custom Claims (`FirebaseAuthDataSource.java`, `server/src/middleware/auth.ts`).<br>• **Officer:** Tạo khách hàng kèm tài khoản `CHECKING` mặc định (`POST /officer/customers` có cơ chế rollback `deleteUser` nếu lỗi Firestore), sửa thông tin, khóa/mở khóa (`PATCH /officer/customers/:uid` đồng bộ `disabled` + `revokeRefreshTokens`) và ghi `audit_logs` bắt buộc.<br>• **Customer:** Xem thông tin định danh, cập nhật an toàn `phone`, `address`, `avatarUrl` (`ProfileFragment`), đổi mật khẩu, quên mật khẩu (`SendPasswordResetEmailUseCase`) và đăng nhập nhanh sinh trắc học (`BiometricQuickLoginStore`). | • **Phát hiện khi rà soát:** `MainActivity` cần chặn phân quyền hai chiều (`Customer ↔ Officer`), `/savings/*` và `/security/*` cần chặn rõ vai trò `OFFICER` (`403 PERMISSION_DENIED`).<br>• **Đã vá tự động:** Hoàn thiện chốt chặn hai chiều ở `MainActivity`, bổ sung chặn `OFFICER` tại `savings.ts` và `security.ts` kèm kiểm thử hồi quy, và dọn sạch phiên khi đăng xuất. |
@@ -139,52 +139,7 @@
 
 ## 3. Kịch Bản Trình Diễn Đồ Án 10 Phút Tối Ưu Nhất (10-Minute Live Demo Script)
 
-### 3.1 Sơ đồ Dòng chảy Kịch bản Demo 10 Phút (PlantUML Activity Timeline)
-
-```plantuml
-@startuml NovaPay_Demo_10Min_Timeline
-skinparam backgroundColor #FFFFFF
-skinparam shadowing false
-skinparam roundcorner 8
-skinparam defaultFontName "Segoe UI"
-skinparam defaultFontSize 11
-skinparam ArrowColor #334155
-skinparam ActivityBorderColor #0F4C81
-skinparam ActivityBackgroundColor #EFF6FF
-
-title Lộ Trình Trình Diễn Trực Tiếp (Live Demo 10 Phút) — Bao Phủ 100% Tiêu Chí & Tính Năng Mới
-
-start
-partition "Phút 00:00 – 02:00 | Đăng nhập, 3 Loại Tài khoản & Mở Sổ Tiết Kiệm" {
-  :Đăng nhập Khách hàng đã duyệt eKYC (SEED_MEMBER_1_EMAIL — Nguyễn Phan Nhân, TK 1001000001);
-  :Trang chủ: Ẩn/hiện tổng tài sản, Biểu đồ MPAndroidChart Thu/Chi, Huy hiệu chuông Thông báo;
-  :Mở 3 tài khoản qua AccountRouter: Checking (QR), Saving (tính lãi/tất toán), Mortgage\n& Mở nhanh sổ tiết kiệm trực tuyến kỳ hạn 6 tháng trên OpenSavingFragment;
-}
-
-partition "Phút 02:00 – 05:00 | Biến Động Số Dư Realtime, FaceCheck 3 Lớp > 5M & Stripe" {
-  :Chuyển tiền nội bộ <= 5M tới Nguyễn Thành Đạt (TK 1001000002) + OTP Email 180s\n-> Xuất Biên lai PNG/PDF & Xuất Sao kê PDF (StatementPdfExporter);
-  :Thanh toán Hóa đơn Điện > 5M (Mã PE0100009999 — 6.200.000 ₫)\n-> Trình diễn đủ 3 lớp: FaceCheck nghiêm ngặt (eKYC >= 0.80) -> Vân tay/PIN -> OTP Brevo;
-  :Kiểm tra NotificationCenter & System Push Notification biến động số dư vừa phát sinh\n+ Nạp tiền Stripe PaymentSheet (Thẻ test 4242...);
-}
-
-partition "Phút 05:00 – 07:00 | Bảo Mật PIN/Hạn Mức, Bản Đồ Chỉ Đường & AI Chatbot" {
-  :Mở Cài đặt Bảo mật (SecuritySettingsFragment): Thiết lập/Đổi PIN 6 số, chỉnh hạn mức\n& thử Đóng băng khẩn cấp (FROZEN) tài khoản thanh toán;
-  :Mở Bản đồ Chi nhánh & ATM (osmdroid): Định vị / Fallback Quận 7 (10.7326, 106.6998)\n& Trợ lý ảo AI Chatbot hỏi chi tiêu tháng -> Chạm Chip DeepLink điều hướng thẳng;
-}
-
-partition "Phút 07:00 – 10:00 | Phân hệ Nhân viên Ngân hàng (Officer) & Khóa Realtime" {
-  :Trên Thiết bị 2: Đăng nhập tài khoản OFFICER (SEED_OFFICER_EMAIL — Trần Minh Quân)\n-> Xem Dashboard KPI, Hậu kiểm FaceCheck & Nhật ký kiểm toán (audit_logs);
-  :Duyệt hồ sơ eKYC đang chờ của Nguyễn Văn Duy (SEED_MEMBER_3_EMAIL, TK 1001000003)\n-> Máy khách hàng tự nhận thông báo kết quả duyệt eKYC (novapay://profile);
-  :Đổi lãi suất kỳ hạn 12T (6.00% -> 6.60%) -> Máy Khách hàng tự nhảy lãi dự kiến;\nBấm "Khóa TK" -> Máy Khách hàng tự văng ra màn hình Login tức thì!;
-}
-stop
-
-@enduml
-```
-
----
-
-### 3.2 Bảng Kịch Bản Thao Tác Chi Tiết Từng Phút (Chuẩn Bị 2 Thiết Bị / Máy Ảo Song Song)
+### Bảng Kịch Bản Thao Tác Chi Tiết Từng Phút (Chuẩn Bị 2 Thiết Bị / Máy Ảo Song Song)
 
 > **Chuẩn bị trước giờ vào phòng bảo vệ (5 phút trước khi gọi tên):**
 > - **4 tài khoản Gmail thật duy nhất trong hệ thống (cấu hình trong `server/.env`, đã loại bỏ hoàn toàn các tài khoản ảo cũ):**
