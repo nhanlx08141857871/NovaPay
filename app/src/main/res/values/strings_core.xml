@@ -180,4 +180,154 @@
     <string name="core_liveness_open_eyes">Vui lòng mở rõ cả hai mắt để xác nhận người thật.</string>
     <string name="core_liveness_ready">Khuôn mặt hợp lệ! Nhấn nút để chụp ngay.</string>
     <string name="core_liveness_capture_failed">Không thể chụp ảnh từ camera. Vui lòng thử lại.</string>
+
+    <!-- Thông báo Biến động số dư & Hệ thống (NotificationCenter + SystemNotificationHelper) -->
+    <string name="core_notif_channel_name">Biến động số dư &amp; Bảo mật</string>
+    <string name="core_notif_channel_desc">Thông báo tức thì khi có tiền vào/ra, tiết kiệm, eKYC và bảo mật tài khoản.</string>
+    <string name="core_notif_center_title">Thông báo</string>
+    <string name="core_notif_mark_all_read">Đọc tất cả</string>
+    <string name="core_notif_mark_all_success">Đã đánh dấu tất cả thông báo là đã đọc.</string>
+    <string name="core_notif_filter_all">Tất cả</string>
+    <string name="core_notif_filter_balance">Biến động số dư</string>
+    <string name="core_notif_filter_saving">Tiết kiệm</string>
+    <string name="core_notif_filter_security">Bảo mật</string>
+    <string name="core_notif_filter_ekyc">eKYC</string>
+    <string name="core_notif_empty_title">Chưa có thông báo mới</string>
+    <string name="core_notif_empty_subtitle">Mọi biến động số dư, tiết kiệm và cảnh báo bảo mật sẽ hiển thị tại đây.</string>
+    <string name="core_notif_balance_after">Số dư sau GD: %1$s</string>
+    <string name="core_notif_account_format">TK %1$s</string>
+    <string name="core_notif_bell_desc">Hộp thư thông báo</string>
+    <string name="core_notif_badge_overflow">99+</string>
+    <string name="core_notif_permission_rationale">Bật quyền thông báo để nhận cảnh báo biến động số dư và bảo mật ngay lập tức.</string>
+    <string name="core_notif_permission_allow">Cho phép</string>
+
+    <!-- Mở & Tất toán Sổ tiết kiệm trực tuyến (OpenSavingFragment & SavingDetailFragment) -->
+    <string name="core_home_action_open_saving">Mở tiết kiệm</string>
+    <string name="core_home_open_saving_cta">+ Mở sổ mới</string>
+    <string name="core_open_saving_title">Mở sổ tiết kiệm trực tuyến</string>
+    <string name="core_open_saving_source_label">Tài khoản thanh toán nguồn (CHECKING)</string>
+    <string name="core_open_saving_source_item">%1$s • %2$s</string>
+    <string name="core_open_saving_amount_hint">Số tiền gửi tiết kiệm (tối thiểu 1.000.000 ₫)</string>
+    <string name="core_open_saving_chip_1m">1.000.000 ₫</string>
+    <string name="core_open_saving_chip_5m">5.000.000 ₫</string>
+    <string name="core_open_saving_chip_10m">10.000.000 ₫</string>
+    <string name="core_open_saving_chip_50m">50.000.000 ₫</string>
+    <string name="core_open_saving_term_section">Chọn kỳ hạn &amp; Lãi suất áp dụng</string>
+    <string name="core_open_saving_term_chip">%1$d tháng • %2$.2f%%/năm</string>
+    <string name="core_open_saving_preview_title">Dự toán tiền lãi tiết kiệm</string>
+    <string name="core_open_saving_preview_rate">Lãi suất áp dụng</string>
+    <string name="core_open_saving_preview_monthly">Lãi dự kiến mỗi tháng</string>
+    <string name="core_open_saving_preview_total_interest">Tổng lãi cuối kỳ</string>
+    <string name="core_open_saving_preview_maturity_date">Ngày đáo hạn dự kiến</string>
+    <string name="core_open_saving_preview_total_payout">Tổng gốc &amp; lãi khi đáo hạn</string>
+    <string name="core_open_saving_pin_hint">Mã PIN giao dịch (6 chữ số)</string>
+    <string name="core_open_saving_pin_note">Tài khoản đã bật Smart PIN. Nhập mã PIN 6 số để xác nhận trích tiền mở sổ.</string>
+    <string name="core_open_saving_pin_invalid">Vui lòng nhập mã PIN giao dịch gồm 6 chữ số.</string>
+    <string name="core_open_saving_submit">Xác nhận mở sổ tiết kiệm</string>
+    <string name="core_open_saving_no_checking">Bạn chưa có tài khoản CHECKING đang hoạt động để mở sổ tiết kiệm.</string>
+    <string name="core_open_saving_no_rates">Biểu lãi suất kỳ hạn hiện chưa sẵn sàng. Vui lòng thử lại sau.</string>
+    <string name="core_open_saving_insufficient">Số dư tài khoản CHECKING không đủ để mở sổ với số tiền này.</string>
+    <string name="core_open_saving_success_title">Mở sổ tiết kiệm thành công</string>
+    <string name="core_open_saving_success_desc">Số sổ tiết kiệm mới: %1$s\nLãi suất áp dụng: %2$.2f%%/năm • Đáo hạn: %3$s</string>
+    <string name="core_open_saving_view_account">Xem sổ tiết kiệm</string>
+    <string name="core_open_saving_view_receipt">Xem biên lai</string>
+
+    <string name="core_saving_settle_action">Tất toán sổ tiết kiệm</string>
+    <string name="core_saving_open_another_action">Mở thêm sổ tiết kiệm mới</string>
+    <string name="core_saving_settle_dialog_title">Xác nhận tất toán sổ tiết kiệm</string>
+    <string name="core_saving_settle_target_label">Tài khoản CHECKING nhận tiền</string>
+    <string name="core_saving_settle_type_mature">Đúng hạn — Hưởng trọn lãi suất kỳ hạn</string>
+    <string name="core_saving_settle_type_early">Trước hạn — Áp dụng lãi suất không kỳ hạn (%1$.2f%%/năm • %2$d ngày)</string>
+    <string name="core_saving_settle_principal">Tiền gốc</string>
+    <string name="core_saving_settle_interest">Tiền lãi thực nhận dự kiến</string>
+    <string name="core_saving_settle_total">Tổng tiền nhận về CHECKING</string>
+    <string name="core_saving_settle_confirm">Xác nhận tất toán</string>
+    <string name="core_saving_settle_cancel">Hủy</string>
+    <string name="core_saving_settle_success">Đã tất toán sổ tiết kiệm thành công. Tổng tiền nhận: %1$s</string>
+    <string name="core_saving_settle_no_checking">Không tìm thấy tài khoản CHECKING đang hoạt động để nhận tiền tất toán.</string>
+
+    <!-- Trung tâm Bảo mật, Quên/Đổi Mật khẩu, Sinh trắc học & Kiểm soát Tài khoản -->
+    <string name="core_login_forgot_password">Quên mật khẩu?</string>
+    <string name="core_login_biometric_action">Đăng nhập bằng Sinh trắc học</string>
+    <string name="core_login_biometric_prompt_title">Đăng nhập nhanh NovaPay</string>
+    <string name="core_login_biometric_prompt_subtitle">Xác thực vân tay hoặc khuôn mặt để đăng nhập vào %1$s</string>
+    <string name="core_login_forgot_dialog_title">Đặt lại mật khẩu đăng nhập</string>
+    <string name="core_login_forgot_dialog_desc">Nhập địa chỉ email đã đăng ký để nhận liên kết đặt lại mật khẩu an toàn.</string>
+    <string name="core_login_forgot_send_action">Gửi liên kết đặt lại</string>
+    <string name="core_login_forgot_sent_success">Đã gửi email đặt lại mật khẩu tới %1$s. Vui lòng kiểm tra hộp thư.</string>
+
+    <string name="core_profile_security_action">Cài đặt Bảo mật &amp; Đổi mật khẩu</string>
+    <string name="core_checking_manage_controls_action">Quản lý hạn mức &amp; Khóa tạm thời</string>
+
+    <string name="core_security_title">Trung tâm Bảo mật</string>
+    <string name="core_security_password_section">Đổi mật khẩu đăng nhập</string>
+    <string name="core_security_current_password_hint">Mật khẩu hiện tại</string>
+    <string name="core_security_new_password_hint">Mật khẩu mới (tối thiểu 6 ký tự)</string>
+    <string name="core_security_confirm_password_hint">Xác nhận mật khẩu mới</string>
+    <string name="core_security_change_password_action">Cập nhật mật khẩu</string>
+    <string name="core_security_password_mismatch">Mật khẩu mới và mật khẩu xác nhận không khớp.</string>
+    <string name="core_security_password_success">Đã cập nhật mật khẩu đăng nhập thành công.</string>
+
+    <string name="core_security_pin_section">Mã PIN giao dịch 6 số (Smart PIN)</string>
+    <string name="core_security_pin_status_set">Đã thiết lập</string>
+    <string name="core_security_pin_status_unset">Chưa thiết lập</string>
+    <string name="core_security_pin_locked_notice">Mã PIN tạm khóa do nhập sai nhiều lần. Thử lại sau %1$s.</string>
+    <string name="core_security_current_pin_hint">Mã PIN hiện tại (6 chữ số)</string>
+    <string name="core_security_new_pin_hint">Mã PIN mới (6 chữ số)</string>
+    <string name="core_security_confirm_pin_hint">Nhập lại mã PIN mới</string>
+    <string name="core_security_pin_save_action">Lưu mã PIN giao dịch</string>
+    <string name="core_security_pin_mismatch">Mã PIN xác nhận không trùng khớp.</string>
+    <string name="core_security_pin_success">Đã lưu mã PIN giao dịch 6 số thành công.</string>
+
+    <string name="core_security_biometric_section">Đăng nhập nhanh bằng Sinh trắc học</string>
+    <string name="core_security_biometric_switch">Kích hoạt vân tay / khuôn mặt khi đăng nhập</string>
+    <string name="core_security_biometric_desc_ready">Cho phép mở khóa và đăng nhập nhanh trên thiết bị này bằng Keystore mã hóa AES-256.</string>
+    <string name="core_security_biometric_desc_enrolled">Đang bật đăng nhập nhanh cho tài khoản %1$s.</string>
+    <string name="core_security_biometric_desc_unavailable">Thiết bị hiện chưa hỗ trợ hoặc chưa thiết lập sinh trắc học / khóa màn hình.</string>
+    <string name="core_security_biometric_enroll_title">Xác nhận kích hoạt Sinh trắc học</string>
+    <string name="core_security_biometric_enroll_desc">Nhập mật khẩu hiện tại để mã hóa an toàn thông tin đăng nhập nhanh trên thiết bị này.</string>
+    <string name="core_security_biometric_enroll_confirm">Tiếp tục xác thực</string>
+    <string name="core_security_biometric_enabled_success">Đã bật đăng nhập nhanh bằng sinh trắc học.</string>
+    <string name="core_security_biometric_disabled_success">Đã tắt đăng nhập nhanh bằng sinh trắc học.</string>
+
+    <string name="core_security_controls_section">Hạn mức &amp; Khóa tạm thời CHECKING</string>
+    <string name="core_security_checking_select_hint">Chọn tài khoản CHECKING</string>
+    <string name="core_security_checking_empty">Bạn chưa có tài khoản CHECKING khả dụng để điều chỉnh.</string>
+    <string name="core_security_freeze_switch">Tạm khóa khẩn cấp tài khoản (FROZEN)</string>
+    <string name="core_security_freeze_desc">Khi bật tạm khóa, mọi giao dịch chi/rút và chuyển khoản từ tài khoản này sẽ bị chặn ngay lập tức.</string>
+    <string name="core_security_per_txn_limit_hint">Hạn mức / lần (1.000.000 – 100.000.000 ₫)</string>
+    <string name="core_security_daily_limit_hint">Hạn mức / ngày (5.000.000 – 500.000.000 ₫)</string>
+    <string name="core_security_controls_pin_hint">Mã PIN giao dịch xác nhận (nếu đã cài đặt)</string>
+    <string name="core_security_controls_save_action">Lưu cấu hình tài khoản</string>
+    <string name="core_security_controls_success">Đã cập nhật hạn mức và trạng thái tài khoản CHECKING.</string>
+    <string name="core_security_controls_no_changes">Không có thay đổi cấu hình nào cần lưu.</string>
+
+    <!-- Lịch sử giao dịch nâng cao & Xuất Sao kê PDF -->
+    <string name="core_history_account_filter_hint">Lọc theo tài khoản</string>
+    <string name="core_history_search_hint">Tìm theo nội dung, mã GD hoặc số tiền…</string>
+    <string name="core_history_range_custom">Tùy chọn ngày</string>
+    <string name="core_history_range_custom_picker_title">Chọn khoảng ngày sao kê</string>
+    <string name="core_history_range_custom_label">%1$s – %2$s</string>
+    <string name="core_history_summary_in">Tổng tiền vào</string>
+    <string name="core_history_summary_out">Tổng tiền ra</string>
+    <string name="core_history_summary_count">%1$d giao dịch</string>
+    <string name="core_history_export_pdf">Xuất PDF</string>
+    <string name="core_history_export_pdf_empty">Chưa có giao dịch nào trong bộ lọc hiện tại để xuất sao kê.</string>
+    <string name="core_history_export_pdf_failed">Không thể tạo tệp sao kê PDF lúc này. Vui lòng thử lại.</string>
+    <string name="core_history_export_pdf_chooser">Chia sẻ / Mở Sao kê Giao dịch NovaPay (PDF)</string>
+    <string name="core_history_receipt_unavailable">Bút toán này chưa gắn mã biên lai chi tiết.</string>
+    <string name="core_history_tap_receipt_hint">Chạm để xem biên lai</string>
+    <string name="core_statement_pdf_title">SAO KÊ GIAO DỊCH ĐIỆN TỬ (E-STATEMENT)</string>
+    <string name="core_statement_pdf_bank">NOVAPAY DIGITAL BANKING</string>
+    <string name="core_statement_pdf_customer">Khách hàng: %1$s</string>
+    <string name="core_statement_pdf_account">Tài khoản: %1$s</string>
+    <string name="core_statement_pdf_period">Kỳ sao kê: %1$s</string>
+    <string name="core_statement_pdf_exported_at">Thời điểm xuất: %1$s</string>
+    <string name="core_statement_pdf_summary">Tổng thu: %1$s   |   Tổng chi: %2$s   |   Số GD: %3$d</string>
+    <string name="core_statement_pdf_col_time">Ngày giờ</string>
+    <string name="core_statement_pdf_col_txid">Mã GD</string>
+    <string name="core_statement_pdf_col_desc">Diễn giải</string>
+    <string name="core_statement_pdf_col_amount">Số tiền (+/-)</string>
+    <string name="core_statement_pdf_col_balance">Số dư sau GD</string>
+    <string name="core_statement_pdf_page">Trang %1$d/%2$d</string>
 </resources>

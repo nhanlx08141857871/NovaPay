@@ -123,4 +123,28 @@
         <deepLink app:uri="novapay://face-check?draftId={draftId}" />
     </dialog>
 
+    <fragment
+        android:id="@+id/notificationCenterFragment"
+        android:name="com.novabank.novapay.presentation.customer.notification.NotificationCenterFragment"
+        android:label="@string/core_notif_center_title"
+        tools:layout="@layout/fragment_notification_center">
+        <deepLink app:uri="novapay://notifications" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/openSavingFragment"
+        android:name="com.novabank.novapay.presentation.customer.account.OpenSavingFragment"
+        android:label="@string/core_open_saving_title"
+        tools:layout="@layout/fragment_open_saving">
+        <deepLink app:uri="novapay://savings/open" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/securitySettingsFragment"
+        android:name="com.novabank.novapay.presentation.customer.security.SecuritySettingsFragment"
+        android:label="@string/core_security_title"
+        tools:layout="@layout/fragment_security_settings">
+        <deepLink app:uri="novapay://security" />
+    </fragment>
+
 </navigation>

@@ -11,6 +11,7 @@ import com.novabank.novapay.domain.model.transaction.MonthlyCashflowSummary;
 import com.novabank.novapay.domain.model.user.User;
 import com.novabank.novapay.domain.usecase.account.ObserveMyAccountsUseCase;
 import com.novabank.novapay.domain.usecase.auth.SignOutUseCase;
+import com.novabank.novapay.domain.usecase.notification.ObserveUnreadNotificationCountUseCase;
 import com.novabank.novapay.domain.usecase.transaction.ObserveMonthlyCashflowUseCase;
 import com.novabank.novapay.domain.usecase.user.ObserveMyProfileUseCase;
 
@@ -32,6 +33,7 @@ public class CustomerHomeViewModel extends ViewModel {
     private final ObserveMyProfileUseCase observeMyProfileUseCase;
     private final ObserveMyAccountsUseCase observeMyAccountsUseCase;
     private final ObserveMonthlyCashflowUseCase observeMonthlyCashflowUseCase;
+    private final ObserveUnreadNotificationCountUseCase observeUnreadNotificationCountUseCase;
     private final SignOutUseCase signOutUseCase;
     private final CompositeDisposable disposables = new CompositeDisposable();
 
@@ -42,17 +44,20 @@ public class CustomerHomeViewModel extends ViewModel {
     private User lastUser;
     private List<Account> lastAccounts;
     private MonthlyCashflowSummary lastCashflow;
+    private int lastUnreadCount = 0;
 
     @Inject
     public CustomerHomeViewModel(
             ObserveMyProfileUseCase observeMyProfileUseCase,
             ObserveMyAccountsUseCase observeMyAccountsUseCase,
             ObserveMonthlyCashflowUseCase observeMonthlyCashflowUseCase,
+            ObserveUnreadNotificationCountUseCase observeUnreadNotificationCountUseCase,
             SignOutUseCase signOutUseCase
     ) {
         this.observeMyProfileUseCase = observeMyProfileUseCase;
         this.observeMyAccountsUseCase = observeMyAccountsUseCase;
         this.observeMonthlyCashflowUseCase = observeMonthlyCashflowUseCase;
+        this.observeUnreadNotificationCountUseCase = observeUnreadNotificationCountUseCase;
         this.signOutUseCase = signOutUseCase;
     }
 
@@ -65,6 +70,8 @@ public class CustomerHomeViewModel extends ViewModel {
                                 observeMyProfileUseCase.execute(),
                                 observeMyAccountsUseCase.execute(),
                                 observeMonthlyCashflowUseCase.execute(),
+                                observeUnreadNotificationCountUseCase.execute()
+                                        .onErrorReturnItem(AppResult.success(0)),
                                 CombinedResult::new
                         )
                         .observeOn(AndroidSchedulers.mainThread())
@@ -82,7 +89,8 @@ public class CustomerHomeViewModel extends ViewModel {
                     lastUser,
                     lastAccounts,
                     lastCashflow,
-                    balanceHidden
+                    balanceHidden,
+                    lastUnreadCount
             )));
         }
     }
@@ -108,12 +116,16 @@ public class CustomerHomeViewModel extends ViewModel {
         lastUser = combined.userResult.isSuccess() ? combined.userResult.getData() : null;
         lastAccounts = accounts;
         lastCashflow = combined.cashflowResult.isSuccess() ? combined.cashflowResult.getData() : null;
+        lastUnreadCount = (combined.unreadResult.isSuccess() && combined.unreadResult.getData() != null)
+                ? combined.unreadResult.getData()
+                : 0;
 
         uiState.setValue(UiState.success(new CustomerHomeUiState(
                 lastUser,
                 lastAccounts,
                 lastCashflow,
-                balanceHidden
+                balanceHidden,
+                lastUnreadCount
         )));
     }
 
@@ -127,15 +139,18 @@ public class CustomerHomeViewModel extends ViewModel {
         final AppResult<User> userResult;
         final AppResult<List<Account>> accountsResult;
         final AppResult<MonthlyCashflowSummary> cashflowResult;
+        final AppResult<Integer> unreadResult;
 
         CombinedResult(
                 AppResult<User> userResult,
                 AppResult<List<Account>> accountsResult,
-                AppResult<MonthlyCashflowSummary> cashflowResult
+                AppResult<MonthlyCashflowSummary> cashflowResult,
+                AppResult<Integer> unreadResult
         ) {
             this.userResult = userResult;
             this.accountsResult = accountsResult;
             this.cashflowResult = cashflowResult;
+            this.unreadResult = unreadResult;
         }
     }
 }

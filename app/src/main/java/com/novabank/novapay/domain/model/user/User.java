@@ -19,6 +19,7 @@ public final class User {
     private final String avatarUrl;
     private final UserStatus status;
     private final EkycInfo ekyc;
+    private final UserSecurityInfo security;
     private final String createdBy;
     private final Instant createdAt;
     private final Instant updatedAt;
@@ -39,6 +40,42 @@ public final class User {
             Instant createdAt,
             Instant updatedAt
     ) {
+        this(
+                uid,
+                role,
+                fullName,
+                email,
+                phone,
+                nationalId,
+                dob,
+                address,
+                avatarUrl,
+                status,
+                ekyc,
+                null,
+                createdBy,
+                createdAt,
+                updatedAt
+        );
+    }
+
+    public User(
+            String uid,
+            UserRole role,
+            String fullName,
+            String email,
+            String phone,
+            String nationalId,
+            String dob,
+            String address,
+            String avatarUrl,
+            UserStatus status,
+            EkycInfo ekyc,
+            UserSecurityInfo security,
+            String createdBy,
+            Instant createdAt,
+            Instant updatedAt
+    ) {
         this.uid = Objects.requireNonNull(uid, "uid must not be null");
         this.role = role != null ? role : UserRole.CUSTOMER;
         this.fullName = fullName != null ? fullName : "";
@@ -50,6 +87,7 @@ public final class User {
         this.avatarUrl = avatarUrl != null ? avatarUrl : "";
         this.status = status != null ? status : UserStatus.ACTIVE;
         this.ekyc = ekyc != null ? ekyc : new EkycInfo(EkycStatus.UNVERIFIED, "", null);
+        this.security = security != null ? security : new UserSecurityInfo(false, null);
         this.createdBy = createdBy != null ? createdBy : "";
         this.createdAt = createdAt;
         this.updatedAt = updatedAt;
@@ -97,6 +135,14 @@ public final class User {
 
     public EkycInfo getEkyc() {
         return ekyc;
+    }
+
+    public UserSecurityInfo getSecurity() {
+        return security;
+    }
+
+    public boolean hasTransactionPin() {
+        return security.hasPin();
     }
 
     public String getCreatedBy() {

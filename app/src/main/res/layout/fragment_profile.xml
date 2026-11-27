@@ -313,11 +313,22 @@
             </com.google.android.material.card.MaterialCardView>
 
             <com.google.android.material.button.MaterialButton
+                android:id="@+id/btnSecuritySettings"
+                style="@style/Widget.NovaPay.Button.Outlined"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                android:text="@string/core_profile_security_action"
+                android:visibility="gone"
+                app:icon="@drawable/ic_np_lock"
+                app:iconGravity="textStart" />
+
+            <com.google.android.material.button.MaterialButton
                 android:id="@+id/btnLogout"
                 style="@style/Widget.NovaPay.Button.Outlined.Danger"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="16dp"
+                android:layout_marginTop="12dp"
                 android:text="@string/core_action_logout"
                 app:icon="@drawable/ic_modc_logout"
                 app:iconGravity="textStart" />

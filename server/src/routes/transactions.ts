@@ -27,6 +27,7 @@ import {
   StripeServiceError,
   stripeService as defaultStripeService,
 } from "../services/stripe";
+import { enqueueTransactionNotifications } from "../services/notifications";
 
 const VN_OFFSET_MS = 7 * 60 * 60 * 1000;
 const DAY_MS = 24 * 60 * 60 * 1000;
@@ -1332,9 +1333,10 @@ export function createTransactionsRouter(deps?: TransactionsRouteDeps): Router {
           createdAt: nowTs,
         });
 
+        let newToBalance: number | null = null;
         if (type === "TRANSFER_INTERNAL" && toAccRef && toAccSnap) {
           const toBalance = Number(toAccSnap.data()?.balance ?? 0);
-          const newToBalance = toBalance + amount;
+          newToBalance = toBalance + amount;
           tx.update(toAccRef, { balance: newToBalance });
           tx.set(toAccRef.collection("ledger").doc(), {
             txId,
@@ -1441,6 +1443,23 @@ export function createTransactionsRouter(deps?: TransactionsRouteDeps): Router {
           txId,
           otpVerified: true,
           biometricPassed: Boolean(biometricPassed),
+        });
+
+        enqueueTransactionNotifications(tx, db, {
+          type,
+          txId,
+          amount,
+          fee,
+          senderUid: uid,
+          senderAccountNumber: fromAccountNumber || null,
+          senderBalanceAfter: newFromBalance,
+          recipientUid: type === "TRANSFER_INTERNAL" ? toOwnerUid || null : null,
+          recipientAccountNumber: toAccountNumber || null,
+          recipientBalanceAfter: newToBalance,
+          recipientName: toOwnerName || null,
+          senderName: asTrimmedString(freshUser.fullName) || null,
+          note,
+          createdAt: nowTs,
         });
 
         return {

@@ -59,11 +59,16 @@ public class ModuleAMapperTest {
         ekyc.put("status", "VERIFIED");
         ekyc.put("verifiedBy", "off_1");
 
+        Map<String, Object> security = new HashMap<>();
+        security.put("hasPin", Boolean.TRUE);
+        security.put("pinUpdatedAt", "2026-02-01T10:00:00Z");
+
         Map<String, Object> doc = new HashMap<>();
         doc.put("role", "CUSTOMER");
         doc.put("fullName", "Nguyen Hoang Anh");
         doc.put("status", "LOCKED");
         doc.put("ekyc", ekyc);
+        doc.put("security", security);
 
         User user = UserMapper.fromMap("u1", doc);
         assertNotNull(user);
@@ -72,6 +77,15 @@ public class ModuleAMapperTest {
         assertFalse(user.isActive());
         assertTrue(user.isEkycVerified());
         assertEquals(EkycStatus.VERIFIED, user.getEkyc().getStatus());
+        assertTrue(user.hasTransactionPin());
+        assertTrue(user.getSecurity().hasPin());
+        assertEquals(Instant.parse("2026-02-01T10:00:00Z"), user.getSecurity().getPinUpdatedAt());
+
+        doc.remove("security");
+        User userWithoutSecurity = UserMapper.fromMap("u2", doc);
+        assertNotNull(userWithoutSecurity);
+        assertFalse(userWithoutSecurity.hasTransactionPin());
+        assertFalse(userWithoutSecurity.getSecurity().hasPin());
     }
 
     @Test

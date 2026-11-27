@@ -19,6 +19,10 @@ public class SessionManagerRoleGuardTest {
         assertTrue(SessionManager.isDeepLinkAllowedForRole(Constants.DEEPLINK_BRANCHES, Constants.ROLE_CUSTOMER, "u1"));
         assertTrue(SessionManager.isDeepLinkAllowedForRole("novapay://chatbot", Constants.ROLE_CUSTOMER, "u1"));
         assertTrue(SessionManager.isDeepLinkAllowedForRole("novapay://face-check?draftId=d1", Constants.ROLE_CUSTOMER, "u1"));
+        assertTrue(SessionManager.isDeepLinkAllowedForRole(Constants.DEEPLINK_NOTIFICATIONS, Constants.ROLE_CUSTOMER, "u1"));
+        assertTrue(SessionManager.isDeepLinkAllowedForRole(Constants.DEEPLINK_SAVINGS_OPEN, Constants.ROLE_CUSTOMER, "u1"));
+        assertTrue(SessionManager.isDeepLinkAllowedForRole(Constants.DEEPLINK_SECURITY, Constants.ROLE_CUSTOMER, "u1"));
+        assertTrue(SessionManager.isDeepLinkAllowedForRole("novapay://receipt/tx_99", Constants.ROLE_CUSTOMER, "u1"));
         assertTrue(SessionManager.isDeepLinkAllowedForRole(Constants.DEEPLINK_EKYC, Constants.ROLE_CUSTOMER, "u1"));
         assertTrue(SessionManager.isDeepLinkAllowedForRole("novapay://ekyc?targetUid=u1", Constants.ROLE_CUSTOMER, "u1"));
 
@@ -39,6 +43,10 @@ public class SessionManagerRoleGuardTest {
         assertFalse(SessionManager.isDeepLinkAllowedForRole(Constants.DEEPLINK_BILLS, Constants.ROLE_OFFICER, "off1"));
         assertFalse(SessionManager.isDeepLinkAllowedForRole("novapay://accounts/acc_1", Constants.ROLE_OFFICER, "off1"));
         assertFalse(SessionManager.isDeepLinkAllowedForRole("novapay://face-check?draftId=d1", Constants.ROLE_OFFICER, "off1"));
+        assertFalse(SessionManager.isDeepLinkAllowedForRole(Constants.DEEPLINK_NOTIFICATIONS, Constants.ROLE_OFFICER, "off1"));
+        assertFalse(SessionManager.isDeepLinkAllowedForRole(Constants.DEEPLINK_SAVINGS_OPEN, Constants.ROLE_OFFICER, "off1"));
+        assertFalse(SessionManager.isDeepLinkAllowedForRole(Constants.DEEPLINK_SECURITY, Constants.ROLE_OFFICER, "off1"));
+        assertFalse(SessionManager.isDeepLinkAllowedForRole("novapay://receipt/tx_99", Constants.ROLE_OFFICER, "off1"));
     }
 
     @Test

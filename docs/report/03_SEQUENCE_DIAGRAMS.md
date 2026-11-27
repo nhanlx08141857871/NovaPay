@@ -108,12 +108,12 @@ deactivate UI
 
 ---
 
-## 2. Luồng 2: Chuyển Tiền Giá Trị Cao (`> 5.000.000 ₫`) — Xác Thực 3 Lớp (`FaceCheck` + `Biometric` + `OTP Brevo`)
+## 2. Luồng 2: Chuyển Tiền Giá Trị Cao (`> 5.000.000 ₫`) — Xác Thực 3 Lớp (`FaceCheck` Siết Chặt + `Biometric` + `OTP Brevo`)
 
 ### Điểm nhấn kiến trúc ăn điểm:
 - **Trì hoãn phát hành OTP thông minh:** Khi số tiền chi/rút `> 5.000.000 ₫`, `POST /transactions/initiate` tạo bản nháp ở trạng thái `"PENDING_FACE"` với `otpExpiresAt: null` (**chưa gửi Email OTP**), giúp khách hàng không bị trôi mất thời gian 180 giây trong lúc cân chỉnh khuôn mặt trước camera và tránh tốn hạn mức gửi mail nếu khuôn mặt không khớp.
-- **Kết hợp Edge AI + Cloud Multimodal AI + Cơ chế Hậu kiểm:** CameraX + ML Kit kiểm tra người thật (1 khuôn mặt, mở cả 2 mắt `>= 0.7`, góc nghiêng đầu `<= 15°`), nén JPEG `< 200KB` gửi lên Backend để **Gemini Flash Multimodal** đối chiếu với `ekyc_images/{uid}`. Nếu Gemini quá tải (HTTP 429) hoặc timeout (`> 8s`), hệ thống cho qua an toàn kèm cờ `manualAuditRequired: true` tại `face_checks/{draftId}` để `OFFICER` hậu kiểm.
-- **Giao dịch nguyên tử 2 pha (Two-Phase Firestore ACID Transaction):** Toàn bộ lệnh `tx.get(...)` được gom vào Pha 1 (kiểm tra lại số dư, trạng thái `ACTIVE`, chủ tài khoản nhận không bị `LOCKED`, hạn mức ngày theo múi giờ `Asia/Ho_Chi_Minh`) trước khi thực thi Pha 2 ghi đồng thời 5 tài liệu.
+- **Đối chiếu khuôn mặt nghiêm ngặt (Zero-False-Acceptance & Fail-Closed):** Trước khi gọi AI, Server kiểm tra `ekyc_images/{uid}`; nếu trống hoặc chỉ là ảnh mẫu 1x1 pixel (`SAMPLE_SEED_PLACEHOLDER_BASE64`), Server từ chối ngay bằng `403 EKYC_FACE_NOT_FOUND`. Trên Android, CameraX + ML Kit kiểm tra Liveness (1 khuôn mặt, mở cả 2 mắt `>= 0.7`, góc nghiêng `<= 15°`), nén JPEG `< 200KB` gửi lên Backend để **Gemini 2.5 Flash** (`temperature: 0.0`) thẩm định cấu trúc khuôn mặt: chỉ đạt khi `matched == true && confidence >= 0.80`; sai người trả `403 FACE_MISMATCH` kèm cảnh báo đỏ (tối đa 5 lần thử); nếu Gemini quá tải (HTTP 429) hoặc timeout (`> 15s`), áp dụng **Fail-Closed (`503 SERVICE_UNAVAILABLE`)** — tuyệt đối không tự cho qua để đảm bảo an toàn sinh trắc học.
+- **Giao dịch nguyên tử 2 pha (Two-Phase Firestore ACID Transaction):** Toàn bộ lệnh `tx.get(...)` được gom vào Pha 1 (kiểm tra lại số dư, trạng thái `ACTIVE`, chủ tài khoản nhận không bị `LOCKED`, hạn mức ngày theo múi giờ `Asia/Ho_Chi_Minh`) trước khi thực thi Pha 2 ghi đồng thời tài liệu kế toán và bản ghi **thông báo biến động số dư (`notifications`)** hai chiều.
 
 ```plantuml
 @startuml NovaPay_Seq_02_HighValue_3Layer_Transfer
@@ -130,7 +130,7 @@ skinparam DatabaseBorderColor #0F4C81
 skinparam DatabaseBackgroundColor #EFF6FF
 
 autonumber
-title Luồng 2: Chuyển Tiền > 5.000.000 ₫ (FaceCheck ML Kit & Gemini + BiometricPrompt + Brevo OTP 180s)
+title Luồng 2: Chuyển Tiền > 5.000.000 ₫ (FaceCheck Zero-False-Acceptance + BiometricPrompt + Brevo OTP 180s)
 
 actor "Khách hàng\n(VERIFIED)" as Cust
 participant "TransferFragment &\nOtpVerificationDialog" as TxUI
@@ -149,7 +149,7 @@ Server -> FS : Query accounts (CHECKING, ACTIVE) & users/{ownerUid} (!LOCKED)
 Server --> TxUI : 200 {accountId, accountNumber, ownerName}
 deactivate Server
 
-== Lớp bảo mật 1/3: Khởi tạo PENDING_FACE & Đối chiếu khuôn mặt eKYC ==
+== Lớp bảo mật 1/3: Khởi tạo PENDING_FACE & Đối chiếu khuôn mặt eKYC siết chặt ==
 Cust -> TxUI : Bấm "Tiếp tục xác thực giao dịch"
 TxUI -> Server : POST /transactions/initiate {type, fromAccountId, toAccountId, amount: 6000000}
 activate Server
@@ -165,26 +165,34 @@ Cust -> FaceUI : Bấm "Xác minh khuôn mặt"
 FaceUI -> Server : POST /transactions/face-check {draftId, imageBase64}
 activate Server
 Server -> FS : Đọc draft (PENDING_FACE) & ảnh gốc ekyc_images/{uid}
-Server -> Gemini : So sánh 2 ảnh chân dung (timeout 8s, JSON schema)
-activate Gemini
-alt Khuôn mặt sai (samePerson == false || confidence < 0.75)
-  Gemini --> Server : {samePerson: false, confidence: 0.35}
-  Server -> FS : Tăng faceAttempts (khóa EXPIRED nếu >= 5 lần)
-  Server --> FaceUI : 403 FACE_MISMATCH
-else Khớp khuôn mặt (>= 0.75) HOẶC Fallback 429/Timeout (manualAuditRequired = true)
-  Gemini --> Server : Kết quả khớp / Tín hiệu Fallback
-  deactivate Gemini
-  Server -> FS : Ghi face_checks/{draftId} {imageBase64, manualAuditRequired}
-  Server -> Server : Sinh OTP 6 số, băm SHA-256(draftId:otp)
-  Server -> Brevo : POST /v3/smtp/email (Mã OTP hiệu lực 180s)
-  activate Brevo
-  Brevo --> Server : 201 Sent
-  deactivate Brevo
-  Server -> FS : Cập nhật draft -> {status: "PENDING_OTP", faceChecked: true, otpHash, otpExpiresAt}
-  Server --> FaceUI : 200 {ok: true, otpExpiresAt}
-  deactivate Server
-  FaceUI --> TxUI : setFragmentResult(REQ_FACE_CHECK, passed=true, otpExpiresAt)
-  deactivate FaceUI
+
+alt Ảnh eKYC trống hoặc là ảnh mẫu 1x1 (isPlaceholderOrEmptyEkycImage)
+  Server --> FaceUI : 403 EKYC_FACE_NOT_FOUND
+else Có ảnh eKYC thật hợp lệ
+  Server -> Gemini : So sánh 2 ảnh chân dung (temperature=0.0, timeout=15s)
+  activate Gemini
+  alt Gemini HTTP 429 / Timeout > 15s / Lỗi mạng AI (Fail-Closed)
+    Gemini --> Server : HTTP 429 / AbortError
+    Server --> FaceUI : 503 SERVICE_UNAVAILABLE (Tuyệt đối không cho qua)
+  else Khuôn mặt không khớp (matched == false || confidence < 0.80)
+    Gemini --> Server : {matched: false, confidence: 0.32, reason: "..."}
+    Server -> FS : Tăng faceAttempts (nếu >= 5 lần -> status = EXPIRED, 429 TOO_MANY_ATTEMPTS)
+    Server --> FaceUI : 403 FACE_MISMATCH (Banner đỏ cảnh báo & cho chụp lại)
+  else Khớp cùng một người (matched == true && confidence >= 0.80)
+    Gemini --> Server : {matched: true, confidence: 0.94}
+    deactivate Gemini
+    Server -> FS : Ghi face_checks/{draftId} {imageBase64, manualAuditRequired: false}
+    Server -> Server : Sinh OTP 6 số, băm SHA-256(draftId:otp)
+    Server -> Brevo : POST /v3/smtp/email (Mã OTP hiệu lực 180s)
+    activate Brevo
+    Brevo --> Server : 201 Sent
+    deactivate Brevo
+    Server -> FS : Cập nhật draft -> {status: "PENDING_OTP", faceChecked: true, otpHash, otpExpiresAt}
+    Server --> FaceUI : 200 {ok: true, otpExpiresAt}
+    deactivate Server
+    FaceUI --> TxUI : setFragmentResult(REQ_FACE_CHECK, passed=true, otpExpiresAt)
+    deactivate FaceUI
+  end
 end
 
 == Lớp bảo mật 2/3: Sinh trắc học Thiết bị (Vân tay / Khuôn mặt / Mã khóa máy) ==
@@ -200,7 +208,7 @@ Cust -> TxUI : Nhập mã OTP 6 chữ số từ Email -> Bấm "Xác nhận"
 TxUI -> Server : POST /transactions/confirm {draftId, otp, biometricPassed: true}
 activate Server
 Server -> Server : Kiểm tra PENDING_OTP, faceChecked==true, biometricPassed==true,\n!isOtpExpired, timingSafeEqual(otpHash) (khóa sau 5 lần sai)
-Server -> FS : runTransaction() — PHA 1: tx.get(draft, user, fromAcc, toAcc, toOwner, spentToday)\nPHA 2: Trừ fromAcc.balance + ghi ledger OUT,\nCộng toAcc.balance + ghi ledger IN,\nGhi transactions/{txId}, gắn txId vào face_checks & khóa draft CONFIRMED
+Server -> FS : runTransaction() — PHA 1: tx.get(draft, user, fromAcc, toAcc, toOwner, spentToday)\nPHA 2: Trừ fromAcc.balance + ghi ledger OUT,\nCộng toAcc.balance + ghi ledger IN,\nGhi transactions/{txId}, gắn txId vào face_checks,\nGhi users/{uidA, uidB}/notifications (OUT & IN) & khóa draft CONFIRMED
 activate FS
 FS --> Server : Commit nguyên tử thành công (txId)
 deactivate FS
@@ -381,6 +389,91 @@ activate Nav
 Nav -> Nav : enforceDestinationGuard(): kiểm tra đã đăng nhập & role == CUSTOMER
 Nav --> Cust : Điều hướng sang UtilityBillFragment (nav_money) không phụ thuộc R.id chéo!
 deactivate Nav
+
+@enduml
+```
+
+---
+
+## 5. Luồng 5: Thông Báo Biến Động Số Dư Thời Gian Thực 2 Chiều & System Push Notification
+
+### Điểm nhấn kiến trúc ăn điểm:
+- **Phát sinh nguyên tử ngay trong giao dịch kế toán:** Mọi lệnh chuyển tiền, thanh toán, nạp Stripe, mở/tất toán tiết kiệm hay duyệt eKYC đều gọi `NotificationsService.enqueueTransactionNotifications()` (hoặc `enqueueUserNotification()`) **bên trong cùng `db.runTransaction()`**. Nhờ vậy không bao giờ xảy ra tình trạng tiền đã trừ/cộng nhưng mất thông báo biến động số dư.
+- **Chống nổ thông báo lịch sử khi mở ứng dụng (`BalanceAlertSubscriber`):** Khi khách hàng đăng nhập, `SessionManager` kích hoạt `BalanceAlertSubscriber.start(uid)` gắn `SnapshotListener` vào `users/{uid}/notifications`. Ở lần đồng bộ đầu tiên (`baselinePrimed == false`), bộ lắng nghe chỉ ghi nhận toàn bộ `notifId` đã có vào tập `seenIds` rồi bật `baselinePrimed = true`. Từ các sự kiện tiếp theo, mọi thông báo mới chưa đọc (`!isRead()`) mới được kích hoạt qua `SystemNotificationHelper` (Notification Channel mức `IMPORTANCE_HIGH` có thể hiện banner ngay cả khi đang ở màn hình khác).
+- **Đánh dấu đã đọc an toàn bởi Security Rules:** Khi người dùng chạm vào thông báo hệ thống hoặc một mục trong `NotificationCenterFragment`, ứng dụng gọi `MarkNotificationReadUseCase` (`update({ read: true })` được bảo vệ bởi `isOwner(uid) && isActiveUserDoc(uid)`) và điều hướng thẳng tới `ReceiptFragment` thông qua DeepLink `novapay://receipt/{txId}`.
+
+```plantuml
+@startuml NovaPay_Seq_05_Realtime_Balance_Notification
+skinparam backgroundColor #FFFFFF
+skinparam shadowing false
+skinparam roundcorner 8
+skinparam defaultFontName "Segoe UI"
+skinparam defaultFontSize 10
+skinparam ArrowColor #334155
+skinparam SequenceLifeLineBorderColor #64748B
+skinparam ParticipantBorderColor #0F4C81
+skinparam ParticipantBackgroundColor #EFF6FF
+skinparam DatabaseBorderColor #047857
+skinparam DatabaseBackgroundColor #ECFDF5
+
+autonumber
+title Luồng 5: Thông Báo Biến Động Số Dư Thời Gian Thực 2 Chiều & System Push Notification
+
+actor "Khách hàng A\n(Người gửi)" as Sender
+participant "NovaPay Server\n(/transactions/confirm)" as Server
+participant "NotificationsService\n(notifications.ts)" as NotifSvc
+database "Cloud Firestore\n(users/*/notifications)" as FS
+participant "BalanceAlertSubscriber &\nSystemNotificationHelper\n(Thiết bị A & B)" as AlertSub
+participant "CustomerHomeViewModel &\nNotificationCenterFragment" as NotifUI
+actor "Khách hàng B\n(Người nhận)" as Recipient
+
+== Pha 1: Khởi tạo kết nối lắng nghe thông báo ngay khi đăng nhập ==
+AlertSub -> FS : SnapshotListener users/{uidB}/notifications (ORDER BY createdAt DESC)
+activate FS
+FS --> AlertSub : Lô dữ liệu đầu tiên (lịch sử cũ)
+AlertSub -> AlertSub : Lưu vào seenIds & đặt baselinePrimed = true\n(Không bắn lại System Push cho thông báo cũ)
+deactivate FS
+
+== Pha 2: Phát sinh thông báo biến động số dư nguyên tử cùng lệnh chuyển tiền ==
+Sender -> Server : POST /transactions/confirm (Chuyển 1.500.000 ₫ tới TK B)
+activate Server
+Server -> FS : db.runTransaction() [PHA 2 - Ghi đồng thời]
+activate FS
+Server -> NotifSvc : enqueueTransactionNotifications(tx, db, senderUid, recipientUid, ...)
+activate NotifSvc
+NotifSvc -> FS : tx.set(users/{uidA}/notifications/{n1})\n{category:"BALANCE", direction:"OUT", amount:1500000, balanceAfter, read:false, deepLink:"novapay://receipt/{txId}"}
+NotifSvc -> FS : tx.set(users/{uidB}/notifications/{n2})\n{category:"BALANCE", direction:"IN", amount:1500000, balanceAfter, read:false, deepLink:"novapay://receipt/{txId}"}
+deactivate NotifSvc
+FS --> Server : Commit thành công đồng thời sổ cái & 2 thông báo
+deactivate FS
+Server --> Sender : 200 {txId, status: "SUCCESS"}
+deactivate Server
+
+== Pha 3: Đẩy thông báo nổi (Heads-up) & Cập nhật Huy hiệu (Unread Badge) tức thì ==
+FS -->> AlertSub : Snapshot Event tới Thiết bị A (OUT) & Thiết bị B (IN)
+activate AlertSub
+AlertSub -> AlertSub : Kiểm tra baselinePrimed == true && !seenIds.contains(notifId) && !read
+AlertSub -> AlertSub : SystemNotificationHelper.showNotification()\n(NotificationChannel IMPORTANCE_HIGH + PendingIntent novapay://receipt/{txId})
+AlertSub -->> Recipient : Hiện thanh thông báo nổi hệ thống: "Nhận tiền chuyển khoản +1.500.000 ₫"
+deactivate AlertSub
+
+FS -->> NotifUI : ObserveUnreadNotificationCountUseCase() -> unreadCount++
+activate NotifUI
+NotifUI --> Recipient : Cập nhật chấm số chưa đọc trên biểu tượng Chuông (CustomerHomeFragment)
+
+== Pha 4: Xem chi tiết biến động số dư & Đánh dấu đã đọc ==
+Recipient -> NotifUI : Chạm Thông báo hệ thống hoặc mở Trung tâm Thông báo (novapay://notifications)
+NotifUI -> NotifUI : Lọc theo Tab (Tất cả / Biến động / Tiết kiệm / Bảo mật / eKYC)
+Recipient -> NotifUI : Chạm vào thông báo "+1.500.000 ₫"
+NotifUI -> FS : MarkNotificationReadUseCase(notifId) -> update({read: true})
+note right of FS
+  firestore.rules kiểm tra:
+  isOwner(uid) && isActiveUserDoc(uid)
+  && affectedKeys().hasOnly(["read"])
+end note
+NotifUI -> NotifUI : NavController.navigate("novapay://receipt/{txId}")
+NotifUI --> Recipient : Mở ReceiptFragment hiển thị biên lai giao dịch tức thì
+deactivate NotifUI
 
 @enduml
 ```

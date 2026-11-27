@@ -307,6 +307,25 @@
                     </LinearLayout>
                 </LinearLayout>
             </com.google.android.material.card.MaterialCardView>
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btnSettleSaving"
+                style="@style/Widget.NovaPay.Button.Primary"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/core_saving_settle_action"
+                android:visibility="gone" />
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btnOpenNewSaving"
+                style="@style/Widget.NovaPay.Button.Outlined"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:layout_marginBottom="16dp"
+                android:text="@string/core_saving_open_another_action"
+                app:icon="@drawable/ic_np_savings"
+                app:iconGravity="textStart" />
         </LinearLayout>
     </ScrollView>
 

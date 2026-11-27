@@ -44,4 +44,14 @@ public class AuthRepositoryImpl implements AuthRepository {
     public String getCurrentUid() {
         return authDataSource.getCurrentUid();
     }
+
+    @Override
+    public Single<AppResult<Boolean>> changePassword(String currentPassword, String newPassword) {
+        return authDataSource.changePassword(currentPassword, newPassword);
+    }
+
+    @Override
+    public Single<AppResult<Boolean>> sendPasswordResetEmail(String email) {
+        return authDataSource.sendPasswordResetEmail(email);
+    }
 }

@@ -1,9 +1,15 @@
 package com.novabank.novapay.presentation.customer.home;
 
+import android.Manifest;
+import android.content.pm.PackageManager;
+import android.os.Build;
+import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.core.content.ContextCompat;
@@ -46,6 +52,12 @@ public class CustomerHomeFragment extends BaseFragment<FragmentCustomerHomeBindi
     private CustomerHomeViewModel viewModel;
     private StateLayoutHelper stateLayoutHelper;
     private AccountCardAdapter accountAdapter;
+    private boolean notificationPermissionPrompted = false;
+
+    private final ActivityResultLauncher<String> notificationPermissionLauncher =
+            registerForActivityResult(new ActivityResultContracts.RequestPermission(), granted -> {
+                // Không làm gián đoạn trải nghiệm nếu người dùng từ chối
+            });
 
     @NonNull
     @Override
@@ -79,8 +91,10 @@ public class CustomerHomeFragment extends BaseFragment<FragmentCustomerHomeBindi
         b.rvAccounts.setAdapter(accountAdapter);
 
         b.btnToggleBalance.setOnClickListener(v -> viewModel.toggleBalanceVisibility());
+        b.btnNotifications.setOnClickListener(v -> safeNavigateDeepLink(Constants.DEEPLINK_NOTIFICATIONS));
         b.btnProfile.setOnClickListener(v -> safeNavigateDeepLink(Constants.DEEPLINK_PROFILE));
         b.btnLogout.setOnClickListener(v -> performLogout());
+        b.btnOpenSaving.setOnClickListener(v -> safeNavigateDeepLink(Constants.DEEPLINK_SAVINGS_OPEN));
 
         b.cardEkycBanner.setOnClickListener(v -> safeNavigateDeepLink(Constants.DEEPLINK_EKYC));
         b.btnEkycBannerAction.setOnClickListener(v -> safeNavigateDeepLink(Constants.DEEPLINK_EKYC));
@@ -98,6 +112,7 @@ public class CustomerHomeFragment extends BaseFragment<FragmentCustomerHomeBindi
         b.btnActionProfile.setOnClickListener(v -> safeNavigateDeepLink(Constants.DEEPLINK_PROFILE));
 
         configureChartAppearance(b.barChartCashflow);
+        requestNotificationPermissionIfNeeded();
         viewModel.loadHome();
     }
 
@@ -133,8 +148,44 @@ public class CustomerHomeFragment extends BaseFragment<FragmentCustomerHomeBindi
         }
 
         renderEkycBanner(user);
+        renderNotificationBadge(data.getUnreadNotificationCount());
         renderCashflowChart(data.getCashflow());
         accountAdapter.submitList(data.getAccounts(), data.isBalanceHidden());
+    }
+
+    private void renderNotificationBadge(int unreadCount) {
+        FragmentCustomerHomeBinding b = getBinding();
+        if (unreadCount <= 0) {
+            b.tvNotificationBadge.setVisibility(View.GONE);
+            return;
+        }
+        b.tvNotificationBadge.setVisibility(View.VISIBLE);
+        b.tvNotificationBadge.setText(unreadCount > 99
+                ? getString(R.string.core_notif_badge_overflow)
+                : String.valueOf(unreadCount));
+    }
+
+    private void requestNotificationPermissionIfNeeded() {
+        if (notificationPermissionPrompted || Build.VERSION.SDK_INT < Build.VERSION_CODES.TIRAMISU) {
+            return;
+        }
+        if (ContextCompat.checkSelfPermission(requireContext(), Manifest.permission.POST_NOTIFICATIONS)
+                == PackageManager.PERMISSION_GRANTED) {
+            return;
+        }
+        notificationPermissionPrompted = true;
+        if (shouldShowRequestPermissionRationale(Manifest.permission.POST_NOTIFICATIONS)) {
+            com.google.android.material.snackbar.Snackbar.make(
+                            getBinding().getRoot(),
+                            R.string.core_notif_permission_rationale,
+                            com.google.android.material.snackbar.Snackbar.LENGTH_LONG
+                    )
+                    .setAction(R.string.core_notif_permission_allow,
+                            v -> notificationPermissionLauncher.launch(Manifest.permission.POST_NOTIFICATIONS))
+                    .show();
+        } else {
+            notificationPermissionLauncher.launch(Manifest.permission.POST_NOTIFICATIONS);
+        }
     }
 
     private void renderEkycBanner(@Nullable User user) {

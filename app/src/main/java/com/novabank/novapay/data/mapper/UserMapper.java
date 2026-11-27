@@ -5,6 +5,7 @@ import com.novabank.novapay.domain.model.user.EkycInfo;
 import com.novabank.novapay.domain.model.user.EkycStatus;
 import com.novabank.novapay.domain.model.user.User;
 import com.novabank.novapay.domain.model.user.UserRole;
+import com.novabank.novapay.domain.model.user.UserSecurityInfo;
 import com.novabank.novapay.domain.model.user.UserStatus;
 
 import java.util.Map;
@@ -40,6 +41,18 @@ public final class UserMapper {
             ekycInfo = new EkycInfo(EkycStatus.UNVERIFIED, "", null);
         }
 
+        Map<String, Object> securityMap = FirestoreValueMapper.toMap(data.get("security"));
+        UserSecurityInfo securityInfo;
+        if (securityMap != null) {
+            boolean hasPin = Boolean.TRUE.equals(securityMap.get("hasPin"));
+            securityInfo = new UserSecurityInfo(
+                    hasPin,
+                    FirestoreValueMapper.toInstant(securityMap.get("pinUpdatedAt"))
+            );
+        } else {
+            securityInfo = new UserSecurityInfo(false, null);
+        }
+
         return new User(
                 uid,
                 UserRole.fromString(FirestoreValueMapper.toStringOrEmpty(data.get("role"))),
@@ -52,6 +65,7 @@ public final class UserMapper {
                 FirestoreValueMapper.toStringOrEmpty(data.get("avatarUrl")),
                 UserStatus.fromString(FirestoreValueMapper.toStringOrEmpty(data.get("status"))),
                 ekycInfo,
+                securityInfo,
                 FirestoreValueMapper.toStringOrEmpty(data.get("createdBy")),
                 FirestoreValueMapper.toInstant(data.get("createdAt")),
                 FirestoreValueMapper.toInstant(data.get("updatedAt"))

@@ -13,12 +13,14 @@ import com.novabank.novapay.core.common.AppResult;
 import com.novabank.novapay.core.common.Constants;
 import com.novabank.novapay.core.common.SingleLiveEvent;
 import com.novabank.novapay.core.common.UiState;
+import com.novabank.novapay.core.security.BiometricQuickLoginStore;
 import com.novabank.novapay.core.security.SessionManager;
 import com.novabank.novapay.domain.model.user.User;
 import com.novabank.novapay.domain.model.user.UserRole;
 import com.novabank.novapay.domain.repository.AuthRepository;
 import com.novabank.novapay.domain.repository.UserRepository;
 import com.novabank.novapay.domain.usecase.auth.SignInUseCase;
+import com.novabank.novapay.domain.usecase.security.SendPasswordResetEmailUseCase;
 
 import javax.inject.Inject;
 
@@ -34,9 +36,11 @@ import io.reactivex.rxjava3.disposables.CompositeDisposable;
 public class LoginViewModel extends ViewModel {
 
     private final SignInUseCase signInUseCase;
+    private final SendPasswordResetEmailUseCase sendPasswordResetEmailUseCase;
     private final AuthRepository authRepository;
     private final UserRepository userRepository;
     private final SessionManager sessionManager;
+    private final BiometricQuickLoginStore biometricQuickLoginStore;
     private final CompositeDisposable disposables = new CompositeDisposable();
 
     private final MutableLiveData<UiState<LoginUiState>> uiState =
@@ -44,18 +48,23 @@ public class LoginViewModel extends ViewModel {
     private final SingleLiveEvent<String> navigateDeepLinkEvent = new SingleLiveEvent<>();
     private final SingleLiveEvent<Integer> messageResEvent = new SingleLiveEvent<>();
     private final SingleLiveEvent<String> messageTextEvent = new SingleLiveEvent<>();
+    private final SingleLiveEvent<String> resetEmailSentEvent = new SingleLiveEvent<>();
 
     @Inject
     public LoginViewModel(
             SignInUseCase signInUseCase,
+            SendPasswordResetEmailUseCase sendPasswordResetEmailUseCase,
             AuthRepository authRepository,
             UserRepository userRepository,
-            SessionManager sessionManager
+            SessionManager sessionManager,
+            BiometricQuickLoginStore biometricQuickLoginStore
     ) {
         this.signInUseCase = signInUseCase;
+        this.sendPasswordResetEmailUseCase = sendPasswordResetEmailUseCase;
         this.authRepository = authRepository;
         this.userRepository = userRepository;
         this.sessionManager = sessionManager;
+        this.biometricQuickLoginStore = biometricQuickLoginStore;
     }
 
     public LiveData<UiState<LoginUiState>> getUiState() {
@@ -72,6 +81,10 @@ public class LoginViewModel extends ViewModel {
 
     public SingleLiveEvent<String> getMessageTextEvent() {
         return messageTextEvent;
+    }
+
+    public SingleLiveEvent<String> getResetEmailSentEvent() {
+        return resetEmailSentEvent;
     }
 
     public void checkExistingSession() {
@@ -108,12 +121,41 @@ public class LoginViewModel extends ViewModel {
                         .flatMap(this::verifyActiveProfile)
                         .observeOn(AndroidSchedulers.mainThread())
                         .subscribe(
-                                this::handleAuthOutcome,
+                                result -> {
+                                    if (result.isSuccess() && biometricQuickLoginStore.isEnabledForEmail(email)) {
+                                        biometricQuickLoginStore.saveCredentials(email, password);
+                                    }
+                                    handleAuthOutcome(result);
+                                },
                                 throwable -> {
                                     resetToReadyForm();
                                     messageResEvent.setValue(R.string.core_error_network_generic);
                                 }
                         )
+        );
+    }
+
+    public void sendPasswordResetEmail(@NonNull String rawEmail) {
+        String email = rawEmail.trim();
+        if (email.isEmpty() || !Patterns.EMAIL_ADDRESS.matcher(email).matches()) {
+            messageResEvent.setValue(R.string.core_login_invalid_email);
+            return;
+        }
+        disposables.add(
+                sendPasswordResetEmailUseCase.execute(email)
+                        .observeOn(AndroidSchedulers.mainThread())
+                        .subscribe(result -> {
+                            if (result.isSuccess()) {
+                                resetEmailSentEvent.setValue(email);
+                            } else {
+                                String msg = result.getMessage();
+                                if (msg != null && !msg.trim().isEmpty()) {
+                                    messageTextEvent.setValue(msg);
+                                } else {
+                                    messageResEvent.setValue(R.string.core_error_network_generic);
+                                }
+                            }
+                        }, throwable -> messageResEvent.setValue(R.string.core_error_network_generic))
         );
     }
 

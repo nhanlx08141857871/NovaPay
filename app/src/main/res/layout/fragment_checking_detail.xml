@@ -285,9 +285,19 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="10dp"
-                android:layout_marginBottom="16dp"
                 android:text="@string/core_checking_action_history"
                 app:icon="@drawable/ic_np_history"
+                app:iconGravity="textStart" />
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btnManageControls"
+                style="@style/Widget.NovaPay.Button.Outlined"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:layout_marginBottom="16dp"
+                android:text="@string/core_checking_manage_controls_action"
+                app:icon="@drawable/ic_np_lock"
                 app:iconGravity="textStart" />
         </LinearLayout>
     </ScrollView>

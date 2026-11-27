@@ -23,8 +23,8 @@ Một ứng dụng ngân hàng di động nếu chỉ kết nối trực tiếp 
 | :--- | :--- | :--- | :--- |
 | **Android Client** | **100% Java 17**, XML + ViewBinding, Material Design 3, Dagger Hilt, Jetpack Navigation (`novapay://`), RxJava 3 + LiveData `UiState<T>`, CameraX, ML Kit, BiometricPrompt, `osmdroid`, MPAndroidChart, Stripe Android SDK | • Hiển thị giao diện 2 phân hệ (`CUSTOMER` / `OFFICER`) xử lý đủ 4 trạng thái `LOADING`, `SUCCESS`, `EMPTY`, `ERROR`.<br>• Đọc dữ liệu thời gian thực từ Firestore cho chính chủ tài khoản.<br>• Kiểm tra Liveness khuôn mặt tại biên (Edge AI bằng ML Kit) và quét mã QR.<br>• Gửi yêu cầu ghi nhạy cảm qua `@BackendRetrofit` đính kèm Firebase ID Token. | Tầng `domain` thuần Java 17 giúp kiểm thử đơn vị (JUnit) siêu tốc trên JVM; tách 3 sub-graphs độc lập chống xung đột Git cho nhóm 3 thành viên. |
 | **Backend Server** | **Node.js 20+**, **TypeScript 5**, Express, Helmet, CORS, Rate Limiter, **Firebase Admin SDK**, Stripe Node SDK | • Xác thực chữ ký JWT của Firebase ID Token (`verifyIdToken(token, true)`) và kiểm tra Custom Claim `role`.<br>• Thực thi **ACID Firestore Transaction** hai pha (đọc toàn bộ trước, ghi nguyên tử sau).<br>• Sinh mã OTP 6 số (`crypto.randomInt`), băm SHA-256 kèm salt `draftId`, so sánh hằng thời gian (`timingSafeEqual`).<br>• Giữ kín toàn bộ khóa bí mật (`STRIPE_SECRET_KEY`, `BREVO_API_KEY`, `GEMINI_API_KEY`, `FIREBASE_PRIVATE_KEY`). | Đảm bảo nguyên tắc **Zero-Trust Client**: mọi quy tắc tài chính, hạn mức ngày theo múi giờ `Asia/Ho_Chi_Minh` (UTC+7) và nhật ký kiểm toán `audit_logs` đều do máy chủ kiểm soát tuyệt đối. |
-| **Cloud Backend-as-a-Service** | **Firebase Authentication** & **Cloud Firestore** + `firestore.rules` + `firestore.indexes.json` | • Lưu trữ 14 collections + 2 subcollections.<br>• Phát đồng bộ biến động số dư và khóa tài khoản (`status == "LOCKED"`) theo thời gian thực qua `SnapshotListener`.<br>• Thực thi hàng rào bảo vệ thứ hai bằng `firestore.rules` (chặn 100% thao tác ghi tài chính từ Client SDK). | Đồng bộ tức thì không cần tự vận hành WebSocket, hỗ trợ Offline Persistence và truy vấn phức hợp tốc độ cao qua Composite Indexes. |
-| **Hệ sinh thái Dịch vụ Ngoài** | **Stripe API**, **Brevo Transactional Email**, **Google Gemini 2.5 Flash**, **OpenRouteService** | • **Stripe:** Cổng nạp tiền thẻ quốc tế (`PaymentIntent` + `PaymentSheet`).<br>• **Brevo:** Gửi Email OTP 2FA hiệu lực 180 giây.<br>• **Gemini Multimodal:** Đối chiếu khuôn mặt eKYC (`> 5.000.000 ₫`) & Trợ lý ảo tài chính kèm DeepLink.<br>• **OpenRouteService:** Định tuyến đường đi bộ ngắn nhất tới chi nhánh/ATM. | Kết hợp chuẩn thanh toán quốc tế, AI đa phương thức và bản đồ mở, đồng thời luôn có **cơ chế Fallback thông minh** (Rule-based NLP, `manualAuditRequired`, tọa độ ĐH Tôn Đức Thắng) chống gián đoạn khi bảo vệ đồ án. |
+| **Cloud Backend-as-a-Service** | **Firebase Authentication** & **Cloud Firestore** + `firestore.rules` + `firestore.indexes.json` | • Lưu trữ **15 collections + 3 subcollections** (bổ sung `users/{uid}/notifications` & `user_secrets`).<br>• Phát đồng bộ biến động số dư, thông báo thời gian thực và khóa tài khoản (`status == "LOCKED"`) qua `SnapshotListener`.<br>• Thực thi hàng rào bảo vệ thứ hai bằng `firestore.rules` (chặn 100% thao tác ghi tài chính & secrets từ Client SDK). | Đồng bộ tức thì không cần tự vận hành WebSocket, hỗ trợ Offline Persistence và truy vấn phức hợp tốc độ cao qua Composite Indexes. |
+| **Hệ sinh thái Dịch vụ Ngoài** | **Stripe API**, **Brevo Transactional Email**, **Google Gemini 2.5 Flash**, **OpenRouteService** | • **Stripe:** Cổng nạp tiền thẻ quốc tế (`PaymentIntent` + `PaymentSheet`).<br>• **Brevo:** Gửi Email OTP 2FA hiệu lực 180 giây.<br>• **Gemini Multimodal:** Đối chiếu khuôn mặt eKYC nghiêm ngặt (`> 5.000.000 ₫`, ngưỡng `>= 0.80`, chế độ **Fail-Closed `503`** khi quá tải) & Trợ lý ảo tài chính kèm DeepLink.<br>• **OpenRouteService:** Định tuyến đường đi bộ ngắn nhất tới chi nhánh/ATM. | Kết hợp chuẩn thanh toán quốc tế, AI đa phương thức và bản đồ mở, đồng thời có **cơ chế Fallback thông minh** (Rule-based NLP, tọa độ ĐH Tôn Đức Thắng) cho Chatbot & Bản đồ khi chấm thi. |
 
 ---
 
@@ -205,9 +205,9 @@ ExpressApp ==> ExtGemini : "POST generateContent\n(FaceCheck & AI Chat)"
 
 ## 3. Thiết Kế Cơ Sở Dữ Liệu Cloud Firestore & Sơ Đồ Thực Thể Liên Kết (ERD)
 
-### 3.1 Sơ đồ ERD 14 Collections & 2 Subcollections (PlantUML Entity-Relationship Diagram)
+### 3.1 Sơ đồ ERD 15 Collections & 3 Subcollections (PlantUML Entity-Relationship Diagram)
 
-Hệ thống cơ sở dữ liệu NoSQL trên Cloud Firestore của NovaPay được chuẩn hóa thành **14 collections cấp gốc (root collections)** và **2 subcollections chuyên biệt** (`users/{uid}/beneficiaries` và `accounts/{accountId}/ledger`), đảm bảo truy xuất thời gian thực tốc độ cao, không bị giới hạn kích thước tài liệu 1 MiB khi lịch sử giao dịch tăng trưởng theo thời gian.
+Hệ thống cơ sở dữ liệu NoSQL trên Cloud Firestore của NovaPay được chuẩn hóa thành **15 collections cấp gốc (root collections)** và **3 subcollections chuyên biệt** (`users/{uid}/beneficiaries`, `users/{uid}/notifications` và `accounts/{accountId}/ledger`), đảm bảo truy xuất thời gian thực tốc độ cao, không bị giới hạn kích thước tài liệu 1 MiB khi lịch sử giao dịch và hộp thư thông báo tăng trưởng theo thời gian.
 
 ```plantuml
 @startuml NovaPay_Firestore_ERD
@@ -225,7 +225,7 @@ skinparam ClassHeaderBackgroundColor #DBEAFE
 hide circle
 hide methods
 
-title Sơ Đồ Thực Thể Liên Kết (ERD) 14 Collections & 2 Subcollections Cloud Firestore — NovaPay
+title Sơ Đồ Thực Thể Liên Kết (ERD) 15 Collections & 3 Subcollections Cloud Firestore — NovaPay
 
 entity "1. users\n(users/{uid})" as users {
   * **uid** : String <<PK>>
@@ -240,6 +240,7 @@ entity "1. users\n(users/{uid})" as users {
   avatarUrl : String
   * status : String ("ACTIVE" | "LOCKED")
   * ekyc : Map {status, verifiedBy, verifiedAt}
+  security : Map? {hasTransactionPin, pinUpdatedAt}
   createdBy : String <<FK -> users.uid>>
   * createdAt : Timestamp
   * updatedAt : Timestamp
@@ -252,6 +253,22 @@ entity "1a. beneficiaries\n(users/{uid}/beneficiaries/{id})" as beneficiaries {
   * accountNumber : String
   * bankCode : String
   alias : String
+}
+
+entity "1b. notifications\n(users/{uid}/notifications/{notifId})" as notifications {
+  * **notifId** : String <<PK, Subcollection>>
+  --
+  * category : String ("BALANCE" | "SECURITY"\n  | "SAVING" | "EKYC")
+  direction : String? ("IN" | "OUT")
+  * title : String
+  * body : String
+  amount : Long? (VND)
+  balanceAfter : Long? (VND)
+  accountNumber : String?
+  txId : String? <<FK -> transactions.txId>>
+  deepLink : String?
+  * read : Boolean
+  * createdAt : Timestamp
 }
 
 entity "2. ekyc_images\n(ekyc_images/{uid})" as ekyc_images {
@@ -273,7 +290,7 @@ entity "3. accounts\n(accounts/{accountId})" as accounts {
   * currency : String ("VND")
   * perTxnLimit : Long (VND)
   * dailyLimit : Long (VND)
-  saving : Map? {termMonths, principal,\n  interestRateId, openedAt, maturityDate}
+  saving : Map? {termMonths, principal,\n  interestRateId, openedAt, maturityDate,\n  settledAt?, settledTxId?}
   mortgage : Map? {loanAmount, outstandingBalance,\n  termMonths, annualRate, paymentFrequency,\n  installmentAmount, nextDueDate}
   * createdAt : Timestamp
 }
@@ -428,8 +445,21 @@ entity "14. audit_logs\n(audit_logs/{logId})" as audit_logs {
   * createdAt : Timestamp
 }
 
+entity "15. user_secrets\n(user_secrets/{uid})" as user_secrets {
+  * **uid** : String <<PK, FK -> users.uid>>
+  --
+  * pinHash : String (HMAC-SHA256)
+  * pinSalt : String
+  * failedAttempts : Integer (Max 5)
+  * lockUntil : Long (Epoch ms)
+  * createdAt : Timestamp
+  * updatedAt : Timestamp
+}
+
 ' --- Quan hệ thực thể (Crow's Foot Notation) ---
 users ||--o{ beneficiaries : "owns subcollection"
+users ||--o{ notifications : "owns subcollection"
+users ||--o| user_secrets : "1:1 server-only PIN"
 users ||--o| ekyc_images : "1:1 reference photo"
 users ||--o{ accounts : "ownerUid"
 users ||--o{ transactions : "initiatedBy"
@@ -452,6 +482,7 @@ drafts ||--o| face_checks : "1:1 draftId"
 utility_bills |o--o| transactions : "meta.billId / txId"
 service_catalog ||--o{ orders : "itemId"
 transactions ||--o| orders : "txId"
+transactions |o--o{ notifications : "txId (OUT / IN)"
 
 @enduml
 ```
@@ -460,12 +491,13 @@ transactions ||--o| orders : "txId"
 
 ### 3.2 Ma Trận Phân Quyền Bảo Mật (`firestore.rules`) & Chỉ Mục Phức Hợp (`firestore.indexes.json`)
 
-#### A. Bảng Ma trận Phân quyền Truy cập 14 Collections
+#### A. Bảng Ma trận Phân quyền Truy cập 15 Collections & 3 Subcollections
 
 | STT | Collection / Subcollection | Quyền Đọc (`allow read`) phía Android | Quyền Ghi (`allow write`) phía Android | Cơ chế Bảo vệ & Ghi từ Backend |
 | :---: | :--- | :--- | :--- | :--- |
 | 1 | `users/{uid}` | Chính chủ (`uid == auth.uid`) hoặc `OFFICER` | Chỉ `update` đúng 4 khóa (`phone`, `address`, `avatarUrl`, `updatedAt`) khi `status == "ACTIVE"`, kèm kiểm tra kiểu `string`/`timestamp` & giới hạn độ dài | Tạo mới, khóa/mở khóa, duyệt eKYC bắt buộc qua `/officer/*` và `/ekyc/*` kèm `audit_logs` |
 | 1a | `users/{uid}/beneficiaries/{id}` | Chính chủ (`uid == auth.uid`) hoặc `OFFICER` | Chính chủ đang `ACTIVE` (`isActiveUserDoc(uid)` kiểm tra `userDoc != null && status == "ACTIVE"`); kiểm tra nghiêm ngặt 4 khóa (`name`, `accountNumber`, `bankCode`, `alias`) và giới hạn ký tự | Đồng bộ danh bạ thụ hưởng cá nhân (đã biên dịch & triển khai trực tiếp lên Cloud Firestore) |
+| 1b | `users/{uid}/notifications/{notifId}` | Chính chủ (`uid == auth.uid`) | Chỉ `update` đúng trường `read` (`bool`) khi chính chủ đang `ACTIVE` (`isOwner(uid) && isActiveUserDoc(uid)`); **Cấm tuyệt đối `create, delete`** | Tạo mới nguyên tử bởi Admin SDK (`NotificationsService`) trong `runTransaction` của giao dịch, tiết kiệm, bảo mật & duyệt eKYC |
 | 2 | `ekyc_images/{uid}` | Chính chủ hoặc `OFFICER` | **Cấm tuyệt đối (`false`)** | Server kiểm tra JPEG SOI `0xFF 0xD8` và `< 200KB` tại `POST /ekyc/submit` |
 | 3 | `accounts/{accountId}` | Chính chủ (`ownerUid == auth.uid`) hoặc `OFFICER` | **Cấm tuyệt đối (`false`)** | Tra cứu tên người nhận nội bộ đi qua `GET /accounts/lookup` (ẩn số dư & CCCD) |
 | 3a | `accounts/{accountId}/ledger/{entryId}` | Chủ tài khoản cha (`isAccountOwner(accountId)` kiểm tra an toàn `accDoc != null`) hoặc `OFFICER` | **Cấm tuyệt đối (`false`)** | Chỉ ghi trong ACID Transaction của `/transactions/confirm` và `/payments/finalize` |
@@ -480,6 +512,7 @@ transactions ||--o| orders : "txId"
 | 12 | `orders/{orderId}` | Chủ đơn hàng (`uid == auth.uid`) hoặc `OFFICER` | **Cấm tuyệt đối (`false`)** | Khởi tạo nguyên tử trong `/transactions/confirm` |
 | 13 | `chat_sessions/{uid}/messages/{msgId}` | Chính chủ (`uid == auth.uid`) | **Cấm tuyệt đối (`false`)** | Ghi theo lô (`WriteBatch`) 2 chiều `USER` + `BOT` tại `POST /ai/chat` |
 | 14 | `audit_logs/{logId}` | Chỉ `OFFICER` | **Cấm tuyệt đối (`false`)** | Nhật ký kiểm toán bất biến (Append-only từ Admin SDK) |
+| 15 | `user_secrets/{uid}` | **Cấm tuyệt đối (`false`)** | **Cấm tuyệt đối (`false`)** | Kho lưu mã băm **PIN giao dịch 6 số (`HMAC-SHA256`)**, `failedAttempts` và `lockUntil`; 100% chỉ Backend `PinService` truy cập |
 
 #### B. Danh sách 5 Composite Indexes tối ưu hiệu năng (`firestore.indexes.json`)
 1. `ledger` (`COLLECTION`): `direction ASC` + `createdAt DESC` — phục vụ lọc sổ cái Tiền vào / Tiền ra theo tháng tại `TransactionHistoryFragment`.

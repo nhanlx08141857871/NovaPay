@@ -2,9 +2,11 @@ package com.novabank.novapay.presentation.customer.history;
 
 import android.content.Context;
 import android.view.LayoutInflater;
+import android.view.View;
 import android.view.ViewGroup;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -19,7 +21,21 @@ import java.util.List;
 
 public class LedgerAdapter extends RecyclerView.Adapter<LedgerAdapter.LedgerViewHolder> {
 
+    public interface OnLedgerClickListener {
+        void onLedgerClick(@NonNull LedgerEntry entry);
+    }
+
     private final List<LedgerEntry> items = new ArrayList<>();
+    @Nullable
+    private final OnLedgerClickListener listener;
+
+    public LedgerAdapter() {
+        this.listener = null;
+    }
+
+    public LedgerAdapter(@Nullable OnLedgerClickListener listener) {
+        this.listener = listener;
+    }
 
     public void submitList(@NonNull List<LedgerEntry> entries) {
         items.clear();
@@ -40,7 +56,7 @@ public class LedgerAdapter extends RecyclerView.Adapter<LedgerAdapter.LedgerView
 
     @Override
     public void onBindViewHolder(@NonNull LedgerViewHolder holder, int position) {
-        holder.bind(items.get(position));
+        holder.bind(items.get(position), listener);
     }
 
     @Override
@@ -57,7 +73,7 @@ public class LedgerAdapter extends RecyclerView.Adapter<LedgerAdapter.LedgerView
             this.binding = binding;
         }
 
-        void bind(@NonNull LedgerEntry entry) {
+        void bind(@NonNull LedgerEntry entry, @Nullable OnLedgerClickListener listener) {
             Context context = binding.getRoot().getContext();
             boolean isIn = entry.isInflow();
 
@@ -72,6 +88,14 @@ public class LedgerAdapter extends RecyclerView.Adapter<LedgerAdapter.LedgerView
                     R.string.core_history_balance_after,
                     CurrencyFormatter.formatVnd(entry.getBalanceAfter())
             ));
+
+            boolean hasTxId = entry.getTxId() != null && !entry.getTxId().trim().isEmpty();
+            binding.tvReceiptHint.setVisibility(hasTxId ? View.VISIBLE : View.GONE);
+            if (listener != null) {
+                binding.getRoot().setOnClickListener(v -> listener.onLedgerClick(entry));
+            } else {
+                binding.getRoot().setOnClickListener(null);
+            }
         }
     }
 }

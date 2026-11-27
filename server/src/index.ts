@@ -9,6 +9,8 @@ import { aiRouter } from "./routes/ai";
 import { ekycRouter } from "./routes/ekyc";
 import { officerRouter } from "./routes/officer";
 import { paymentsRouter } from "./routes/payments";
+import { savingsRouter } from "./routes/savings";
+import { securityRouter } from "./routes/security";
 import { transactionsRouter } from "./routes/transactions";
 
 initFirebaseAdmin();
@@ -43,6 +45,8 @@ app.use("/transactions/confirm", createRateLimiter({ windowMs: MINUTE_MS, max: 2
 app.use("/transactions/face-check", createRateLimiter({ windowMs: MINUTE_MS, max: 10 }));
 app.use("/transactions/resend-otp", createRateLimiter({ windowMs: MINUTE_MS, max: 10 }));
 app.use("/payments/finalize", createRateLimiter({ windowMs: MINUTE_MS, max: 20 }));
+app.use("/savings", createRateLimiter({ windowMs: MINUTE_MS, max: 20 }));
+app.use("/security", createRateLimiter({ windowMs: MINUTE_MS, max: 30 }));
 app.use("/officer", createRateLimiter({ windowMs: MINUTE_MS, max: 30 }));
 
 // Định tuyến phân tách theo đúng phạm vi sở hữu của 3 thành viên (A, B, C)
@@ -50,6 +54,8 @@ app.use("/ekyc", ekycRouter);
 app.use("/accounts", accountsRouter);
 app.use("/transactions", transactionsRouter);
 app.use("/payments", paymentsRouter);
+app.use("/savings", savingsRouter);
+app.use("/security", securityRouter);
 app.use("/officer", officerRouter);
 app.use("/ai", aiRouter);
 

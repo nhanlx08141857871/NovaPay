@@ -1,4 +1,4 @@
-import { Response, Router } from "express";
+import { RequestHandler, Response, Router } from "express";
 import admin from "firebase-admin";
 import { FieldValue } from "firebase-admin/firestore";
 import {
@@ -7,6 +7,13 @@ import {
   requireOfficer,
   sendApiError,
 } from "../middleware/auth";
+import { enqueueUserNotification } from "../services/notifications";
+
+export interface EkycRouteDeps {
+  getDb?: () => FirebaseFirestore.Firestore;
+  authMiddleware?: RequestHandler;
+  officerMiddleware?: RequestHandler;
+}
 
 const MAX_EKYC_IMAGE_BYTES = 200 * 1024;
 const BASE64_PATTERN = /^[A-Za-z0-9+/]+={0,2}$/;
@@ -50,9 +57,13 @@ function normalizeAndValidateJpegBase64(raw: unknown): string {
  * - POST /ekyc/submit: Khách hàng tự chụp hoặc Officer chụp hộ qua targetUid.
  * - POST /ekyc/review: Officer duyệt VERIFIED / REJECTED và ghi audit_logs bắt buộc.
  */
-export const ekycRouter = Router();
+export function createEkycRouter(deps?: EkycRouteDeps): Router {
+  const router = Router();
+  const getDb = deps?.getDb ?? (() => admin.firestore());
+  const auth = deps?.authMiddleware ?? requireAuth;
+  const officer = deps?.officerMiddleware ?? requireOfficer;
 
-ekycRouter.post("/submit", requireAuth, async (req: AuthenticatedRequest, res: Response): Promise<void> => {
+  router.post("/submit", auth, async (req: AuthenticatedRequest, res: Response): Promise<void> => {
   const actor = req.user;
   if (!actor) {
     sendApiError(res, 401, "PERMISSION_DENIED", "Chưa xác thực người dùng.");
@@ -93,7 +104,7 @@ ekycRouter.post("/submit", requireAuth, async (req: AuthenticatedRequest, res: R
     }
   }
 
-  const db = admin.firestore();
+  const db = getDb();
   const userRef = db.collection("users").doc(effectiveUid);
   const imageRef = db.collection("ekyc_images").doc(effectiveUid);
   const isOfficerCounterSubmit = actor.role === "OFFICER" && effectiveUid !== actor.uid;
@@ -156,11 +167,11 @@ ekycRouter.post("/submit", requireAuth, async (req: AuthenticatedRequest, res: R
   }
 });
 
-ekycRouter.post(
-  "/review",
-  requireAuth,
-  requireOfficer,
-  async (req: AuthenticatedRequest, res: Response): Promise<void> => {
+  router.post(
+    "/review",
+    auth,
+    officer,
+    async (req: AuthenticatedRequest, res: Response): Promise<void> => {
     const actor = req.user;
     if (!actor) {
       sendApiError(res, 401, "PERMISSION_DENIED", "Chưa xác thực nhân viên.");
@@ -181,7 +192,7 @@ ekycRouter.post(
       return;
     }
 
-    const db = admin.firestore();
+    const db = getDb();
     const userRef = db.collection("users").doc(uid);
     const imageRef = db.collection("ekyc_images").doc(uid);
 
@@ -230,6 +241,21 @@ ekycRouter.post(
           },
           createdAt: FieldValue.serverTimestamp(),
         });
+
+        const isApproved = decision === "VERIFIED";
+        enqueueUserNotification(tx, db, uid, {
+          category: "EKYC",
+          direction: null,
+          title: isApproved ? "Hồ sơ eKYC đã được phê duyệt" : "Hồ sơ eKYC chưa được phê duyệt",
+          body: isApproved
+            ? "Định danh khuôn mặt (eKYC) của Quý khách đã được xác thực thành công. Quý khách có thể sử dụng đầy đủ các tính năng chuyển tiền, thanh toán và gửi tiết kiệm."
+            : "Hồ sơ định danh khuôn mặt (eKYC) của Quý khách chưa đạt yêu cầu xác thực. Vui lòng chụp lại ảnh khuôn mặt rõ nét để gửi duyệt lại.",
+          amount: null,
+          balanceAfter: null,
+          accountNumber: null,
+          txId: null,
+          deepLink: isApproved ? "novapay://profile" : "novapay://ekyc",
+        });
       });
 
       res.status(200).json({ status: decision });
@@ -241,4 +267,9 @@ ekycRouter.post(
       sendApiError(res, 500, "INTERNAL_ERROR", "Không thể xử lý duyệt eKYC. Vui lòng thử lại.");
     }
   }
-);
+  );
+
+  return router;
+}
+
+export const ekycRouter = createEkycRouter();

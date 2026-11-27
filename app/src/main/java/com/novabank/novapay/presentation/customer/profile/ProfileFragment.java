@@ -57,6 +57,7 @@ public class ProfileFragment extends BaseFragment<FragmentProfileBinding> {
 
         b.btnBack.setOnClickListener(v -> NavHostFragment.findNavController(this).popBackStack());
         b.btnStartEkyc.setOnClickListener(v -> navigateDeepLink(Constants.DEEPLINK_EKYC));
+        b.btnSecuritySettings.setOnClickListener(v -> navigateDeepLink(Constants.DEEPLINK_SECURITY));
         b.btnSaveProfile.setOnClickListener(v -> {
             String phone = b.etPhone.getText() != null ? b.etPhone.getText().toString() : "";
             String address = b.etAddress.getText() != null ? b.etAddress.getText().toString() : "";
@@ -148,6 +149,7 @@ public class ProfileFragment extends BaseFragment<FragmentProfileBinding> {
         b.etAddress.setEnabled(active && !isSaving);
         b.etAvatarUrl.setEnabled(active && !isSaving);
         b.btnSaveProfile.setEnabled(active && !isSaving);
+        b.btnSecuritySettings.setVisibility(user.getRole() == UserRole.CUSTOMER ? View.VISIBLE : View.GONE);
         b.tvLockedNotice.setVisibility(active ? View.GONE : View.VISIBLE);
     }
 }

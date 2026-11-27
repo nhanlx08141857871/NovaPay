@@ -2,7 +2,7 @@
 
 > **Dự án:** Hệ thống Ngân hàng Số **NovaPay** (`com.novabank.novapay`)  
 > **Học phần:** Phát triển Ứng dụng Di động — Khoa Công nghệ Thông tin, Trường Đại học Tôn Đức Thắng (TDTU)  
-> **Chuẩn ký hiệu UML 2.5 sử dụng thống nhất trên toàn bộ 8 sơ đồ lớp:**
+> **Chuẩn ký hiệu UML 2.5 sử dụng thống nhất trên toàn bộ 10 sơ đồ lớp:**
 > - `--|>` **Kế thừa (Inheritance / Generalization):** ví dụ `*Fragment --|> BaseFragment`, `*DialogFragment --|> DialogFragment`, `*ViewModel --|> ViewModel`, `SingleLiveEvent --|> MutableLiveData`.
 > - `..|>` **Thực thi giao diện (Interface Realization):** ví dụ `*RepositoryImpl ..|> *Repository`, `AuthInterceptor ..|> Interceptor`.
 > - `*--` **Hợp thành chặt (Composition — vòng đời phụ thuộc):** ví dụ `User *-- EkycInfo`, `Account *-- SavingInfo`, `*Fragment *-- StateLayoutHelper`, `UiState *-- Status`, `*ViewModel *-- MutableLiveData`.
@@ -2313,6 +2313,381 @@ EmailService --> AppConfig
 FaceCheckService --> AppConfig
 StripeService --> AppConfig
 ChatbotService --> AppConfig
+
+@enduml
+```
+
+---
+
+## 6. Phân Hệ Nâng Cấp Chuẩn iBanking Thương Mại (Thông Báo Biến Động, Tiết Kiệm Trực Tuyến, Bảo Mật PIN/Hạn Mức & Sao Kê PDF)
+
+Nhằm nâng tầm ứng dụng đạt chuẩn **iBanking thương mại hoàn chỉnh**, NovaPay bổ sung đồng bộ từ tầng `domain` → `data` → `core` → `presentation` và các dịch vụ Backend mới (`NotificationsService`, `PinService`, `SavingsRouter`, `SecurityRouter`) được thể hiện chi tiết qua **2 sơ đồ lớp mở rộng** (Sơ đồ 9 và Sơ đồ 10) dưới đây.
+
+### 6.1 Sơ đồ 9: Tầng `domain` & `data` cho Thông Báo, Tiết Kiệm Trực Tuyến, Bảo Mật & Lọc Sao Kê (`NovaPay_06A_iBanking_Domain_Data_Class_Diagram`)
+
+```plantuml
+@startuml NovaPay_06A_iBanking_Domain_Data_Class_Diagram
+skinparam backgroundColor #FFFFFF
+skinparam shadowing false
+skinparam roundcorner 8
+skinparam defaultFontName "Segoe UI"
+skinparam defaultFontSize 10
+skinparam ArrowColor #334155
+skinparam ClassBorderColor #047857
+skinparam ClassBackgroundColor #F8FAFC
+skinparam ClassHeaderBackgroundColor #D1FAE5
+skinparam PackageBorderColor #64748B
+
+title Sơ Đồ 9: Tầng Domain & Data Mở Rộng (Thông Báo Biến Động, Tiết Kiệm Trực Tuyến, Bảo Mật PIN/Hạn Mức & Sao Kê)
+
+package "com.novabank.novapay.domain.model" {
+  enum NotificationCategory {
+    BALANCE
+    SECURITY
+    SAVING
+    EKYC
+    OTHER
+    --
+    + {static} fromString(raw: String) : NotificationCategory
+  }
+
+  class AppNotification {
+    - notifId : String
+    - category : NotificationCategory
+    - direction : String
+    - title : String
+    - body : String
+    - amount : Long
+    - balanceAfter : Long
+    - accountNumber : String
+    - txId : String
+    - deepLink : String
+    - read : boolean
+    - createdAt : Instant
+    --
+    + isInflow() : boolean
+    + isOutflow() : boolean
+  }
+
+  class SavingCalculator {
+    + {static} DEFAULT_DEMAND_ANNUAL_RATE : double = 0.5
+    + {static} HO_CHI_MINH_ZONE : ZoneId
+    --
+    + {static} calculateMonthlyProfit(principal: long, annualRate: double) : long
+    + {static} calculateMaturityInterest(principal: long, annualRate: double, termMonths: int) : long
+    + {static} calculateEarlyInterest(principal: long, demandRate: double, daysHeld: long) : long
+    + {static} previewSettlement(acc: Account, rate: double, demandRate: double, now: Instant) : SavingSettlementPreview
+    + {static} estimateMaturityDate(openedAt: Instant, termMonths: int) : Instant
+  }
+
+  class SavingSettlementPreview {
+    - principalAmount : long
+    - interestAmount : long
+    - totalPayoutAmount : long
+    - earlySettlement : boolean
+    - appliedAnnualRate : double
+    - daysHeld : long
+  }
+
+  class OpenSavingResult {
+    - savingAccountId : String
+    - accountNumber : String
+    - txId : String
+    - annualRate : double
+    - maturityDate : Instant
+  }
+
+  class SettleSavingResult {
+    - txId : String
+    - principalAmount : long
+    - interestAmount : long
+    - totalPayoutAmount : long
+    - earlySettlement : boolean
+    - appliedAnnualRate : double
+  }
+
+  class SecurityStatus {
+    - hasTransactionPin : boolean
+    - pinLockedUntil : Instant
+    --
+    + hasTransactionPin() : boolean
+    + isPinLockedNow(now: Instant) : boolean
+  }
+
+  class AccountControlResult {
+    - status : AccountStatus
+    - perTxnLimit : long
+    - dailyLimit : long
+  }
+
+  class UserSecurityInfo {
+    - hasPin : boolean
+    - pinUpdatedAt : Instant
+  }
+}
+
+package "com.novabank.novapay.domain.repository & usecase" {
+  interface NotificationRepository {
+    + observeNotifications() : Observable<AppResult<List<AppNotification>>>
+    + observeUnreadCount() : Observable<AppResult<Integer>>
+    + markAsRead(notifId: String) : Single<AppResult<Boolean>>
+    + markAllAsRead() : Single<AppResult<Boolean>>
+  }
+
+  interface SavingsRepository {
+    + openSavingAccount(fromCheckingId: String, termMonths: int, principal: long, pinOrNull: String) : Single<AppResult<OpenSavingResult>>
+    + settleSavingAccount(savingId: String, toCheckingId: String, pinOrNull: String) : Single<AppResult<SettleSavingResult>>
+  }
+
+  interface SecurityRepository {
+    + getSecurityStatus() : Single<AppResult<SecurityStatus>>
+    + setTransactionPin(currentPinOrNull: String, newPin: String) : Single<AppResult<SecurityStatus>>
+    + updateCheckingControls(accountId: String, statusOrNull: AccountStatus, perTxnOrNull: Long, dailyOrNull: Long, pinOrNull: String) : Single<AppResult<AccountControlResult>>
+  }
+
+  class ObserveNotificationsUseCase
+  class ObserveUnreadNotificationCountUseCase
+  class MarkNotificationReadUseCase
+  class MarkAllNotificationsReadUseCase
+  class OpenSavingAccountUseCase {
+    + {static} MIN_PRINCIPAL_VND : long = 1_000_000L
+    + execute(...) : Single<AppResult<OpenSavingResult>>
+  }
+  class SettleSavingAccountUseCase
+  class GetSecurityStatusUseCase
+  class SetTransactionPinUseCase
+  class UpdateCheckingControlsUseCase {
+    + {static} buildPatch(...) : ControlsPatch
+    + execute(...) : Single<AppResult<AccountControlResult>>
+  }
+  class ChangePasswordUseCase
+  class SendPasswordResetEmailUseCase
+
+  class LedgerFilterHelper {
+    + {static} filterByKeyword(source: List<LedgerEntry>, rawKeyword: String) : List<LedgerEntry>
+    + {static} computeSummary(entries: List<LedgerEntry>) : Summary
+  }
+}
+
+package "com.novabank.novapay.data (DTOs, Mappers, APIs & Repositories)" {
+  interface SavingsApi {
+    + openSaving(body: OpenSavingRequestDto) : Single<OpenSavingResponseDto>
+    + settleSaving(accountId: String, body: SettleSavingRequestDto) : Single<SettleSavingResponseDto>
+  }
+
+  interface SecurityApi {
+    + getSecurityStatus() : Single<SecurityStatusResponseDto>
+    + setTransactionPin(body: SetTransactionPinRequestDto) : Single<SetTransactionPinResponseDto>
+    + updateAccountControls(accountId: String, body: UpdateAccountControlsRequestDto) : Single<UpdateAccountControlsResponseDto>
+  }
+
+  class FirestoreNotificationDataSource {
+    + observeNotifications(uid: String) : Observable<AppResult<List<AppNotification>>>
+    + markAsRead(uid: String, notifId: String) : Single<AppResult<Boolean>>
+    + markAllAsRead(uid: String) : Single<AppResult<Boolean>>
+  }
+
+  class NotificationMapper {
+    + {static} fromSnapshot(snapshot: DocumentSnapshot) : AppNotification
+    + {static} fromMap(notifId: String, data: Map<String, Object>) : AppNotification
+  }
+  class SavingsMapper {
+    + {static} toDomain(dto: OpenSavingResponseDto) : OpenSavingResult
+    + {static} toDomain(dto: SettleSavingResponseDto) : SettleSavingResult
+  }
+  class SecurityMapper {
+    + {static} toDomain(dto: SecurityStatusResponseDto) : SecurityStatus
+    + {static} toDomain(dto: SetTransactionPinResponseDto) : SecurityStatus
+    + {static} toDomain(dto: UpdateAccountControlsResponseDto) : AccountControlResult
+  }
+
+  class NotificationRepositoryImpl
+  class SavingsRepositoryImpl
+  class SecurityRepositoryImpl
+}
+
+AppNotification *-- NotificationCategory
+SavingCalculator --> SavingSettlementPreview
+
+ObserveNotificationsUseCase --> NotificationRepository
+ObserveUnreadNotificationCountUseCase --> NotificationRepository
+MarkNotificationReadUseCase --> NotificationRepository
+MarkAllNotificationsReadUseCase --> NotificationRepository
+OpenSavingAccountUseCase --> SavingsRepository
+SettleSavingAccountUseCase --> SavingsRepository
+GetSecurityStatusUseCase --> SecurityRepository
+SetTransactionPinUseCase --> SecurityRepository
+UpdateCheckingControlsUseCase --> SecurityRepository
+
+NotificationRepositoryImpl ..|> NotificationRepository
+SavingsRepositoryImpl ..|> SavingsRepository
+SecurityRepositoryImpl ..|> SecurityRepository
+
+NotificationRepositoryImpl --> FirestoreNotificationDataSource
+FirestoreNotificationDataSource --> NotificationMapper
+SavingsRepositoryImpl --> SavingsApi
+SavingsRepositoryImpl --> SavingsMapper
+SecurityRepositoryImpl --> SecurityApi
+SecurityRepositoryImpl --> SecurityMapper
+
+@enduml
+```
+
+### 6.2 Sơ đồ 10: Tầng `core`, `presentation` (MVVM) & Dịch vụ Backend Mở Rộng (`NovaPay_06B_iBanking_Presentation_Core_Server_Class_Diagram`)
+
+```plantuml
+@startuml NovaPay_06B_iBanking_Presentation_Core_Server_Class_Diagram
+skinparam backgroundColor #FFFFFF
+skinparam shadowing false
+skinparam roundcorner 8
+skinparam defaultFontName "Segoe UI"
+skinparam defaultFontSize 10
+skinparam ArrowColor #334155
+skinparam ClassBorderColor #1E3A8A
+skinparam ClassBackgroundColor #F8FAFC
+skinparam ClassHeaderBackgroundColor #DBEAFE
+skinparam PackageBorderColor #64748B
+
+title Sơ Đồ 10: Tầng Core, Presentation MVVM & Backend Node.js Mở Rộng (Thông Báo, Tiết Kiệm, Bảo Mật, Sao Kê PDF)
+
+package "com.novabank.novapay.core (Realtime Alerts, Quick Login & PDF)" {
+  class BalanceAlertSubscriber {
+    - baselinePrimed : boolean
+    - seenIds : Set<String>
+    --
+    + start(uid: String) : void
+    + stop() : void
+  }
+
+  class SystemNotificationHelper {
+    + ensureChannel() : void
+    + showNotification(notification: AppNotification) : void
+    + {static} resolveTargetDeepLink(notification: AppNotification) : String
+  }
+
+  class BiometricQuickLoginStore {
+    + isEnabled() : boolean
+    + isEnabledForEmail(email: String) : boolean
+    + {static} matchesEnrolledEmail(enrolled: String, candidate: String) : boolean
+    + saveCredentials(email: String, password: String) : boolean
+    + readCredentials() : Credentials
+    + clear() : void
+  }
+
+  class StatementPdfExporter {
+    + {static} exportStatementPdf(context: Context, accountNumber: String, rangeLabel: String, entries: List<LedgerEntry>, summary: Summary) : File
+  }
+}
+
+package "com.novabank.novapay.presentation.customer (New MVVM Screens)" {
+  class NotificationCenterFragment
+  class NotificationCenterViewModel {
+    + loadNotifications() : void
+    + setCategoryFilter(categoryOrNull: NotificationCategory) : void
+    + markAsRead(notifId: String) : void
+    + markAllAsRead() : void
+    + getUiState() : LiveData<UiState<NotificationCenterUiState>>
+  }
+  class NotificationCenterUiState {
+    - items : List<AppNotification>
+    - selectedCategory : NotificationCategory
+    - unreadCount : int
+  }
+  class NotificationAdapter {
+    + submitList(notifications: List<AppNotification>) : void
+  }
+
+  class OpenSavingFragment
+  class OpenSavingViewModel {
+    + load() : void
+    + selectCheckingAccount(accountId: String) : void
+    + selectTermMonths(termMonths: int) : void
+    + updatePrincipalAmount(amount: long) : void
+    + submitOpenSaving(pin: String) : void
+    + getUiState() : LiveData<UiState<OpenSavingUiState>>
+  }
+  class OpenSavingUiState {
+    - checkingAccounts : List<Account>
+    - termRates : List<InterestRate>
+    - principalAmount : long
+    - monthlyInterest : long
+    - totalMaturityInterest : long
+    - hasTransactionPin : boolean
+  }
+
+  class SecuritySettingsFragment
+  class SecuritySettingsViewModel {
+    + load() : void
+    + selectCheckingAccount(accountId: String) : void
+    + changePassword(current: String, next: String) : void
+    + saveTransactionPin(currentPin: String, newPin: String) : void
+    + updateCheckingControls(status: AccountStatus, perTxn: Long, daily: Long, pin: String) : void
+    + getUiState() : LiveData<UiState<SecuritySettingsUiState>>
+  }
+  class SecuritySettingsUiState {
+    - user : User
+    - securityStatus : SecurityStatus
+    - checkingAccounts : List<Account>
+    - selectedCheckingAccount : Account
+    - busy : boolean
+  }
+}
+
+package "NovaPay Backend Server (server/src — iBanking Extensions)" {
+  class NotificationsService {
+    + {static} buildNotificationDoc(payload: NotificationPayload) : NotificationDocument
+    + {static} buildBalanceNotificationDoc(params: BalanceNotificationParams) : NotificationDocument
+    + {static} enqueueUserNotification(tx, db, uid, payload) : string
+    + {static} enqueueTransactionNotifications(tx, db, params) : SenderRecipientNotifIds
+    + {static} createUserNotification(db, uid, payload) : Promise<string>
+  }
+
+  class PinService {
+    + {static} PIN_MAX_ATTEMPTS : number = 5
+    + {static} PIN_LOCKOUT_MS : number = 900000
+    --
+    + isValidPinFormat(pin: unknown) : boolean
+    + hashPin(pin: string, uid: string) : string
+    + verifyPinHash(pin: string, uid: string, expectedHash: string) : boolean
+    + getPinStatus(db, uid, nowMs) : Promise<PinStatusResult>
+    + setOrChangePin(db, uid, params, nowMs) : Promise<SetPinResult>
+    + verifyTransactionPin(db, uid, pin, nowMs) : Promise<PinVerificationResult>
+  }
+
+  class SavingsRouter {
+    + POST_open(fromCheckingAccountId, termMonths, principalAmount, pin) : OpenSavingResponse
+    + POST_settle(savingAccountId, toCheckingAccountId, pin) : SettleSavingResponse
+    + {static} addCalendarMonthsHoChiMinh(baseMs: number, months: number) : Date
+    + {static} computeSavingsSettlementAmounts(params) : SettlementAmounts
+  }
+
+  class SecurityRouter {
+    + GET_status() : PinStatusResult
+    + POST_pinSet(currentPin?, newPin) : OkPinResponse
+    + PATCH_accountControls(accountId, status?, perTxnLimit?, dailyLimit?, pin?) : AccountControlResponse
+  }
+}
+
+NotificationCenterFragment --> NotificationCenterViewModel
+NotificationCenterFragment o-- NotificationAdapter
+NotificationCenterViewModel *-- NotificationCenterUiState
+
+OpenSavingFragment --> OpenSavingViewModel
+OpenSavingViewModel *-- OpenSavingUiState
+
+SecuritySettingsFragment --> SecuritySettingsViewModel
+SecuritySettingsViewModel *-- SecuritySettingsUiState
+
+BalanceAlertSubscriber --> SystemNotificationHelper
+BalanceAlertSubscriber --> NotificationRepository
+
+SavingsRouter --> PinService : "TOCTOU-safe tx.get(user_secrets)"
+SavingsRouter --> NotificationsService : "enqueueUserNotification (SAVING)"
+SecurityRouter --> PinService
+SecurityRouter --> NotificationsService : "enqueueUserNotification (SECURITY)"
+TransactionsRouter --> NotificationsService : "enqueueTransactionNotifications (OUT / IN)"
+PaymentsRouter --> NotificationsService : "enqueueUserNotification (BALANCE IN)"
+EkycRouter --> NotificationsService : "createUserNotification (EKYC)"
 
 @enduml
 ```

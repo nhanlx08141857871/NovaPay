@@ -52,6 +52,18 @@ public final class Constants {
     public static final String DEEPLINK_TOPUP = "novapay://topup";
     public static final String DEEPLINK_SERVICES = "novapay://services";
     public static final String DEEPLINK_BRANCHES = "novapay://branches";
+    public static final String DEEPLINK_NOTIFICATIONS = "novapay://notifications";
+    public static final String DEEPLINK_SAVINGS_OPEN = "novapay://savings/open";
+    public static final String DEEPLINK_SECURITY = "novapay://security";
+    public static final String DEEPLINK_RECEIPT_PREFIX = "novapay://receipt/";
+
+    // --- Kênh Thông báo Hệ thống & Ngưỡng Tiết kiệm / Hạn mức ---
+    public static final String NOTIFICATION_CHANNEL_BALANCE_ALERTS = "novapay_balance_alerts";
+    public static final long MIN_SAVING_PRINCIPAL_VND = 1_000_000L;
+    public static final long MIN_PER_TXN_LIMIT_VND = 1_000_000L;
+    public static final long MAX_PER_TXN_LIMIT_VND = 100_000_000L;
+    public static final long MIN_DAILY_LIMIT_VND = 5_000_000L;
+    public static final long MAX_DAILY_LIMIT_VND = 500_000_000L;
 
     // --- Khóa giao tiếp FragmentResultListener liên phân hệ (A <-> B <-> C) ---
     public static final String REQ_FACE_CHECK = "req_novapay_face_check";

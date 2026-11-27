@@ -13,6 +13,7 @@ import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.ListenerRegistration;
 import com.novabank.novapay.core.common.Constants;
 import com.novabank.novapay.core.common.SingleLiveEvent;
+import com.novabank.novapay.core.notification.BalanceAlertSubscriber;
 
 import java.net.URI;
 import java.net.URLDecoder;
@@ -40,6 +41,7 @@ public class SessionManager {
 
     private final FirebaseAuth firebaseAuth;
     private final FirebaseFirestore firestore;
+    private final BalanceAlertSubscriber balanceAlertSubscriber;
     private final SingleLiveEvent<Boolean> accountLockedEvent = new SingleLiveEvent<>();
     private final MutableLiveData<String> roleClaimLiveData = new MutableLiveData<>();
 
@@ -62,9 +64,14 @@ public class SessionManager {
     };
 
     @Inject
-    public SessionManager(FirebaseAuth firebaseAuth, FirebaseFirestore firestore) {
+    public SessionManager(
+            FirebaseAuth firebaseAuth,
+            FirebaseFirestore firestore,
+            BalanceAlertSubscriber balanceAlertSubscriber
+    ) {
         this.firebaseAuth = firebaseAuth;
         this.firestore = firestore;
+        this.balanceAlertSubscriber = balanceAlertSubscriber;
         this.firebaseAuth.addAuthStateListener(authStateListener);
         FirebaseUser current = this.firebaseAuth.getCurrentUser();
         if (current != null) {
@@ -176,6 +183,7 @@ public class SessionManager {
                         forceLogoutDueToLock();
                     }
                 });
+        balanceAlertSubscriber.start(uid);
     }
 
     private synchronized void stopUserListener() {
@@ -184,6 +192,7 @@ public class SessionManager {
             userDocListener = null;
         }
         observedUid = null;
+        balanceAlertSubscriber.stop();
     }
 
     private void forceLogoutDueToLock() {
@@ -235,6 +244,10 @@ public class SessionManager {
             case "services":
             case "chatbot":
             case "face-check":
+            case "notifications":
+            case "savings":
+            case "security":
+            case "receipt":
                 return !isOfficer;
             case "branches":
             case "profile":

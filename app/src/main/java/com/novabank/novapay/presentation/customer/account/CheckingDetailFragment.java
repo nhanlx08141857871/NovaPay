@@ -65,6 +65,7 @@ public class CheckingDetailFragment extends BaseFragment<FragmentCheckingDetailB
         b.btnBack.setOnClickListener(v -> NavHostFragment.findNavController(this).popBackStack());
         b.btnTransfer.setOnClickListener(v -> safeNavigateDeepLink(Constants.DEEPLINK_TRANSFER));
         b.btnHistory.setOnClickListener(v -> safeNavigateDeepLink(Constants.DEEPLINK_TRANSACTIONS_MONTH));
+        b.btnManageControls.setOnClickListener(v -> safeNavigateDeepLink(Constants.DEEPLINK_SECURITY));
 
         Bundle args = getArguments();
         accountId = args != null ? args.getString("accountId") : null;

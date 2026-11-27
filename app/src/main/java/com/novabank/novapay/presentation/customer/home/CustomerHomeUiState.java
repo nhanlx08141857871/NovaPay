@@ -19,18 +19,21 @@ public final class CustomerHomeUiState {
     private final MonthlyCashflowSummary cashflow;
     private final long totalLiquidAssets;
     private final boolean balanceHidden;
+    private final int unreadNotificationCount;
 
     public CustomerHomeUiState(
             User user,
             List<Account> accounts,
             MonthlyCashflowSummary cashflow,
-            boolean balanceHidden
+            boolean balanceHidden,
+            int unreadNotificationCount
     ) {
         this.user = user;
         this.accounts = accounts != null ? accounts : Collections.emptyList();
         this.cashflow = cashflow != null ? cashflow : new MonthlyCashflowSummary("", 0L, 0L, 0);
         this.totalLiquidAssets = computeTotalLiquidAssets(this.accounts);
         this.balanceHidden = balanceHidden;
+        this.unreadNotificationCount = Math.max(0, unreadNotificationCount);
     }
 
     public static long computeTotalLiquidAssets(List<Account> accounts) {
@@ -64,5 +67,9 @@ public final class CustomerHomeUiState {
 
     public boolean isBalanceHidden() {
         return balanceHidden;
+    }
+
+    public int getUnreadNotificationCount() {
+        return unreadNotificationCount;
     }
 }

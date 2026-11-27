@@ -6,6 +6,7 @@ import {
   StripeServiceError,
   stripeService as defaultStripeService,
 } from "../services/stripe";
+import { enqueueUserNotification, formatVnd } from "../services/notifications";
 
 export interface PaymentsRouteDeps {
   getDb?: () => FirebaseFirestore.Firestore;
@@ -228,6 +229,24 @@ export function createPaymentsRouter(deps?: PaymentsRouteDeps): Router {
           status: "CONFIRMED",
           txId,
         });
+
+        enqueueUserNotification(
+          tx,
+          db,
+          uid,
+          {
+            category: "BALANCE",
+            direction: "IN",
+            title: "Nạp tiền thành công",
+            body: `TK ${fromAccountNumber || "thanh toán"} biến động +${formatVnd(amount)} qua cổng thanh toán. Số dư hiện tại: ${formatVnd(newBalance)}.${note ? ` Nội dung: ${note}` : ""}`,
+            amount,
+            balanceAfter: newBalance,
+            accountNumber: fromAccountNumber || null,
+            txId,
+            deepLink: `novapay://receipt/${txId}`,
+          },
+          nowTs
+        );
 
         return {
           txId,

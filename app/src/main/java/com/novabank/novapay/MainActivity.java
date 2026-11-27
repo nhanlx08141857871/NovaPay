@@ -230,6 +230,10 @@ public class MainActivity extends AppCompatActivity {
                 || destId == R.id.savingDetailFragment
                 || destId == R.id.mortgageDetailFragment
                 || destId == R.id.transactionHistoryFragment
+                || destId == R.id.notificationCenterFragment
+                || destId == R.id.openSavingFragment
+                || destId == R.id.securitySettingsFragment
+                || destId == R.id.receiptFragment
                 || destId == R.id.faceCheckDialogFragment) {
             return true;
         }

@@ -64,6 +64,22 @@ service cloud.firestore {
         allow delete: if isOwner(uid)
           && isActiveUserDoc(uid);
       }
+
+      // Hộp thư thông báo biến động số dư, bảo mật, tiết kiệm & eKYC (chỉ Admin SDK tạo mới)
+      match /notifications/{notifId} {
+        allow read: if isOwner(uid);
+        allow update: if isOwner(uid)
+          && isActiveUserDoc(uid)
+          && resource != null
+          && request.resource.data.diff(resource.data).affectedKeys().hasOnly(["read"])
+          && request.resource.data.read is bool;
+        allow create, delete: if false;
+      }
+    }
+
+    // Kho lưu trữ mã băm PIN giao dịch nội bộ — tuyệt đối cấm Client đọc/ghi
+    match /user_secrets/{uid} {
+      allow read, write: if false;
     }
 
     // 2. ekyc_images/{uid} — Chỉ Server ghi; chính chủ và Officer đọc

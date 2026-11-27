@@ -2,6 +2,8 @@ package com.novabank.novapay.data.remote.firebase;
 
 import androidx.annotation.Nullable;
 
+import com.google.firebase.auth.AuthCredential;
+import com.google.firebase.auth.EmailAuthProvider;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseAuthInvalidCredentialsException;
 import com.google.firebase.auth.FirebaseAuthInvalidUserException;
@@ -89,6 +91,67 @@ public class FirebaseAuthDataSource {
     public String getCurrentUid() {
         FirebaseUser user = firebaseAuth.getCurrentUser();
         return user != null ? user.getUid() : null;
+    }
+
+    public Single<AppResult<Boolean>> changePassword(String currentPassword, String newPassword) {
+        return Single.create(emitter -> {
+            FirebaseUser user = firebaseAuth.getCurrentUser();
+            if (user == null || user.getEmail() == null || user.getEmail().trim().isEmpty()) {
+                if (!emitter.isDisposed()) {
+                    emitter.onSuccess(AppResult.error("UNAUTHENTICATED", "Vui lòng đăng nhập lại trước khi đổi mật khẩu."));
+                }
+                return;
+            }
+            AuthCredential credential = EmailAuthProvider.getCredential(user.getEmail(), currentPassword);
+            user.reauthenticate(credential)
+                    .addOnSuccessListener(unused -> user.updatePassword(newPassword)
+                            .addOnSuccessListener(unused2 -> {
+                                if (!emitter.isDisposed()) {
+                                    emitter.onSuccess(AppResult.success(Boolean.TRUE));
+                                }
+                            })
+                            .addOnFailureListener(ex -> {
+                                if (!emitter.isDisposed()) {
+                                    emitter.onSuccess(AppResult.error(
+                                            "PASSWORD_UPDATE_FAILED",
+                                            ex.getMessage() != null ? ex.getMessage() : "Không thể cập nhật mật khẩu mới."
+                                    ));
+                                }
+                            }))
+                    .addOnFailureListener(ex -> {
+                        if (!emitter.isDisposed()) {
+                            String code = ex instanceof FirebaseAuthInvalidCredentialsException
+                                    ? "INVALID_CURRENT_PASSWORD"
+                                    : "REAUTH_FAILED";
+                            String msg = ex instanceof FirebaseAuthInvalidCredentialsException
+                                    ? "Mật khẩu hiện tại không chính xác."
+                                    : (ex.getMessage() != null ? ex.getMessage() : "Xác thực mật khẩu hiện tại thất bại.");
+                            emitter.onSuccess(AppResult.error(code, msg));
+                        }
+                    });
+        });
+    }
+
+    public Single<AppResult<Boolean>> sendPasswordResetEmail(String email) {
+        return Single.create(emitter ->
+                firebaseAuth.sendPasswordResetEmail(email)
+                        .addOnSuccessListener(unused -> {
+                            if (!emitter.isDisposed()) {
+                                emitter.onSuccess(AppResult.success(Boolean.TRUE));
+                            }
+                        })
+                        .addOnFailureListener(ex -> {
+                            if (!emitter.isDisposed()) {
+                                String code = ex instanceof FirebaseAuthInvalidUserException
+                                        ? "USER_NOT_FOUND"
+                                        : "RESET_EMAIL_FAILED";
+                                String msg = ex instanceof FirebaseAuthInvalidUserException
+                                        ? "Không tìm thấy tài khoản với email này."
+                                        : (ex.getMessage() != null ? ex.getMessage() : "Không thể gửi email đặt lại mật khẩu.");
+                                emitter.onSuccess(AppResult.error(code, msg));
+                            }
+                        })
+        );
     }
 
     private void fetchRoleFromToken(

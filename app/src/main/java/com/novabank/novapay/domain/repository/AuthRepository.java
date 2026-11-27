@@ -19,4 +19,8 @@ public interface AuthRepository {
     boolean isSignedIn();
 
     String getCurrentUid();
+
+    Single<AppResult<Boolean>> changePassword(String currentPassword, String newPassword);
+
+    Single<AppResult<Boolean>> sendPasswordResetEmail(String email);
 }
