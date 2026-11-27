@@ -175,6 +175,22 @@ public class DepositWithdrawViewModel extends ViewModel {
             @Nullable String rawNote,
             @NonNull String noMortgageError
     ) {
+        submitAction(
+                amountVnd,
+                withdrawDestination,
+                rawNote,
+                noMortgageError,
+                "Vui lòng nhập số thẻ hoặc tài khoản ngân hàng liên kết nhận tiền rút hợp lệ."
+        );
+    }
+
+    public void submitAction(
+            long amountVnd,
+            @Nullable String withdrawDestination,
+            @Nullable String rawNote,
+            @NonNull String noMortgageError,
+            @NonNull String invalidWithdrawDestError
+    ) {
         if (checkingAccounts.isEmpty()) {
             uiState.setValue(UiState.empty());
             return;
@@ -194,10 +210,16 @@ public class DepositWithdrawViewModel extends ViewModel {
                     TransactionMeta.empty()
             );
             case WITHDRAW -> {
-                String dest = withdrawDestination != null ? withdrawDestination.trim() : "";
-                String combinedNote = !dest.isEmpty()
-                        ? (note.isEmpty() ? "Rut tien ve: " + dest : note + " (" + dest + ")")
-                        : note;
+                String dest = withdrawDestination != null
+                        ? withdrawDestination.trim().replaceAll("\\s+", "")
+                        : "";
+                if (dest.length() < 4 || dest.length() > 34 || !dest.matches("^[A-Za-z0-9-]+$")) {
+                    messageEvent.setValue(invalidWithdrawDestError);
+                    return;
+                }
+                String combinedNote = note.isEmpty()
+                        ? "Rút tiền về: " + dest
+                        : note + " (" + dest + ")";
                 request = new TransactionInitiateRequest(
                         TransactionType.WITHDRAW,
                         checking.getAccountId(),

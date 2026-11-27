@@ -16,18 +16,53 @@ service cloud.firestore {
       return isSignedIn() && request.auth.token.role == "OFFICER";
     }
 
+    function isActiveUserDoc(uid) {
+      let userDoc = get(/databases/$(database)/documents/users/$(uid));
+      return userDoc != null && userDoc.data.status == "ACTIVE";
+    }
+
+    function isAccountOwner(accountId) {
+      let accDoc = get(/databases/$(database)/documents/accounts/$(accountId));
+      return accDoc != null && accDoc.data.ownerUid == request.auth.uid;
+    }
+
     // 1. users/{uid} & subcollection beneficiaries/{id}
     match /users/{uid} {
       allow read: if isOwner(uid) || isOfficer();
-      // Khách hàng đang ACTIVE chỉ được phép tự cập nhật SĐT, địa chỉ, ảnh đại diện (cấm sửa role, status, ekyc, CCCD)
+      // Khách hàng đang ACTIVE chỉ được phép tự cập nhật SĐT, địa chỉ, ảnh đại diện đúng kiểu & giới hạn độ dài (cấm sửa role, status, ekyc, CCCD)
       allow update: if isOwner(uid)
+        && resource != null
         && resource.data.status == "ACTIVE"
         && request.resource.data.diff(resource.data).affectedKeys()
-             .hasOnly(["phone", "address", "avatarUrl", "updatedAt"]);
+             .hasOnly(["phone", "address", "avatarUrl", "updatedAt"])
+        && request.resource.data.phone is string
+        && request.resource.data.phone.size() >= 8
+        && request.resource.data.phone.size() <= 20
+        && request.resource.data.address is string
+        && request.resource.data.address.size() >= 1
+        && request.resource.data.address.size() <= 500
+        && request.resource.data.avatarUrl is string
+        && request.resource.data.avatarUrl.size() <= 2048
+        && request.resource.data.updatedAt is timestamp;
       allow create, delete: if false;
 
       match /beneficiaries/{beneficiaryId} {
-        allow read, write: if isOwner(uid);
+        allow read: if isOwner(uid) || isOfficer();
+        allow create, update: if isOwner(uid)
+          && isActiveUserDoc(uid)
+          && request.resource.data.keys().hasOnly(["name", "accountNumber", "bankCode", "alias"])
+          && request.resource.data.name is string
+          && request.resource.data.name.size() >= 1
+          && request.resource.data.name.size() <= 120
+          && request.resource.data.accountNumber is string
+          && request.resource.data.accountNumber.size() >= 4
+          && request.resource.data.accountNumber.size() <= 34
+          && request.resource.data.bankCode is string
+          && request.resource.data.bankCode.size() <= 20
+          && request.resource.data.alias is string
+          && request.resource.data.alias.size() <= 80;
+        allow delete: if isOwner(uid)
+          && isActiveUserDoc(uid);
       }
     }
 
@@ -39,13 +74,11 @@ service cloud.firestore {
 
     // 3. accounts/{accountId} & subcollection ledger/{entryId}
     match /accounts/{accountId} {
-      allow read: if (isSignedIn() && resource.data.ownerUid == request.auth.uid) || isOfficer();
+      allow read: if (isSignedIn() && resource != null && resource.data.ownerUid == request.auth.uid) || isOfficer();
       allow write: if false;
 
       match /ledger/{entryId} {
-        allow read: if (isSignedIn()
-          && get(/databases/$(database)/documents/accounts/$(accountId)).data.ownerUid == request.auth.uid)
-          || isOfficer();
+        allow read: if (isSignedIn() && isAccountOwner(accountId)) || isOfficer();
         allow write: if false;
       }
     }
@@ -55,8 +88,9 @@ service cloud.firestore {
       allow read: if isOfficer()
         || (isSignedIn() && resource != null && (
              resource.data.initiatedBy == request.auth.uid
-             || (resource.data.get("toAccountId", null) != null
-                 && get(/databases/$(database)/documents/accounts/$(resource.data.toAccountId)).data.ownerUid == request.auth.uid)
+             || (resource.data.get("toAccountId", "") is string
+                 && resource.data.get("toAccountId", "").size() > 0
+                 && isAccountOwner(resource.data.toAccountId))
            ));
       allow write: if false;
     }
@@ -104,7 +138,7 @@ service cloud.firestore {
 
     // 12. orders/{orderId} — Đơn hàng dịch vụ của khách hàng
     match /orders/{orderId} {
-      allow read: if (isSignedIn() && resource.data.uid == request.auth.uid) || isOfficer();
+      allow read: if (isSignedIn() && resource != null && resource.data.uid == request.auth.uid) || isOfficer();
       allow write: if false;
     }
 
@@ -118,6 +152,11 @@ service cloud.firestore {
     match /audit_logs/{logId} {
       allow read: if isOfficer();
       allow write: if false;
+    }
+
+    // Khóa mặc định toàn bộ đường dẫn ngoài 14 collections được phép
+    match /{document=**} {
+      allow read, write: if false;
     }
   }
 }

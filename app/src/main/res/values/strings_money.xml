@@ -37,7 +37,7 @@
     <string name="money_transfer_chip_1m">1.000.000 ₫</string>
     <string name="money_transfer_chip_6m">6.000.000 ₫</string>
     <string name="money_transfer_note_hint">Nội dung chuyển tiền</string>
-    <string name="money_transfer_default_note">Chuyen tien NovaPay</string>
+    <string name="money_transfer_default_note">Chuyển tiền NovaPay</string>
     <string name="money_transfer_save_beneficiary">Lưu người nhận vào danh bạ thụ hưởng</string>
     <string name="money_transfer_alias_hint">Tên gợi nhớ (tùy chọn)</string>
     <string name="money_transfer_submit_action">Tiếp tục xác thực giao dịch</string>
@@ -62,6 +62,7 @@
     <string name="money_dw_deposit_subtitle">Nạp tiền trực tuyến tức thì qua cổng thanh toán thẻ quốc tế. Bảo mật bằng mã xác thực OTP Email 2FA.</string>
     <string name="money_dw_withdraw_subtitle">Rút tiền từ tài khoản CHECKING về thẻ/ngân hàng liên kết (áp dụng xác thực 3 lớp nếu trên 5.000.000 ₫).</string>
     <string name="money_dw_withdraw_dest_hint">Số thẻ / Tài khoản ngân hàng liên kết nhận tiền rút</string>
+    <string name="money_dw_withdraw_dest_invalid">Vui lòng nhập số thẻ hoặc tài khoản ngân hàng liên kết nhận tiền rút hợp lệ (4–34 ký tự).</string>
     <string name="money_dw_mortgage_select_hint">Chọn hợp đồng vay thế chấp (MORTGAGE)</string>
     <string name="money_dw_mortgage_item_format">%1$s • Dư nợ: %2$s</string>
     <string name="money_dw_mortgage_empty">Bạn hiện không có khoản vay thế chấp nào đang dư nợ.</string>
@@ -144,7 +145,7 @@
     <string name="money_bills_period_format">Kỳ cước: %1$s • Hạn: %2$s</string>
     <string name="money_bills_customer_format">KH: %1$s (%2$s)</string>
     <string name="money_bills_pay_action">Thanh toán ngay</string>
-    <string name="money_bills_default_note">Thanh toan hoa don %1$s ky %2$s</string>
+    <string name="money_bills_default_note">Thanh toán hóa đơn %1$s kỳ %2$s</string>
 
     <!-- Nạp tiền điện thoại (PhoneTopupFragment) -->
     <string name="money_topup_title">Nạp tiền điện thoại</string>
@@ -164,7 +165,7 @@
     <string name="money_topup_selected_amount">Số tiền thanh toán: %1$s</string>
     <string name="money_topup_invalid_phone">Vui lòng nhập số điện thoại hợp lệ (9–11 chữ số).</string>
     <string name="money_topup_submit_action">Nạp tiền ngay</string>
-    <string name="money_topup_default_note">Nap tien dien thoai %1$s (%2$s)</string>
+    <string name="money_topup_default_note">Nạp tiền điện thoại %1$s (%2$s)</string>
 
     <!-- Đặt dịch vụ & Mua sắm (ServiceBookingFragment) -->
     <string name="money_services_title">Đặt vé &amp; Mua sắm tiện ích</string>
@@ -181,7 +182,7 @@
     <string name="money_services_quantity_format">Số lượng: %1$d</string>
     <string name="money_services_total_format">Tổng thanh toán: %1$s</string>
     <string name="money_services_pay_now">Thanh toán đơn hàng</string>
-    <string name="money_services_default_note">Thanh toan dich vu %1$s (SL: %2$d)</string>
+    <string name="money_services_default_note">Thanh toán dịch vụ %1$s (SL: %2$d)</string>
     <string name="money_services_order_code_format">Mã đơn: %1$s • SL: %2$d</string>
     <string name="money_services_order_status_format">Trạng thái: %1$s • %2$s</string>
 </resources>

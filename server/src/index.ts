@@ -37,10 +37,13 @@ app.use(createRateLimiter({ windowMs: MINUTE_MS, max: 300 }));
 app.use("/accounts/lookup", createRateLimiter({ windowMs: MINUTE_MS, max: 30 }));
 app.use("/ai/chat", createRateLimiter({ windowMs: MINUTE_MS, max: 20 }));
 app.use("/ekyc/submit", createRateLimiter({ windowMs: MINUTE_MS, max: 10 }));
+app.use("/ekyc/review", createRateLimiter({ windowMs: MINUTE_MS, max: 30 }));
 app.use("/transactions/initiate", createRateLimiter({ windowMs: MINUTE_MS, max: 30 }));
 app.use("/transactions/confirm", createRateLimiter({ windowMs: MINUTE_MS, max: 20 }));
 app.use("/transactions/face-check", createRateLimiter({ windowMs: MINUTE_MS, max: 10 }));
 app.use("/transactions/resend-otp", createRateLimiter({ windowMs: MINUTE_MS, max: 10 }));
+app.use("/payments/finalize", createRateLimiter({ windowMs: MINUTE_MS, max: 20 }));
+app.use("/officer", createRateLimiter({ windowMs: MINUTE_MS, max: 30 }));
 
 // Định tuyến phân tách theo đúng phạm vi sở hữu của 3 thành viên (A, B, C)
 app.use("/ekyc", ekycRouter);

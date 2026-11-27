@@ -1,14 +1,17 @@
 import test from "node:test";
 import assert from "node:assert/strict";
 import {
+  ChatbotAccessError,
   buildRuleBasedReply,
   formatVndInteger,
   generateChatReply,
   buildGeminiContents,
   getVietnamMonthStartMillis,
+  handleChatAndPersist,
   parseAndSanitizeAiResponse,
   validateChatMessageInput,
 } from "../src/services/chatbot";
+import { MockFirestore } from "./helpers/mockFirestore";
 
 test("validateChatMessageInput accepts trimmed non-empty strings and rejects blank/oversized", () => {
   assert.deepEqual(validateChatMessageInput({ message: "  Số dư của tôi?  " }), {
@@ -159,4 +162,24 @@ test("buildGeminiContents merges history, keeps alternating roles and ends with 
   );
   assert.equal(contents[2].parts[0].text, "còn tháng trước thì sao");
   assert.equal(buildGeminiContents("a").length, 1);
+});
+
+test("handleChatAndPersist rejects LOCKED users before reading context or persisting messages", async () => {
+  const mockDb = new MockFirestore();
+  mockDb.seed("users/u_locked_chat", {
+    role: "CUSTOMER",
+    status: "LOCKED",
+  });
+
+  await assert.rejects(
+    () =>
+      handleChatAndPersist("u_locked_chat", "Số dư của tôi?", {
+        db: mockDb.asFirestore(),
+        chatOptions: { apiKey: "" },
+      }),
+    (err: unknown) =>
+      err instanceof ChatbotAccessError &&
+      err.statusCode === 403 &&
+      err.errorCode === "PERMISSION_DENIED"
+  );
 });

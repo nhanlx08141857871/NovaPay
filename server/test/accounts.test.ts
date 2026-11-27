@@ -114,4 +114,41 @@ describe("Accounts Route (GET /accounts/lookup)", () => {
     const json = (await res.json()) as { error: string };
     assert.equal(json.error, "ACCOUNT_NOT_ACTIVE");
   });
+
+  it("rejects malformed accountNumber query and CHECKING account owned by a LOCKED user", async () => {
+    const badFormat = await fetch(
+      `${baseUrl}/accounts/lookup?accountNumber=${encodeURIComponent("1001$DROP")}`
+    );
+    assert.equal(badFormat.status, 400);
+    assert.equal(((await badFormat.json()) as { error: string }).error, "INVALID_ARGUMENT");
+
+    db.seed("users/u_locked", {
+      fullName: "Tài Khoản Khóa",
+      status: "LOCKED",
+    });
+    db.seed("accounts/acc_chk_locked_owner", {
+      ownerUid: "u_locked",
+      type: "CHECKING",
+      accountNumber: "10010099",
+      status: "ACTIVE",
+      balance: 500_000,
+    });
+
+    const lockedOwnerRes = await fetch(`${baseUrl}/accounts/lookup?accountNumber=10010099`);
+    assert.equal(lockedOwnerRes.status, 400);
+    assert.equal(((await lockedOwnerRes.json()) as { error: string }).error, "ACCOUNT_NOT_ACTIVE");
+
+    // Rejects account lookup when the caller themselves is LOCKED in Firestore
+    db.seed("users/caller_uid", {
+      fullName: "Caller Locked",
+      status: "LOCKED",
+    });
+    const lockedCallerRes = await fetch(`${baseUrl}/accounts/lookup?accountNumber=10010001`);
+    assert.equal(lockedCallerRes.status, 403);
+    assert.equal(((await lockedCallerRes.json()) as { error: string }).error, "PERMISSION_DENIED");
+    db.seed("users/caller_uid", {
+      fullName: "Caller Active",
+      status: "ACTIVE",
+    });
+  });
 });

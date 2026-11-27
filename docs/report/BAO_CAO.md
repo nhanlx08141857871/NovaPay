@@ -134,7 +134,7 @@ NovaPay/
 - **Bản đồ:** thời gian chờ GPS 5 giây, nếu mất GPS hoặc cách TP.HCM trên 100 km thì dùng vị trí mặc định ĐH Tôn Đức Thắng. Tìm chi nhánh gần nhất bằng công thức Haversine, đường đi bộ qua OpenRouteService, dự phòng đoạn thẳng khi mất mạng.
 - **Chatbot:** Server đưa số dư và thu/chi tháng vào ngữ cảnh Gemini, bắt buộc trả JSON `{reply, actions}`, chỉ chấp nhận deep link trong danh sách cho phép, tự chuyển sang bộ phân tích từ khóa tiếng Việt khi Gemini lỗi hoặc hết hạn mức.
 - **Biên lai:** xuất ảnh PNG và tệp PDF, chia sẻ qua FileProvider.
-- **Phát hành:** R8 bật cho bản release kèm luật giữ lại các DTO của Gson, tắt sao lưu tự động.
+- **Phát hành:** R8 bật cho bản release kèm luật giữ lại các DTO của Gson và giữ tên lớp giao diện (`-keepnames class com.novabank.novapay.presentation.**`) cho chốt chặn phân quyền, tắt sao lưu tự động.
 
 ### 4.3 Bảng API Backend
 
@@ -159,7 +159,7 @@ Chụp màn hình từng chức năng và đặt vào `docs/screenshots/`. Gợi
 
 | STT | Màn hình | Tài khoản dùng | Ảnh |
 | :--- | :--- | :--- | :--- |
-| 1 | Đăng nhập (kèm chú thích Academic Sandbox) | Bất kỳ | (chèn ảnh) |
+| 1 | Đăng nhập (giao diện Ngân hàng số thương mại) | Bất kỳ | (chèn ảnh) |
 | 2 | Trang chủ khách hàng, biểu đồ thu/chi tháng | `customer.verified@novapay.vn` | (chèn ảnh) |
 | 3 | Chi tiết tài khoản Checking, lịch sử giao dịch | như trên | (chèn ảnh) |
 | 4 | Chi tiết tài khoản Saving, lãi suất và tiền lãi tháng | như trên | (chèn ảnh) |
@@ -197,7 +197,7 @@ Dùng bốn tài khoản và dữ liệu mẫu trong `docs/TEST_ACCOUNTS.md` (ch
 
 - Backend: triển khai Node.js (ví dụ Render), cấu hình biến môi trường như `server/.env.example`, dùng `GET /health` để giữ server hoạt động. Triển khai quy tắc bằng `npm run deploy:rules`, nạp dữ liệu mẫu bằng `npm run seed`.
 - Android: đặt `BACKEND_BASE_URL` trỏ tới địa chỉ HTTPS của server khi đóng gói bản release, ký ứng dụng, đưa lên Google Play.
-- Google Play: ghi rõ đây là ứng dụng mô phỏng học thuật ở mô tả cửa hàng, chính sách quyền riêng tư và màn hình đăng nhập. Khai báo tài khoản Customer và Officer trong mục App Access.
+- Google Play: ghi rõ đây là ứng dụng mô phỏng học thuật ở `README.md`, mô tả cửa hàng (Store Listing) và chính sách quyền riêng tư (giữ giao diện ứng dụng chuẩn thương mại). Khai báo tài khoản Customer và Officer trong mục App Access.
 
 ---
 

@@ -48,18 +48,24 @@ test("validateCreateCustomerPayload rejects invalid fields", () => {
   };
 
   assert.equal(validateCreateCustomerPayload({ ...base, fullName: "A" }).ok, false);
+  assert.equal(validateCreateCustomerPayload({ ...base, fullName: "A".repeat(121) }).ok, false);
   assert.equal(validateCreateCustomerPayload({ ...base, email: "not-an-email" }).ok, false);
   assert.equal(validateCreateCustomerPayload({ ...base, phone: "12345" }).ok, false);
   assert.equal(validateCreateCustomerPayload({ ...base, nationalId: "12345" }).ok, false);
   assert.equal(validateCreateCustomerPayload({ ...base, dob: "2026-02-30" }).ok, false);
   assert.equal(validateCreateCustomerPayload({ ...base, dob: "2999-01-01" }).ok, false);
   assert.equal(validateCreateCustomerPayload({ ...base, address: "   " }).ok, false);
+  assert.equal(validateCreateCustomerPayload({ ...base, address: "x".repeat(501) }).ok, false);
   assert.equal(validateCreateCustomerPayload({ ...base, initialPassword: "123" }).ok, false);
+  assert.equal(validateCreateCustomerPayload({ ...base, initialPassword: "p".repeat(129) }).ok, false);
 });
 
 test("validateUpdateCustomerPayload validates partial updates and status values", () => {
   assert.equal(validateUpdateCustomerPayload("", { fullName: "Test" }).ok, false);
+  assert.equal(validateUpdateCustomerPayload("u".repeat(129), { fullName: "Test" }).ok, false);
   assert.equal(validateUpdateCustomerPayload("uid1", {}).ok, false);
+  assert.equal(validateUpdateCustomerPayload("uid1", { fullName: "A".repeat(121) }).ok, false);
+  assert.equal(validateUpdateCustomerPayload("uid1", { address: "x".repeat(501) }).ok, false);
   assert.equal(
     validateUpdateCustomerPayload("uid1", { status: "DELETED" }).ok,
     false
@@ -287,6 +293,43 @@ test("updateCustomerWithAudit writes audit log and syncs Auth disabled + revokeR
   assert.equal(updates[0].data.status, "LOCKED");
   assert.equal(auditWrites[0].action, "LOCK_CUSTOMER");
   assert.deepEqual(authCalls, ["updateUser:cust_1:disabled=true", "revoke:cust_1"]);
+
+  // Rejects cross-officer lock/edit via customer management endpoint
+  const officerTargetDb = {
+    collection(col: string) {
+      return {
+        doc(id?: string) {
+          return { path: `${col}/${id ?? "auto"}` };
+        },
+      };
+    },
+    async runTransaction<T>(fn: (tx: unknown) => Promise<T>): Promise<T> {
+      const tx = {
+        async get() {
+          return {
+            exists: true,
+            data: () => ({ role: "OFFICER", status: "ACTIVE" }),
+          };
+        },
+        update() {},
+        set() {},
+      };
+      return fn(tx);
+    },
+  } as unknown as FirebaseFirestore.Firestore;
+
+  await assert.rejects(
+    () =>
+      updateCustomerWithAudit(
+        "officer_1",
+        { uid: "officer_2", status: "LOCKED" },
+        { auth: mockAuth, db: officerTargetDb }
+      ),
+    (err: unknown) =>
+      err instanceof OfficerServiceError &&
+      err.statusCode === 403 &&
+      err.errorCode === "PERMISSION_DENIED"
+  );
 });
 
 test("upsertInterestRateWithAudit updates existing rate doc and records audit log", async () => {

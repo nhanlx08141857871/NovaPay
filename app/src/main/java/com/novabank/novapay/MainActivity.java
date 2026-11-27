@@ -12,9 +12,12 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
+import androidx.navigation.NavBackStackEntry;
 import androidx.navigation.NavController;
 import androidx.navigation.NavDestination;
 import androidx.navigation.NavOptions;
+import androidx.navigation.fragment.DialogFragmentNavigator;
+import androidx.navigation.fragment.FragmentNavigator;
 import androidx.navigation.fragment.NavHostFragment;
 
 import com.google.android.material.snackbar.Snackbar;
@@ -140,14 +143,23 @@ public class MainActivity extends AppCompatActivity {
         String role = sessionManager.getCachedRole();
         boolean isOfficer = Constants.ROLE_OFFICER.equalsIgnoreCase(role);
 
-        if (!isRedirecting && isOfficer && isCustomerOnlyDestination(destId)) {
-            updateBottomNavState(destination, false, true);
-            showMessage(getString(R.string.core_guard_role_denied));
-            redirectToRoleHome(role);
-            return;
+        if (!isRedirecting && sessionManager.isRoleClaimLoaded()) {
+            if (isOfficer && isCustomerOnlyDestination(destination)) {
+                updateBottomNavState(destination, false, true);
+                showMessage(getString(R.string.core_guard_role_denied));
+                redirectToRoleHome(role);
+                return;
+            }
+            if (!isOfficer && isOfficerOnlyDestination(destination)) {
+                updateBottomNavState(destination, false, false);
+                showMessage(getString(R.string.core_guard_role_denied));
+                redirectToRoleHome(role);
+                return;
+            }
         }
 
-        if (!isRedirecting && !isOfficer && destId == R.id.ekycCaptureFragment && arguments != null) {
+        if (!isRedirecting && sessionManager.isRoleClaimLoaded()
+                && !isOfficer && destId == R.id.ekycCaptureFragment && arguments != null) {
             String targetUid = arguments.getString("targetUid");
             if (targetUid == null) {
                 targetUid = arguments.getString(Constants.BUNDLE_TARGET_UID);
@@ -174,7 +186,10 @@ public class MainActivity extends AppCompatActivity {
             return;
         }
         int selectedTabId = resolveCustomerTabId(destination);
-        boolean showBottomNav = isSignedIn && !isOfficer && selectedTabId != 0;
+        boolean showBottomNav = isSignedIn
+                && sessionManager.isRoleClaimLoaded()
+                && !isOfficer
+                && selectedTabId != 0;
 
         int visibility = showBottomNav ? View.VISIBLE : View.GONE;
         binding.bottomNavCustomer.setVisibility(visibility);
@@ -207,14 +222,46 @@ public class MainActivity extends AppCompatActivity {
         return 0;
     }
 
-    private boolean isCustomerOnlyDestination(int destId) {
-        return destId == R.id.customerHomeFragment
+    private boolean isCustomerOnlyDestination(@NonNull NavDestination destination) {
+        int destId = destination.getId();
+        if (destId == R.id.customerHomeFragment
                 || destId == R.id.accountRouterFragment
                 || destId == R.id.checkingDetailFragment
                 || destId == R.id.savingDetailFragment
                 || destId == R.id.mortgageDetailFragment
                 || destId == R.id.transactionHistoryFragment
-                || destId == R.id.faceCheckDialogFragment;
+                || destId == R.id.faceCheckDialogFragment) {
+            return true;
+        }
+        String className = resolveDestinationClassName(destination);
+        if (className == null) {
+            return false;
+        }
+        // ProfileFragment và BranchMapFragment dùng chung cho cả Customer & Officer (SPEC_CHOT.md Q4)
+        if (className.startsWith("com.novabank.novapay.presentation.customer.branch.")
+                || className.startsWith("com.novabank.novapay.presentation.customer.profile.")) {
+            return false;
+        }
+        return className.startsWith("com.novabank.novapay.presentation.customer.");
+    }
+
+    private boolean isOfficerOnlyDestination(@NonNull NavDestination destination) {
+        if (destination.hasDeepLink(Uri.parse(SessionManager.DEEPLINK_OFFICER))) {
+            return true;
+        }
+        String className = resolveDestinationClassName(destination);
+        return className != null && className.startsWith("com.novabank.novapay.presentation.officer.");
+    }
+
+    @Nullable
+    private static String resolveDestinationClassName(@NonNull NavDestination destination) {
+        if (destination instanceof FragmentNavigator.Destination fragmentDest) {
+            return fragmentDest.getClassName();
+        }
+        if (destination instanceof DialogFragmentNavigator.Destination dialogDest) {
+            return dialogDest.getClassName();
+        }
+        return null;
     }
 
     private void handleIncomingIntent(@Nullable Intent intent) {
@@ -226,7 +273,7 @@ public class MainActivity extends AppCompatActivity {
             return;
         }
 
-        if (!sessionManager.isSignedIn()) {
+        if (!sessionManager.isSignedIn() || !sessionManager.isRoleClaimLoaded()) {
             sessionManager.setPendingDeepLink(data);
             redirectToLogin();
             return;
@@ -248,6 +295,16 @@ public class MainActivity extends AppCompatActivity {
             if (Boolean.TRUE.equals(locked)) {
                 showMessage(getString(R.string.core_session_locked_message));
                 redirectToLogin();
+            }
+        });
+        sessionManager.getRoleClaimLiveData().observe(this, role -> {
+            if (role != null && navController != null) {
+                NavBackStackEntry entry = navController.getCurrentBackStackEntry();
+                if (entry != null) {
+                    enforceDestinationGuard(navController, entry.getDestination(), entry.getArguments());
+                } else if (navController.getCurrentDestination() != null) {
+                    enforceDestinationGuard(navController, navController.getCurrentDestination(), null);
+                }
             }
         });
     }

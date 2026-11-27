@@ -11,6 +11,7 @@ import com.google.firebase.firestore.Query;
 import com.google.firebase.firestore.QuerySnapshot;
 import com.novabank.novapay.core.common.AppResult;
 import com.novabank.novapay.core.common.Constants;
+import com.novabank.novapay.core.security.SessionManager;
 import com.novabank.novapay.core.util.DateUtils;
 import com.novabank.novapay.data.dto.CreateCustomerRequestDto;
 import com.novabank.novapay.data.dto.EkycReviewRequestDto;
@@ -47,6 +48,7 @@ public final class OfficerRepositoryImpl implements OfficerRepository {
 
     private final FirebaseFirestore firestore;
     private final FirebaseAuth firebaseAuth;
+    private final SessionManager sessionManager;
     private final OfficerApi officerApi;
     private final ApiErrorParser apiErrorParser;
 
@@ -54,11 +56,13 @@ public final class OfficerRepositoryImpl implements OfficerRepository {
     public OfficerRepositoryImpl(
             FirebaseFirestore firestore,
             FirebaseAuth firebaseAuth,
+            SessionManager sessionManager,
             OfficerApi officerApi,
             ApiErrorParser apiErrorParser
     ) {
         this.firestore = firestore;
         this.firebaseAuth = firebaseAuth;
+        this.sessionManager = sessionManager;
         this.officerApi = officerApi;
         this.apiErrorParser = apiErrorParser;
     }
@@ -360,7 +364,7 @@ public final class OfficerRepositoryImpl implements OfficerRepository {
 
     @Override
     public Completable signOut() {
-        return Completable.fromAction(firebaseAuth::signOut);
+        return Completable.fromAction(sessionManager::signOut);
     }
 
     private static int priorityOf(EkycReviewCandidate c) {

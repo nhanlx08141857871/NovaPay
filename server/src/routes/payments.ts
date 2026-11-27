@@ -44,8 +44,8 @@ export function createPaymentsRouter(deps?: PaymentsRouteDeps): Router {
           ? (req.body as Record<string, unknown>).draftId
           : undefined;
       const draftId = typeof rawDraftId === "string" ? rawDraftId.trim() : "";
-      if (!draftId) {
-        sendApiError(res, 400, "INVALID_ARGUMENT", "Thiếu mã draftId để hoàn tất thanh toán.");
+      if (!draftId || draftId.length > 128) {
+        sendApiError(res, 400, "INVALID_ARGUMENT", "Thiếu hoặc sai định dạng mã draftId để hoàn tất thanh toán.");
         return;
       }
 
@@ -155,10 +155,24 @@ export function createPaymentsRouter(deps?: PaymentsRouteDeps): Router {
         const accRef = db.collection("accounts").doc(fromAccountId);
         const accSnap = await tx.get(accRef);
         const userSnap = await tx.get(db.collection("users").doc(uid));
+        if (!userSnap.exists || userSnap.data()?.status !== "ACTIVE") {
+          throw new PaymentApiError(
+            403,
+            "PERMISSION_DENIED",
+            "Tài khoản người dùng hiện không hoạt động."
+          );
+        }
         if (!accSnap.exists) {
           throw new PaymentApiError(404, "ACCOUNT_NOT_FOUND", "Không tìm thấy tài khoản nhận tiền.");
         }
         const accData = accSnap.data() ?? {};
+        if (accData.ownerUid !== uid) {
+          throw new PaymentApiError(
+            403,
+            "PERMISSION_DENIED",
+            "Tài khoản nhận tiền không thuộc quyền sở hữu của người dùng."
+          );
+        }
         if (accData.type !== "CHECKING" || accData.status !== "ACTIVE") {
           throw new PaymentApiError(
             400,

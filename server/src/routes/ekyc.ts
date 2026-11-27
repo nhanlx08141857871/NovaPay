@@ -108,6 +108,13 @@ ekycRouter.post("/submit", requireAuth, async (req: AuthenticatedRequest, res: R
       if (userData.status === "LOCKED") {
         throw new RouteHttpError(403, "PERMISSION_DENIED", "Tài khoản đang bị khóa, không thể thực hiện eKYC.");
       }
+      if (isOfficerCounterSubmit && userData.role === "OFFICER") {
+        throw new RouteHttpError(
+          403,
+          "PERMISSION_DENIED",
+          "Không được phép gửi eKYC tại quầy cho tài khoản nhân viên ngân hàng khác."
+        );
+      }
 
       const currentEkyc = (userData.ekyc ?? {}) as { status?: string };
       if (currentEkyc.status === "VERIFIED" && !isOfficerCounterSubmit) {

@@ -19,7 +19,7 @@ import com.novabank.novapay.databinding.FragmentLoginBinding;
 import dagger.hilt.android.AndroidEntryPoint;
 
 /**
- * Màn hình Đăng nhập chính thức (Firebase Auth + Custom Claim role + Academic Sandbox notice).
+ * Màn hình Đăng nhập chính thức (Firebase Auth + Custom Claim role).
  */
 @AndroidEntryPoint
 public class LoginFragment extends BaseFragment<FragmentLoginBinding> {

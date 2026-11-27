@@ -66,7 +66,8 @@ public class ProfileFragment extends BaseFragment<FragmentProfileBinding> {
         b.btnLogout.setOnClickListener(v -> {
             viewModel.signOut();
             NavOptions options = new NavOptions.Builder()
-                    .setPopUpTo(R.id.nav_core, true)
+                    .setPopUpTo(R.id.nav_graph, true)
+                    .setLaunchSingleTop(true)
                     .build();
             NavHostFragment.findNavController(this).navigate(R.id.loginFragment, null, options);
         });

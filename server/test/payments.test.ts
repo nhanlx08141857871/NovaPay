@@ -168,6 +168,28 @@ describe("Stripe GATEWAY 2-Phase Flow & Idempotent /payments/finalize", () => {
     assert.equal(db.getRaw("accounts/acc_chk_gw")?.balance, 1_000_000);
     paymentIntentAmount = 10_000_000;
 
+    // 3c. Reject finalize when user account is LOCKED inside ACID transaction
+    db.seed("users/uid_gw", {
+      fullName: "Phạm Quốc Bảo",
+      email: "bao@novapay.vn",
+      status: "LOCKED",
+      ekyc: { status: "PENDING" },
+    });
+    const lockedUserRes = await fetch(`${baseUrl}/payments/finalize`, {
+      method: "POST",
+      headers: { "content-type": "application/json" },
+      body: JSON.stringify({ draftId: initJson.draftId }),
+    });
+    assert.equal(lockedUserRes.status, 403);
+    assert.equal(((await lockedUserRes.json()) as { error: string }).error, "PERMISSION_DENIED");
+    assert.equal(db.getRaw("accounts/acc_chk_gw")?.balance, 1_000_000);
+    db.seed("users/uid_gw", {
+      fullName: "Phạm Quốc Bảo",
+      email: "bao@novapay.vn",
+      status: "ACTIVE",
+      ekyc: { status: "PENDING" },
+    });
+
     // 4. Finalize once succeeded -> credits 10M once
     paymentIntentStatus = "succeeded";
     const fin1Res = await fetch(`${baseUrl}/payments/finalize`, {

@@ -304,6 +304,15 @@ export function createTransactionsRouter(deps?: TransactionsRouteDeps): Router {
       }
 
       const note = asTrimmedString(body.note);
+      if (note.length > 500) {
+        sendApiError(
+          res,
+          400,
+          "INVALID_ARGUMENT",
+          "Nội dung giao dịch không được vượt quá 500 ký tự."
+        );
+        return;
+      }
       const meta = { ...asPlainObject(body.meta) };
       const db = getDb();
       const nowMs = now();
@@ -398,18 +407,41 @@ export function createTransactionsRouter(deps?: TransactionsRouteDeps): Router {
           sendApiError(res, 400, "ACCOUNT_NOT_ACTIVE", "Tài khoản người nhận không hoạt động.");
           return;
         }
+        const toOwnerUidInit = asTrimmedString(toAccData.ownerUid);
+        if (toOwnerUidInit) {
+          const toOwnerInitSnap = await db.collection("users").doc(toOwnerUidInit).get();
+          if (toOwnerInitSnap.exists && toOwnerInitSnap.data()?.status === "LOCKED") {
+            sendApiError(
+              res,
+              400,
+              "ACCOUNT_NOT_ACTIVE",
+              "Chủ tài khoản người nhận hiện đang bị khóa giao dịch."
+            );
+            return;
+          }
+        }
         toAccountId = targetId;
       } else if (type === "TRANSFER_INTERBANK") {
         const ext = asPlainObject(body.toExternal);
         const bankCode = asTrimmedString(ext.bankCode);
         const accountNumber = asTrimmedString(ext.accountNumber);
         const name = asTrimmedString(ext.name);
-        if (!bankCode || !accountNumber || !name) {
+        if (
+          !bankCode ||
+          bankCode.length > 20 ||
+          !accountNumber ||
+          accountNumber.length < 4 ||
+          accountNumber.length > 34 ||
+          !/^[A-Za-z0-9-]+$/.test(accountNumber) ||
+          !name ||
+          name.length < 2 ||
+          name.length > 120
+        ) {
           sendApiError(
             res,
             400,
             "INVALID_ARGUMENT",
-            "Thông tin tài khoản nhận liên ngân hàng không đầy đủ."
+            "Thông tin tài khoản nhận liên ngân hàng không đầy đủ hoặc không hợp lệ."
           );
           return;
         }
@@ -713,8 +745,19 @@ export function createTransactionsRouter(deps?: TransactionsRouteDeps): Router {
         const body = asPlainObject(req.body);
         const draftId = asTrimmedString(body.draftId);
         const imageBase64 = asTrimmedString(body.imageBase64);
-        if (!draftId || !imageBase64) {
-          sendApiError(res, 400, "INVALID_ARGUMENT", "Thiếu draftId hoặc ảnh khuôn mặt.");
+        const cleanLiveImage = imageBase64 ? stripBase64DataUrlPrefix(imageBase64) : "";
+        if (!draftId || draftId.length > 128 || !cleanLiveImage) {
+          sendApiError(res, 400, "INVALID_ARGUMENT", "Thiếu draftId hoặc dữ liệu ảnh khuôn mặt không hợp lệ.");
+          return;
+        }
+        const estimatedImageBytes = Math.floor((cleanLiveImage.length * 3) / 4);
+        if (estimatedImageBytes > 200 * 1024) {
+          sendApiError(
+            res,
+            400,
+            "INVALID_ARGUMENT",
+            "Dung lượng ảnh xác thực khuôn mặt không được vượt quá 200KB."
+          );
           return;
         }
 
@@ -784,7 +827,6 @@ export function createTransactionsRouter(deps?: TransactionsRouteDeps): Router {
           return;
         }
 
-        const cleanLiveImage = stripBase64DataUrlPrefix(imageBase64);
         await db.collection("face_checks").doc(draftId).set({
           uid,
           txId: null,
@@ -854,8 +896,8 @@ export function createTransactionsRouter(deps?: TransactionsRouteDeps): Router {
 
         const body = asPlainObject(req.body);
         const draftId = asTrimmedString(body.draftId);
-        if (!draftId) {
-          sendApiError(res, 400, "INVALID_ARGUMENT", "Thiếu draftId.");
+        if (!draftId || draftId.length > 128) {
+          sendApiError(res, 400, "INVALID_ARGUMENT", "Thiếu hoặc sai định dạng draftId.");
           return;
         }
 
@@ -966,8 +1008,8 @@ export function createTransactionsRouter(deps?: TransactionsRouteDeps): Router {
       const otp = asTrimmedString(body.otp);
       const biometricPassed = body.biometricPassed;
 
-      if (!draftId || !otp) {
-        sendApiError(res, 400, "INVALID_ARGUMENT", "Thiếu draftId hoặc mã OTP.");
+      if (!draftId || draftId.length > 128 || !otp || otp.length > 32) {
+        sendApiError(res, 400, "INVALID_ARGUMENT", "Thiếu hoặc sai định dạng draftId / mã OTP.");
         return;
       }
       if (biometricPassed !== undefined && typeof biometricPassed !== "boolean") {
@@ -1194,6 +1236,13 @@ export function createTransactionsRouter(deps?: TransactionsRouteDeps): Router {
           }
           if (toAccData.status !== "ACTIVE") {
             throw new RouteApiError(400, "ACCOUNT_NOT_ACTIVE", "Tài khoản nhận không hoạt động.");
+          }
+          if (toOwnerSnap?.exists && toOwnerSnap.data()?.status === "LOCKED") {
+            throw new RouteApiError(
+              400,
+              "ACCOUNT_NOT_ACTIVE",
+              "Chủ tài khoản người nhận hiện đang bị khóa giao dịch."
+            );
           }
         } else if (type === "BILL") {
           if (!billSnap || !billSnap.exists) {

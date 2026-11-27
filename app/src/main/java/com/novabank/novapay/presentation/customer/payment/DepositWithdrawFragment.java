@@ -147,7 +147,8 @@ public class DepositWithdrawFragment extends BaseFragment<FragmentDepositWithdra
                     amount,
                     withdrawDest,
                     note,
-                    getString(R.string.money_dw_mortgage_empty)
+                    getString(R.string.money_dw_mortgage_empty),
+                    getString(R.string.money_dw_withdraw_dest_invalid)
             );
         });
 

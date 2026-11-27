@@ -133,10 +133,10 @@ export function validateCreateCustomerPayload(
   const address = raw.address.trim();
   const initialPassword = raw.initialPassword;
 
-  if (fullName.length < 2) {
-    return { ok: false, message: "Họ và tên phải có ít nhất 2 ký tự." };
+  if (fullName.length < 2 || fullName.length > 120) {
+    return { ok: false, message: "Họ và tên phải từ 2 đến 120 ký tự." };
   }
-  if (!EMAIL_REGEX.test(email)) {
+  if (email.length > 254 || !EMAIL_REGEX.test(email)) {
     return { ok: false, message: "Địa chỉ email không đúng định dạng." };
   }
   if (!PHONE_REGEX.test(phone)) {
@@ -154,11 +154,11 @@ export function validateCreateCustomerPayload(
       message: "Ngày sinh không hợp lệ (định dạng YYYY-MM-DD, không vượt quá ngày hiện tại).",
     };
   }
-  if (address.length === 0) {
-    return { ok: false, message: "Địa chỉ không được để trống." };
+  if (address.length === 0 || address.length > 500) {
+    return { ok: false, message: "Địa chỉ liên hệ phải từ 1 đến 500 ký tự." };
   }
-  if (initialPassword.length < 6) {
-    return { ok: false, message: "Mật khẩu khởi tạo phải có ít nhất 6 ký tự." };
+  if (initialPassword.length < 6 || initialPassword.length > 128) {
+    return { ok: false, message: "Mật khẩu khởi tạo phải từ 6 đến 128 ký tự." };
   }
 
   return {
@@ -179,8 +179,8 @@ export function validateUpdateCustomerPayload(
   uid: unknown,
   body: unknown
 ): ValidationResult<UpdateCustomerInput> {
-  if (typeof uid !== "string" || uid.trim().length === 0) {
-    return { ok: false, message: "Thiếu mã định danh khách hàng (uid)." };
+  if (typeof uid !== "string" || uid.trim().length === 0 || uid.trim().length > 128) {
+    return { ok: false, message: "Thiếu hoặc sai định dạng mã định danh khách hàng (uid)." };
   }
   if (!body || typeof body !== "object") {
     return { ok: false, message: "Dữ liệu cập nhật khách hàng không hợp lệ." };
@@ -203,8 +203,12 @@ export function validateUpdateCustomerPayload(
   const parsed: UpdateCustomerInput = { uid: uid.trim() };
 
   if (raw.fullName !== undefined) {
-    if (typeof raw.fullName !== "string" || raw.fullName.trim().length < 2) {
-      return { ok: false, message: "Họ và tên phải có ít nhất 2 ký tự." };
+    if (
+      typeof raw.fullName !== "string" ||
+      raw.fullName.trim().length < 2 ||
+      raw.fullName.trim().length > 120
+    ) {
+      return { ok: false, message: "Họ và tên phải từ 2 đến 120 ký tự." };
     }
     parsed.fullName = raw.fullName.trim();
   }
@@ -224,8 +228,12 @@ export function validateUpdateCustomerPayload(
   }
 
   if (raw.address !== undefined) {
-    if (typeof raw.address !== "string" || raw.address.trim().length === 0) {
-      return { ok: false, message: "Địa chỉ không được để trống." };
+    if (
+      typeof raw.address !== "string" ||
+      raw.address.trim().length === 0 ||
+      raw.address.trim().length > 500
+    ) {
+      return { ok: false, message: "Địa chỉ liên hệ phải từ 1 đến 500 ký tự." };
     }
     parsed.address = raw.address.trim();
   }
@@ -505,6 +513,13 @@ export async function updateCustomerWithAudit(
     }
 
     const existingData = snap.data() || {};
+    if (existingData.role === "OFFICER") {
+      throw new OfficerServiceError(
+        403,
+        "PERMISSION_DENIED",
+        "Không được phép chỉnh sửa hoặc khóa tài khoản nhân viên ngân hàng qua nghiệp vụ khách hàng."
+      );
+    }
     const previousStatus =
       typeof existingData.status === "string" ? existingData.status : "ACTIVE";
 

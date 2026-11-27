@@ -4,6 +4,8 @@ import android.net.Uri;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.lifecycle.LiveData;
+import androidx.lifecycle.MutableLiveData;
 
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
@@ -39,10 +41,12 @@ public class SessionManager {
     private final FirebaseAuth firebaseAuth;
     private final FirebaseFirestore firestore;
     private final SingleLiveEvent<Boolean> accountLockedEvent = new SingleLiveEvent<>();
+    private final MutableLiveData<String> roleClaimLiveData = new MutableLiveData<>();
 
     private ListenerRegistration userDocListener;
     private String observedUid;
     private volatile String cachedRole = Constants.ROLE_CUSTOMER;
+    private volatile boolean roleClaimLoaded = false;
     private volatile Uri pendingDeepLink;
 
     private final FirebaseAuth.AuthStateListener authStateListener = auth -> {
@@ -50,6 +54,7 @@ public class SessionManager {
         if (user == null) {
             stopUserListener();
             cachedRole = Constants.ROLE_CUSTOMER;
+            roleClaimLoaded = false;
         } else {
             attachUserListener(user.getUid());
             refreshRoleClaimAsync(user);
@@ -72,6 +77,10 @@ public class SessionManager {
         return accountLockedEvent;
     }
 
+    public LiveData<String> getRoleClaimLiveData() {
+        return roleClaimLiveData;
+    }
+
     public boolean isSignedIn() {
         return firebaseAuth.getCurrentUser() != null;
     }
@@ -87,12 +96,18 @@ public class SessionManager {
         return cachedRole;
     }
 
+    public boolean isRoleClaimLoaded() {
+        return roleClaimLoaded;
+    }
+
     public void updateCachedRole(@Nullable String role) {
         if (Constants.ROLE_OFFICER.equalsIgnoreCase(role)) {
             this.cachedRole = Constants.ROLE_OFFICER;
         } else {
             this.cachedRole = Constants.ROLE_CUSTOMER;
         }
+        this.roleClaimLoaded = true;
+        this.roleClaimLiveData.postValue(this.cachedRole);
     }
 
     public void setPendingDeepLink(@Nullable Uri uri) {
@@ -126,15 +141,22 @@ public class SessionManager {
         pendingDeepLink = null;
         stopUserListener();
         cachedRole = Constants.ROLE_CUSTOMER;
+        roleClaimLoaded = false;
         firebaseAuth.signOut();
     }
 
     private void refreshRoleClaimAsync(@NonNull FirebaseUser user) {
-        user.getIdToken(false).addOnSuccessListener(result -> {
-            Map<String, Object> claims = result.getClaims();
-            Object rawRole = claims != null ? claims.get("role") : null;
-            updateCachedRole(rawRole != null ? String.valueOf(rawRole) : Constants.ROLE_CUSTOMER);
-        });
+        user.getIdToken(false)
+                .addOnSuccessListener(result -> {
+                    Map<String, Object> claims = result.getClaims();
+                    Object rawRole = claims != null ? claims.get("role") : null;
+                    updateCachedRole(rawRole != null ? String.valueOf(rawRole) : Constants.ROLE_CUSTOMER);
+                })
+                .addOnFailureListener(ex -> {
+                    if (!roleClaimLoaded && firebaseAuth.getCurrentUser() != null) {
+                        updateCachedRole(cachedRole);
+                    }
+                });
     }
 
     private synchronized void attachUserListener(@NonNull String uid) {

@@ -137,7 +137,7 @@ async function createTestHarness(): Promise<TestHarness> {
   };
 
   const app = express();
-  app.use(express.json());
+  app.use(express.json({ limit: "1mb" }));
   app.use(
     "/transactions",
     createTransactionsRouter({
@@ -734,5 +734,80 @@ describe("Transactions Routes", () => {
     });
     assert.equal(depositRes.status, 400);
     assert.equal(((await depositRes.json()) as { error: string }).error, "LIMIT_EXCEEDED");
+  });
+
+  it("validates note max length, FaceCheck image < 200KB / non-empty Base64, and blocks transfers to LOCKED owners", async () => {
+    const h = await createTestHarness();
+    harnesses.push(h);
+
+    const longNoteRes = await fetch(`${h.baseUrl}/transactions/initiate`, {
+      method: "POST",
+      headers: { "content-type": "application/json" },
+      body: JSON.stringify({
+        type: "WITHDRAW",
+        fromAccountId: "acc_chk_1",
+        amount: 100_000,
+        note: "x".repeat(501),
+      }),
+    });
+    assert.equal(longNoteRes.status, 400);
+    assert.equal(((await longNoteRes.json()) as { error: string }).error, "INVALID_ARGUMENT");
+
+    // Create >5M draft to test /face-check payload edge cases
+    const initHighRes = await fetch(`${h.baseUrl}/transactions/initiate`, {
+      method: "POST",
+      headers: { "content-type": "application/json" },
+      body: JSON.stringify({
+        type: "WITHDRAW",
+        fromAccountId: "acc_chk_1",
+        amount: 6_000_000,
+      }),
+    });
+    assert.equal(initHighRes.status, 200);
+    const { draftId } = (await initHighRes.json()) as { draftId: string };
+
+    // Empty Base64 after data URL prefix must return 400 INVALID_ARGUMENT
+    const emptyPrefixRes = await fetch(`${h.baseUrl}/transactions/face-check`, {
+      method: "POST",
+      headers: { "content-type": "application/json" },
+      body: JSON.stringify({ draftId, imageBase64: "data:image/jpeg;base64," }),
+    });
+    assert.equal(emptyPrefixRes.status, 400);
+    assert.equal(((await emptyPrefixRes.json()) as { error: string }).error, "INVALID_ARGUMENT");
+
+    // >200KB decoded Base64 (~280,000 chars) must return 400 INVALID_ARGUMENT
+    const oversizedFaceRes = await fetch(`${h.baseUrl}/transactions/face-check`, {
+      method: "POST",
+      headers: { "content-type": "application/json" },
+      body: JSON.stringify({ draftId, imageBase64: "A".repeat(280_000) }),
+    });
+    assert.equal(oversizedFaceRes.status, 400);
+    assert.equal(((await oversizedFaceRes.json()) as { error: string }).error, "INVALID_ARGUMENT");
+
+    // Transfer to an account whose owner is LOCKED must fail with ACCOUNT_NOT_ACTIVE
+    h.db.seed("users/uid_locked_recv", {
+      fullName: "Người Nhận Bị Khóa",
+      status: "LOCKED",
+      ekyc: { status: "VERIFIED" },
+    });
+    h.db.seed("accounts/acc_chk_locked_recv", {
+      ownerUid: "uid_locked_recv",
+      type: "CHECKING",
+      accountNumber: "10000099",
+      status: "ACTIVE",
+      balance: 0,
+    });
+    const lockedRecvRes = await fetch(`${h.baseUrl}/transactions/initiate`, {
+      method: "POST",
+      headers: { "content-type": "application/json" },
+      body: JSON.stringify({
+        type: "TRANSFER_INTERNAL",
+        fromAccountId: "acc_chk_1",
+        toAccountId: "acc_chk_locked_recv",
+        amount: 200_000,
+      }),
+    });
+    assert.equal(lockedRecvRes.status, 400);
+    assert.equal(((await lockedRecvRes.json()) as { error: string }).error, "ACCOUNT_NOT_ACTIVE");
   });
 });

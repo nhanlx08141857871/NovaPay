@@ -23,7 +23,26 @@ export function createAccountsRouter(deps?: AccountsRouteDeps): Router {
         return;
       }
 
+      if (accountNumber.length > 34 || !/^[A-Za-z0-9-]+$/.test(accountNumber)) {
+        sendApiError(res, 400, "INVALID_ARGUMENT", "Định dạng số tài khoản cần tra cứu không hợp lệ.");
+        return;
+      }
+
       const db = getDb();
+      const callerUid = typeof req.user?.uid === "string" ? req.user.uid.trim() : "";
+      if (callerUid) {
+        const callerSnap = await db.collection("users").doc(callerUid).get();
+        if (callerSnap.exists && callerSnap.data()?.status === "LOCKED") {
+          sendApiError(
+            res,
+            403,
+            "PERMISSION_DENIED",
+            "Tài khoản người dùng hiện đang bị khóa, không thể tra cứu."
+          );
+          return;
+        }
+      }
+
       const snapshot = await db
         .collection("accounts")
         .where("accountNumber", "==", accountNumber)
@@ -62,6 +81,15 @@ export function createAccountsRouter(deps?: AccountsRouteDeps): Router {
       if (typeof accountData.ownerUid === "string" && accountData.ownerUid.trim().length > 0) {
         const userSnap = await db.collection("users").doc(accountData.ownerUid).get();
         if (userSnap.exists) {
+          if (userSnap.data()?.status === "LOCKED") {
+            sendApiError(
+              res,
+              400,
+              "ACCOUNT_NOT_ACTIVE",
+              "Chủ tài khoản người nhận hiện đang bị khóa giao dịch."
+            );
+            return;
+          }
           ownerName = String(userSnap.data()?.fullName ?? "");
         }
       }

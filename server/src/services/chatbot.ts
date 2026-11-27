@@ -446,6 +446,18 @@ export async function generateChatReply(
   }
 }
 
+export class ChatbotAccessError extends Error {
+  public readonly statusCode: number;
+  public readonly errorCode: string;
+
+  constructor(statusCode: number, errorCode: string, message: string) {
+    super(message);
+    this.name = "ChatbotAccessError";
+    this.statusCode = statusCode;
+    this.errorCode = errorCode;
+  }
+}
+
 export async function handleChatAndPersist(
   uid: string,
   message: string,
@@ -457,6 +469,15 @@ export async function handleChatAndPersist(
 ): Promise<ChatReply> {
   const db = deps.db ?? admin.firestore();
   const nowMs = (deps.nowMs ?? Date.now)();
+
+  const userSnap = await db.collection("users").doc(uid).get();
+  if (userSnap.exists && userSnap.data()?.status === "LOCKED") {
+    throw new ChatbotAccessError(
+      403,
+      "PERMISSION_DENIED",
+      "Tài khoản người dùng hiện đang bị khóa."
+    );
+  }
 
   const context = await getCustomerFinancialContext(db, uid, nowMs);
   const messagesCol = db.collection("chat_sessions").doc(uid).collection("messages");

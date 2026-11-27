@@ -160,10 +160,14 @@ public class LoginViewModel extends ViewModel {
         sessionManager.startUserSession();
         uiState.setValue(UiState.success(new LoginUiState(true, role.asClaimValue())));
 
+        boolean hadPending = sessionManager.peekPendingDeepLink() != null;
         Uri pending = sessionManager.consumePendingDeepLinkIfAllowed(
                 role.asClaimValue(),
                 authRepository.getCurrentUid()
         );
+        if (hadPending && pending == null) {
+            messageResEvent.setValue(R.string.core_guard_role_denied);
+        }
         if (pending != null) {
             navigateDeepLinkEvent.setValue(pending.toString());
         } else if (role == UserRole.OFFICER) {
