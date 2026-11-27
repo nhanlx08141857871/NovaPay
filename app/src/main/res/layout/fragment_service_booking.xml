@@ -109,7 +109,6 @@
             android:layout_weight="1"
             android:clipToPadding="false" />
 
-        <!-- Docked Checkout Summary Bar -->
         <com.google.android.material.card.MaterialCardView
             android:id="@+id/cardSelectedItemCheckout"
             style="@style/Widget.NovaPay.Card.Outlined"

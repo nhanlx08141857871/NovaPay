@@ -24,9 +24,6 @@ import com.novabank.novapay.domain.model.transaction.TransactionType;
 import java.time.Instant;
 import java.util.Map;
 
-/**
- * Mapper hai chiều giữa DTO/Firestore và các thực thể Giao dịch thuần Java ở tầng domain.
- */
 public final class TransactionMapper {
 
     private TransactionMapper() {

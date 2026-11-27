@@ -6,9 +6,6 @@ import com.novabank.novapay.domain.model.transaction.Transaction;
 
 import java.util.Objects;
 
-/**
- * Dữ liệu trạng thái màn hình Biên lai giao dịch điện tử (ReceiptFragment).
- */
 public final class ReceiptUiState {
 
     private final Transaction transaction;

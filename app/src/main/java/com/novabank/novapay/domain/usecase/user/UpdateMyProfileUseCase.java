@@ -7,9 +7,6 @@ import javax.inject.Inject;
 
 import io.reactivex.rxjava3.core.Single;
 
-/**
- * UseCase cập nhật an toàn các trường được phép (phone, address, avatarUrl) theo firestore.rules.
- */
 public final class UpdateMyProfileUseCase {
 
     private static final String PHONE_REGEX = "^(0|\\+84)[0-9]{9,10}$";

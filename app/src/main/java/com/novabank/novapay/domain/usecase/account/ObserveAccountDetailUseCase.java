@@ -9,9 +9,6 @@ import javax.inject.Inject;
 import io.reactivex.rxjava3.core.Observable;
 import io.reactivex.rxjava3.core.Single;
 
-/**
- * UseCase lấy hoặc quan sát realtime chi tiết một tài khoản theo accountId.
- */
 public final class ObserveAccountDetailUseCase {
 
     private final AccountRepository accountRepository;

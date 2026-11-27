@@ -2,9 +2,6 @@ package com.novabank.novapay.presentation.customer.otp;
 
 import androidx.annotation.Nullable;
 
-/**
- * Trạng thái giao diện của Dialog xác thực OTP & điều phối 3 lớp bảo mật (> 5.000.000 VNĐ).
- */
 public final class OtpVerificationUiState {
 
     private final String draftId;

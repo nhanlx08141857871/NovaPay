@@ -7,9 +7,6 @@ import com.novabank.novapay.domain.model.account.Account;
 import java.util.Collections;
 import java.util.List;
 
-/**
- * Trạng thái màn hình Nạp tiền điện thoại (PhoneTopupFragment).
- */
 public final class PhoneTopupUiState {
 
     private final List<Account> checkingAccounts;

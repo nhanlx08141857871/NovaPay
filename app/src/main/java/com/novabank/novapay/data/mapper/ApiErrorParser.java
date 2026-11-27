@@ -43,7 +43,6 @@ public final class ApiErrorParser {
                         }
                     }
                 } catch (IOException | JsonSyntaxException ignored) {
-                    // Fallback below
                 }
             }
             return AppResult.error(

@@ -11,9 +11,6 @@ import com.novabank.novapay.domain.model.utility.ServiceItem;
 import java.util.Collections;
 import java.util.List;
 
-/**
- * Trạng thái màn hình Đặt vé máy bay, xem phim, khách sạn, mua sắm & Đơn đã đặt (ServiceBookingFragment).
- */
 public final class ServiceBookingUiState {
 
     private final List<Account> checkingAccounts;

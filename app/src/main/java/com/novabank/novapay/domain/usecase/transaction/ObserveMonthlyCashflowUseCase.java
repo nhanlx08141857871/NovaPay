@@ -22,9 +22,6 @@ import javax.inject.Inject;
 
 import io.reactivex.rxjava3.core.Observable;
 
-/**
- * UseCase tổng hợp Thu (IN) / Chi (OUT) tháng hiện tại theo múi giờ Asia/Ho_Chi_Minh (kiểu long).
- */
 public final class ObserveMonthlyCashflowUseCase {
 
     private static final ZoneId VIETNAM_ZONE = ZoneId.of(Constants.ZONE_HO_CHI_MINH);

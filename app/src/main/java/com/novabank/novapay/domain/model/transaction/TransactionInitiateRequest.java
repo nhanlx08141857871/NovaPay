@@ -2,9 +2,6 @@ package com.novabank.novapay.domain.model.transaction;
 
 import java.util.Objects;
 
-/**
- * Yêu cầu khởi tạo giao dịch gửi tới POST /transactions/initiate.
- */
 public final class TransactionInitiateRequest {
 
     private final TransactionType type;

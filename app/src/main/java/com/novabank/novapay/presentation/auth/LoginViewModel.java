@@ -29,9 +29,6 @@ import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers;
 import io.reactivex.rxjava3.core.Single;
 import io.reactivex.rxjava3.disposables.CompositeDisposable;
 
-/**
- * ViewModel Đăng nhập Firebase Auth, kiểm tra Custom Claim role và trạng thái LOCKED.
- */
 @HiltViewModel
 public class LoginViewModel extends ViewModel {
 

@@ -13,9 +13,6 @@ import javax.inject.Inject;
 
 import dagger.hilt.android.lifecycle.HiltViewModel;
 
-/**
- * ViewModel giải mã dữ liệu QR chuyển khoản bằng QrHelper.parseTransferQrPayload.
- */
 @HiltViewModel
 public class QrScannerViewModel extends ViewModel {
 

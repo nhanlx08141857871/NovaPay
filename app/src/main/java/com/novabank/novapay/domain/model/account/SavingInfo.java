@@ -2,10 +2,6 @@ package com.novabank.novapay.domain.model.account;
 
 import java.time.Instant;
 
-/**
- * Thông tin chuyên biệt của tài khoản Tiết kiệm (SAVING).
- * Tiền gốc và tiền lãi bắt buộc dùng kiểu long (VNĐ); thời gian dùng java.time.Instant.
- */
 public final class SavingInfo {
 
     private final int termMonths;

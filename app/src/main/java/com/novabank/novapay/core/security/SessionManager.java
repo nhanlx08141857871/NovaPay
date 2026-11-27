@@ -200,16 +200,10 @@ public class SessionManager {
         accountLockedEvent.postValue(Boolean.TRUE);
     }
 
-    /**
-     * Kiểm tra DeepLink URI có được phép mở với vai trò hiện tại hay không (Pure Java JVM-testable).
-     */
     public static boolean isDeepLinkAllowedForRole(@Nullable String uriString, @Nullable String role) {
         return isDeepLinkAllowedForRole(uriString, role, null);
     }
 
-    /**
-     * Kiểm tra DeepLink URI có được phép mở với vai trò và UID hiện tại hay không (Pure Java JVM-testable).
-     */
     public static boolean isDeepLinkAllowedForRole(
             @Nullable String uriString,
             @Nullable String role,

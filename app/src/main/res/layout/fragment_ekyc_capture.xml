@@ -72,7 +72,6 @@
                     android:layout_width="match_parent"
                     android:layout_height="match_parent" />
 
-                <!-- Face Framing Guide -->
                 <View
                     android:layout_width="230dp"
                     android:layout_height="290dp"

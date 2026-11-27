@@ -8,10 +8,6 @@ import com.novabank.novapay.domain.model.user.User;
 import java.util.Collections;
 import java.util.List;
 
-/**
- * Dữ liệu trạng thái màn hình Trang chủ Khách hàng (CustomerHomeFragment).
- * Tổng tài sản bắt buộc dùng kiểu long (VNĐ).
- */
 public final class CustomerHomeUiState {
 
     private final User user;

@@ -19,7 +19,6 @@
             android:paddingTop="12dp"
             android:paddingBottom="24dp">
 
-            <!-- Header & Deposit/Withdraw/Mortgage Quick Entry -->
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -55,7 +54,6 @@
                     app:iconSize="16dp" />
             </LinearLayout>
 
-            <!-- Source CHECKING Account Dropdown -->
             <com.google.android.material.textfield.TextInputLayout
                 android:id="@+id/tilSourceAccount"
                 style="@style/Widget.NovaPay.TextInputLayout.Dropdown"
@@ -72,7 +70,6 @@
                     android:inputType="none" />
             </com.google.android.material.textfield.TextInputLayout>
 
-            <!-- Saved Beneficiaries Strip -->
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -99,7 +96,6 @@
                 android:clipToPadding="false"
                 android:visibility="gone" />
 
-            <!-- Internal vs Interbank Segmented Toggle -->
             <com.google.android.material.button.MaterialButtonToggleGroup
                 android:id="@+id/toggleTransferMode"
                 android:layout_width="match_parent"
@@ -128,7 +124,6 @@
                     android:text="@string/money_transfer_tab_interbank" />
             </com.google.android.material.button.MaterialButtonToggleGroup>
 
-            <!-- Recipient & Amount Form Card -->
             <com.google.android.material.card.MaterialCardView
                 style="@style/Widget.NovaPay.Card.Outlined"
                 android:layout_width="match_parent"
@@ -150,7 +145,6 @@
                         android:textColor="?attr/colorOnSurface"
                         android:textStyle="bold" />
 
-                    <!-- Interbank Bank Selector -->
                     <com.google.android.material.textfield.TextInputLayout
                         android:id="@+id/tilBank"
                         style="@style/Widget.NovaPay.TextInputLayout.Dropdown"
@@ -167,7 +161,6 @@
                             android:inputType="none" />
                     </com.google.android.material.textfield.TextInputLayout>
 
-                    <!-- Recipient Account + Lookup -->
                     <LinearLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
@@ -212,7 +205,6 @@
                         app:iconGravity="textStart"
                         app:iconTint="@color/np_accent_emerald" />
 
-                    <!-- Internal Account Lookup Result Pill -->
                     <TextView
                         android:id="@+id/tvLookupStatus"
                         android:layout_width="match_parent"
@@ -225,7 +217,6 @@
                         android:textStyle="bold"
                         android:visibility="gone" />
 
-                    <!-- Interbank Manual Recipient Name -->
                     <com.google.android.material.textfield.TextInputLayout
                         android:id="@+id/tilRecipientName"
                         style="@style/Widget.NovaPay.TextInputLayout"
@@ -256,7 +247,6 @@
                         android:textColor="?attr/colorOnSurface"
                         android:textStyle="bold" />
 
-                    <!-- Amount Input (long VND, tabular figures) -->
                     <com.google.android.material.textfield.TextInputLayout
                         android:id="@+id/tilAmount"
                         style="@style/Widget.NovaPay.TextInputLayout"
@@ -275,7 +265,6 @@
                             android:textStyle="bold" />
                     </com.google.android.material.textfield.TextInputLayout>
 
-                    <!-- Quick Denomination Chips -->
                     <com.google.android.material.chip.ChipGroup
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
@@ -315,7 +304,6 @@
                             android:text="@string/money_transfer_chip_6m" />
                     </com.google.android.material.chip.ChipGroup>
 
-                    <!-- Transfer Note -->
                     <com.google.android.material.textfield.TextInputLayout
                         android:id="@+id/tilNote"
                         style="@style/Widget.NovaPay.TextInputLayout"
@@ -332,7 +320,6 @@
                             android:text="@string/money_transfer_default_note" />
                     </com.google.android.material.textfield.TextInputLayout>
 
-                    <!-- Save Beneficiary Option -->
                     <com.google.android.material.checkbox.MaterialCheckBox
                         android:id="@+id/cbSaveBeneficiary"
                         android:layout_width="match_parent"

@@ -10,9 +10,6 @@ import com.novabank.novapay.domain.model.account.SavingInfo;
 import java.time.Instant;
 import java.util.Map;
 
-/**
- * Mapper cho collection accounts/{accountId} phục vụ cơ chế fallback khi Module A chưa merge.
- */
 public final class MoneyAccountMapper {
 
     private MoneyAccountMapper() {

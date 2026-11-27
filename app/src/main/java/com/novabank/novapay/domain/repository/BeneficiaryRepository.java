@@ -8,9 +8,6 @@ import java.util.List;
 import io.reactivex.rxjava3.core.Observable;
 import io.reactivex.rxjava3.core.Single;
 
-/**
- * Hợp đồng Repository quản lý danh bạ người thụ hưởng của khách hàng (users/{uid}/beneficiaries).
- */
 public interface BeneficiaryRepository {
 
     Observable<AppResult<List<Beneficiary>>> observeBeneficiaries();

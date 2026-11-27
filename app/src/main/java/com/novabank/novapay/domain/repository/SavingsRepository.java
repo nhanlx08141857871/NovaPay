@@ -6,9 +6,6 @@ import com.novabank.novapay.domain.model.account.SettleSavingResult;
 
 import io.reactivex.rxjava3.core.Single;
 
-/**
- * Hợp đồng mở và tất toán sổ tiết kiệm trực tuyến (Pure Java 17).
- */
 public interface SavingsRepository {
 
     Single<AppResult<OpenSavingResult>> openSavingAccount(

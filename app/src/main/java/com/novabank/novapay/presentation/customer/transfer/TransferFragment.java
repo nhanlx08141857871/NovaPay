@@ -35,13 +35,6 @@ import java.util.List;
 
 import dagger.hilt.android.AndroidEntryPoint;
 
-/**
- * Màn hình Chuyển tiền nội bộ NovaPay & Liên ngân hàng 24/7 (novapay://transfer):
- * - Tự động tra cứu tên người nhận nội bộ qua GET /accounts/lookup.
- * - Quét mã QR chuyển khoản (QrScannerFragment) điền tự động thông tin.
- * - Chọn/lưu/xóa danh bạ thụ hưởng (beneficiaries).
- * - Hỗ trợ chuyển tiếp tự động sang trả nợ vay khi mở từ MortgageDetailFragment.
- */
 @AndroidEntryPoint
 public class TransferFragment extends BaseFragment<FragmentTransferBinding> {
 
@@ -76,7 +69,6 @@ public class TransferFragment extends BaseFragment<FragmentTransferBinding> {
                 () -> viewModel.loadInitialData()
         );
 
-        // Nếu được gọi từ MortgageDetailFragment (novapay://transfer?type=MORTGAGE_PAYMENT&accountId=...)
         if (redirectMortgagePaymentIfRequested()) {
             return;
         }
@@ -306,7 +298,6 @@ public class TransferFragment extends BaseFragment<FragmentTransferBinding> {
     private void renderTransferState(@NonNull TransferUiState data) {
         FragmentTransferBinding b = getBinding();
 
-        // Cập nhật danh sách tài khoản CHECKING nguồn
         List<String> sourceLabels = new ArrayList<>();
         for (Account acc : data.getCheckingAccounts()) {
             sourceLabels.add(getString(
@@ -325,13 +316,11 @@ public class TransferFragment extends BaseFragment<FragmentTransferBinding> {
             b.actvSourceAccount.setText(sourceLabels.get(data.getSelectedSourceIndex()), false);
         }
 
-        // Cập nhật danh bạ thụ hưởng
         List<Beneficiary> beneficiaries = data.getBeneficiaries();
         b.tvBeneficiariesEmpty.setVisibility(beneficiaries.isEmpty() ? View.VISIBLE : View.GONE);
         b.rvBeneficiaries.setVisibility(beneficiaries.isEmpty() ? View.GONE : View.VISIBLE);
         beneficiaryAdapter.submitList(beneficiaries);
 
-        // Cập nhật danh sách ngân hàng (Interbank)
         if (!data.getBanks().isEmpty()) {
             if (pendingBankCodeFromArgs != null) {
                 String code = pendingBankCodeFromArgs;
@@ -358,7 +347,6 @@ public class TransferFragment extends BaseFragment<FragmentTransferBinding> {
         b.tilRecipientName.setVisibility(interbank ? View.VISIBLE : View.GONE);
         b.btnLookupRecipient.setVisibility(interbank ? View.GONE : View.VISIBLE);
 
-        // Hiển thị trạng thái tra cứu tài khoản nội bộ
         if (!interbank) {
             if (data.isLookingUpRecipient()) {
                 b.tvLookupStatus.setVisibility(View.VISIBLE);

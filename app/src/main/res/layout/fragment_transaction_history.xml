@@ -6,7 +6,6 @@
     android:background="?android:attr/colorBackground"
     android:orientation="vertical">
 
-    <!-- Filter Header on Pure Surface + 1dp Bottom Hairline -->
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -52,7 +51,6 @@
                 app:iconSize="16dp" />
         </LinearLayout>
 
-        <!-- Account Selector + Keyword Search -->
         <com.google.android.material.textfield.TextInputLayout
             android:id="@+id/tilAccountFilter"
             style="@style/Widget.NovaPay.TextInputLayout.Dropdown"
@@ -182,7 +180,6 @@
             android:layout_height="match_parent"
             android:orientation="vertical">
 
-            <!-- Summary Card: Total In / Total Out / Count -->
             <com.google.android.material.card.MaterialCardView
                 style="@style/Widget.NovaPay.Card.Outlined"
                 android:layout_width="match_parent"

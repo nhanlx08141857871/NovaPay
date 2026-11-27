@@ -1,31 +1,22 @@
 package com.novabank.novapay.core.common;
 
-/**
- * Tập hợp các hằng số dùng chung toàn hệ thống NovaPay (DeepLinks, FragmentResult keys,
- * ngưỡng bảo mật giao dịch, tọa độ fallback ĐH Tôn Đức Thắng và URL máy chủ).
- */
 public final class Constants {
 
     private Constants() {
-        // Cấm khởi tạo
     }
 
-    // --- Cấu hình kết nối API ---
     public static final String DEFAULT_BACKEND_BASE_URL = "http://10.0.2.2:3000/";
     public static final String OPEN_ROUTE_BASE_URL = "https://api.openrouteservice.org/";
     public static final long NETWORK_TIMEOUT_SECONDS = 30L;
 
-    // --- Múi giờ & Tiền tệ ---
     public static final String ZONE_HO_CHI_MINH = "Asia/Ho_Chi_Minh";
     public static final String CURRENCY_VND = "VND";
 
-    // --- Ràng buộc Bảo mật Giao dịch (SPEC_CHOT.md) ---
     public static final long HIGH_VALUE_THRESHOLD_VND = 5_000_000L;
     public static final int OTP_EXPIRY_SECONDS = 180;
     public static final int OTP_MAX_ATTEMPTS = 5;
     public static final int MAX_EKYC_IMAGE_BYTES = 200 * 1024;
 
-    // --- Vai trò & Trạng thái Người dùng ---
     public static final String ROLE_CUSTOMER = "CUSTOMER";
     public static final String ROLE_OFFICER = "OFFICER";
     public static final String USER_STATUS_ACTIVE = "ACTIVE";
@@ -40,7 +31,6 @@ public final class Constants {
     public static final double MAX_VALID_DISTANCE_FROM_HCMC_METERS = 100_000.0;
     public static final long GPS_TIMEOUT_MILLIS = 5_000L;
 
-    // --- Bảng Định Tuyến DeepLinks (novapay://) ---
     public static final String DEEPLINK_SCHEME = "novapay";
     public static final String DEEPLINK_HOME = "novapay://home";
     public static final String DEEPLINK_ACCOUNT_PREFIX = "novapay://accounts/";
@@ -57,7 +47,6 @@ public final class Constants {
     public static final String DEEPLINK_SECURITY = "novapay://security";
     public static final String DEEPLINK_RECEIPT_PREFIX = "novapay://receipt/";
 
-    // --- Kênh Thông báo Hệ thống & Ngưỡng Tiết kiệm / Hạn mức ---
     public static final String NOTIFICATION_CHANNEL_BALANCE_ALERTS = "novapay_balance_alerts";
     public static final long MIN_SAVING_PRINCIPAL_VND = 1_000_000L;
     public static final long MIN_PER_TXN_LIMIT_VND = 1_000_000L;
@@ -65,7 +54,6 @@ public final class Constants {
     public static final long MIN_DAILY_LIMIT_VND = 5_000_000L;
     public static final long MAX_DAILY_LIMIT_VND = 500_000_000L;
 
-    // --- Khóa giao tiếp FragmentResultListener liên phân hệ (A <-> B <-> C) ---
     public static final String REQ_FACE_CHECK = "req_novapay_face_check";
     public static final String REQ_OTP_VERIFICATION = "req_novapay_otp_verification";
     public static final String REQ_EKYC_CAPTURE = "req_novapay_ekyc_capture";

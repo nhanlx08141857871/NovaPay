@@ -4,10 +4,6 @@ import com.novabank.novapay.domain.model.rate.InterestRate;
 
 import java.util.Objects;
 
-/**
- * Kết quả kết hợp realtime giữa Tài khoản Tiết kiệm và Biểu lãi suất động (SPEC_CHOT.md Q9).
- * Tiền lãi dự kiến hàng tháng bắt buộc dùng kiểu long (VNĐ).
- */
 public final class SavingProjection {
 
     private final Account account;

@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <!-- Adaptive Semantic Tokens for Dark Mode -->
     <color name="novapay_income_positive">#FF22C55E</color>
     <color name="novapay_expense_negative">#FFF87171</color>
     <color name="novapay_warning_pending">#FFFBBF24</color>

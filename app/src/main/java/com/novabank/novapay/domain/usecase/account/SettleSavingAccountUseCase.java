@@ -8,9 +8,6 @@ import javax.inject.Inject;
 
 import io.reactivex.rxjava3.core.Single;
 
-/**
- * UseCase tất toán sổ tiết kiệm về tài khoản CHECKING (Pure Java 17).
- */
 public final class SettleSavingAccountUseCase {
 
     private final SavingsRepository savingsRepository;

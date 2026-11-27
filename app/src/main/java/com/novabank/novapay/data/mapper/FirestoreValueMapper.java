@@ -5,14 +5,9 @@ import com.google.firebase.Timestamp;
 import java.time.Instant;
 import java.util.Map;
 
-/**
- * Tiện ích chuyển đổi an toàn các giá trị từ Firestore sang kiểu Java 17 chuẩn
- * (Instant, long cho tiền tệ, double cho lãi suất/tỷ lệ).
- */
 public final class FirestoreValueMapper {
 
     private FirestoreValueMapper() {
-        // Cấm khởi tạo
     }
 
     public static Instant toInstant(Object raw) {

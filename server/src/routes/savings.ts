@@ -395,7 +395,6 @@ export function createSavingsRouter(deps?: SavingsRouteDeps): Router {
           );
         }
 
-        // PHASE 2: Ghi nguyên tử trừ CHECKING, tạo SAVING, ghi ledger 2 chiều, transaction & notification
         const newCheckingBalance = currentCheckingBalance - principalAmount;
         const fromAccountNumber = asTrimmedString(freshFromData.accountNumber);
         const ownerName = asTrimmedString(freshUser.fullName);
@@ -797,7 +796,6 @@ export function createSavingsRouter(deps?: SavingsRouteDeps): Router {
             nowMs,
           });
 
-          // PHASE 2: Đóng sổ tiết kiệm, cộng gốc + lãi vào CHECKING, ghi ledger, transaction & notification
           const currentCheckingBalance = Number(freshCheckingData.balance ?? 0);
           const newCheckingBalance = currentCheckingBalance + settlement.totalPayoutAmount;
           const savingAccountNumber = asTrimmedString(freshSavingData.accountNumber);

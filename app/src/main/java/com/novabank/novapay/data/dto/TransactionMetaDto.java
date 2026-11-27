@@ -1,8 +1,5 @@
 package com.novabank.novapay.data.dto;
 
-/**
- * DTO siêu dữ liệu giao dịch cho POST /transactions/initiate.
- */
 public final class TransactionMetaDto {
 
     private String billId;

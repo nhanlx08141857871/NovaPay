@@ -2,9 +2,6 @@ package com.novabank.novapay.domain.model.bank;
 
 import java.util.Objects;
 
-/**
- * Danh bạ thụ hưởng đã lưu tại users/{uid}/beneficiaries/{id}.
- */
 public final class Beneficiary {
 
     private final String id;

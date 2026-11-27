@@ -1,8 +1,5 @@
 package com.novabank.novapay.domain.model.transaction;
 
-/**
- * Tổng hợp thu/chi theo tháng cho biểu đồ Trang chủ (Pure Java 17, tiền tệ dùng kiểu long).
- */
 public final class MonthlyCashflowSummary {
 
     private final String monthLabel;

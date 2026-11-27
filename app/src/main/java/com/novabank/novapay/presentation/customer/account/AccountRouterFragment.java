@@ -18,10 +18,6 @@ import com.novabank.novapay.domain.model.account.AccountType;
 
 import dagger.hilt.android.AndroidEntryPoint;
 
-/**
- * Bộ định tuyến tài khoản (novapay://accounts/{accountId}):
- * Tự động điều hướng kèm popUpTo(accountRouterFragment, true) sang Checking/Saving/Mortgage.
- */
 @AndroidEntryPoint
 public class AccountRouterFragment extends BaseFragment<FragmentAccountRouterBinding> {
 

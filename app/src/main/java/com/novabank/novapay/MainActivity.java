@@ -29,10 +29,6 @@ import javax.inject.Inject;
 
 import dagger.hilt.android.AndroidEntryPoint;
 
-/**
- * Single-Activity trung tâm chứa NavHostFragment, thanh BottomNavigationView 4 tab cho Customer,
- * bảo vệ DeepLink Auth/Role Guard và xử lý cưỡng bức đăng xuất realtime khi tài khoản bị LOCKED.
- */
 @AndroidEntryPoint
 public class MainActivity extends AppCompatActivity {
 

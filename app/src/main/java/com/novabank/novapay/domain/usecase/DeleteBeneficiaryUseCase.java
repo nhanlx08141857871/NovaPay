@@ -7,9 +7,6 @@ import javax.inject.Inject;
 
 import io.reactivex.rxjava3.core.Single;
 
-/**
- * Xóa người thụ hưởng khỏi danh bạ khách hàng.
- */
 public class DeleteBeneficiaryUseCase {
 
     private final BeneficiaryRepository beneficiaryRepository;

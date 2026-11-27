@@ -12,9 +12,6 @@ import java.time.Instant;
 
 import io.reactivex.rxjava3.core.Single;
 
-/**
- * Hợp đồng Repository điều phối giao dịch, tra cứu tài khoản nội bộ và hoàn tất Stripe PaymentSheet.
- */
 public interface TransactionRepository {
 
     Single<AppResult<AccountLookupResult>> lookupInternalAccount(String accountNumber);

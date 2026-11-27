@@ -7,9 +7,6 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Locale;
 
-/**
- * Bộ lọc từ khóa và tính tổng Thu/Chi kiểu long cho danh sách sổ cái (Pure Java 17).
- */
 public final class LedgerFilterHelper {
 
     public static final class Summary {

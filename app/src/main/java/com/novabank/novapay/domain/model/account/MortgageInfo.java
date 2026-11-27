@@ -2,10 +2,6 @@ package com.novabank.novapay.domain.model.account;
 
 import java.time.Instant;
 
-/**
- * Thông tin chuyên biệt của tài khoản Vay thế chấp (MORTGAGE).
- * Dư nợ gốc, khoản vay và số tiền trả định kỳ bắt buộc dùng kiểu long (VNĐ).
- */
 public final class MortgageInfo {
 
     public static final String FREQUENCY_MONTHLY = "MONTHLY";

@@ -35,10 +35,6 @@ import java.util.List;
 
 import dagger.hilt.android.AndroidEntryPoint;
 
-/**
- * Màn hình chi tiết tài khoản Tiết kiệm (SAVING):
- * Kết hợp realtime accounts/{id} + interest_rates theo termMonths, hỗ trợ Tất toán & Mở thêm sổ mới.
- */
 @AndroidEntryPoint
 public class SavingDetailFragment extends BaseFragment<FragmentSavingDetailBinding> {
 

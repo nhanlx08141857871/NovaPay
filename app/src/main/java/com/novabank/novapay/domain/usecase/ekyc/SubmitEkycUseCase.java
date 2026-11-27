@@ -7,9 +7,6 @@ import javax.inject.Inject;
 
 import io.reactivex.rxjava3.core.Single;
 
-/**
- * UseCase gửi ảnh khuôn mặt eKYC (< 200KB Base64) lên máy chủ.
- */
 public final class SubmitEkycUseCase {
 
     private final EkycRepository ekycRepository;

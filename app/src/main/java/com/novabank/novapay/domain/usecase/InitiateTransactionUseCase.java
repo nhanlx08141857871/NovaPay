@@ -13,13 +13,6 @@ import javax.inject.Inject;
 
 import io.reactivex.rxjava3.core.Single;
 
-/**
- * Khởi tạo giao dịch kèm kiểm tra ràng buộc nghiệp vụ bắt buộc tại tầng domain:
- * - Tài khoản nguồn phải là CHECKING + ACTIVE
- * - Số tiền dương (long VNĐ)
- * - Cấm tự chuyển nội bộ (fromAccountId != toAccountId)
- * - Kiểm tra hạn mức mỗi lần và số dư đối với các giao dịch chi/rút (trừ GATEWAY/DEPOSIT)
- */
 public class InitiateTransactionUseCase {
 
     private final TransactionRepository transactionRepository;

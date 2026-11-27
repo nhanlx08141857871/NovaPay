@@ -3,10 +3,6 @@ package com.novabank.novapay.domain.model.transaction;
 import java.time.Instant;
 import java.util.Objects;
 
-/**
- * Thực thể Giao dịch đã hoàn tất hoặc thất bại (collection transactions/{txId}).
- * Tiền tệ dùng kiểu long (VNĐ); thời gian dùng java.time.Instant.
- */
 public final class Transaction {
 
     private final String txId;

@@ -2,9 +2,6 @@ package com.novabank.novapay.domain.model.transaction;
 
 import java.util.Objects;
 
-/**
- * Siêu dữ liệu bổ sung cho các giao dịch hóa đơn, nạp điện thoại, dịch vụ, trả nợ vay và Stripe.
- */
 public final class TransactionMeta {
 
     private final String billId;

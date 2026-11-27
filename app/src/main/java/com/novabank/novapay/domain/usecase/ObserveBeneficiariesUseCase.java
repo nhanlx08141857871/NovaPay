@@ -10,9 +10,6 @@ import javax.inject.Inject;
 
 import io.reactivex.rxjava3.core.Observable;
 
-/**
- * Theo dõi danh sách người thụ hưởng đã lưu của khách hàng hiện tại.
- */
 public class ObserveBeneficiariesUseCase {
 
     private final BeneficiaryRepository beneficiaryRepository;

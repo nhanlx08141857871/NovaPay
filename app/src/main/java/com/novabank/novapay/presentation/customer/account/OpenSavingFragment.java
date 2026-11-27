@@ -32,9 +32,6 @@ import java.util.List;
 
 import dagger.hilt.android.AndroidEntryPoint;
 
-/**
- * Màn hình Mở sổ tiết kiệm trực tuyến (novapay://savings/open).
- */
 @AndroidEntryPoint
 public class OpenSavingFragment extends BaseFragment<FragmentOpenSavingBinding> {
 

@@ -27,9 +27,6 @@ import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers;
 import io.reactivex.rxjava3.disposables.CompositeDisposable;
 import io.reactivex.rxjava3.schedulers.Schedulers;
 
-/**
- * ViewModel nạp tiền điện thoại theo nhà mạng và mệnh giá cố định (kiểu long VNĐ).
- */
 @HiltViewModel
 public class PhoneTopupViewModel extends ViewModel {
 

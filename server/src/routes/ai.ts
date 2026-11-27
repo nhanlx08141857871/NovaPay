@@ -10,9 +10,6 @@ import {
   validateChatMessageInput,
 } from "../services/chatbot";
 
-/**
- * Trợ lý ảo AI Chatbot tích hợp Gemini & Rule-based NLP Fallback (Owner: Thành viên C).
- */
 export const aiRouter = Router();
 
 aiRouter.post("/chat", requireAuth, async (req: AuthenticatedRequest, res) => {

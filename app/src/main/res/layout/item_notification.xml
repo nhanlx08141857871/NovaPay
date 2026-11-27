@@ -15,7 +15,6 @@
         android:layout_height="wrap_content"
         android:orientation="horizontal">
 
-        <!-- Category Icon Container -->
         <FrameLayout
             android:id="@+id/frameCategoryIcon"
             android:layout_width="42dp"
@@ -74,7 +73,6 @@
                 android:textAppearance="?attr/textAppearanceBodySmall"
                 android:textColor="?attr/colorOnSurfaceVariant" />
 
-            <!-- Optional Amount & Balance Row -->
             <LinearLayout
                 android:id="@+id/layoutAmountRow"
                 android:layout_width="match_parent"

@@ -1,8 +1,5 @@
 package com.novabank.novapay.domain.model.account;
 
-/**
- * Dự toán tất toán sổ tiết kiệm trước khi xác nhận (Pure Java 17, tiền tệ long VNĐ).
- */
 public final class SavingSettlementPreview {
 
     private final long principalAmount;

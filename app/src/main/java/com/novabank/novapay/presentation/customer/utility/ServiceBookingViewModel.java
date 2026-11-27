@@ -31,9 +31,6 @@ import io.reactivex.rxjava3.disposables.CompositeDisposable;
 import io.reactivex.rxjava3.disposables.Disposable;
 import io.reactivex.rxjava3.schedulers.Schedulers;
 
-/**
- * ViewModel tải danh mục service_catalog, theo dõi orders realtime và đặt dịch vụ qua SERVICE_PAYMENT.
- */
 @HiltViewModel
 public class ServiceBookingViewModel extends ViewModel {
 

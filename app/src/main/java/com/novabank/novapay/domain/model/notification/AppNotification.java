@@ -3,9 +3,6 @@ package com.novabank.novapay.domain.model.notification;
 import java.time.Instant;
 import java.util.Objects;
 
-/**
- * Thực thể Thông báo biến động số dư, tiết kiệm, bảo mật & eKYC (Pure Java 17).
- */
 public final class AppNotification {
 
     private final String notifId;

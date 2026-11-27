@@ -35,10 +35,6 @@ import java.io.IOException;
 
 import dagger.hilt.android.AndroidEntryPoint;
 
-/**
- * Màn hình Biên lai giao dịch điện tử (E-Receipt):
- * Hiển thị thông tin giao dịch thành công và xuất ảnh PNG chia sẻ qua FileProvider Intent.
- */
 @AndroidEntryPoint
 public class ReceiptFragment extends BaseFragment<FragmentReceiptBinding> {
 

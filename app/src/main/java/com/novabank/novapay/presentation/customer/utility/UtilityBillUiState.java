@@ -10,9 +10,6 @@ import com.novabank.novapay.domain.model.utility.UtilityBillType;
 import java.util.Collections;
 import java.util.List;
 
-/**
- * Trạng thái màn hình Thanh toán hóa đơn Điện / Nước (UtilityBillFragment).
- */
 public final class UtilityBillUiState {
 
     private final List<Account> checkingAccounts;

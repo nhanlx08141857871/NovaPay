@@ -16,23 +16,14 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.regex.Pattern;
 
-/**
- * Tiện ích mã hóa/giải mã payload QR chuyển khoản NovaPay và tạo ma trận QR chuẩn ISO/IEC 18004
- * hoàn toàn bằng Pure Java 17 (không phụ thuộc ZXing).
- * Hàm render Bitmap được tách riêng để các hàm payload và ma trận QR có thể unit-test trên JVM.
- */
 public final class QrHelper {
 
     private static final Pattern PLAIN_ACCOUNT_PATTERN = Pattern.compile("^[A-Za-z0-9]{4,24}$");
     private static final int QUIET_ZONE_MODULES = 4;
 
     private QrHelper() {
-        // Cấm khởi tạo
     }
 
-    /**
-     * Dữ liệu chuyển khoản trích xuất từ mã QR (bất biến, Pure Java).
-     */
     public static final class QrTransferPayload {
         private final String accountNumber;
         private final String bankCode;
@@ -91,16 +82,10 @@ public final class QrHelper {
         }
     }
 
-    /**
-     * Tạo chuỗi URI QR chuẩn NovaPay (`novapay://transfer?...`) dùng Pure Java URI/URLEncoder.
-     */
     public static String buildTransferQrUri(String accountNumber, String bankCode, long amount, String note) {
         return buildTransferQrUri(accountNumber, bankCode, null, amount, note);
     }
 
-    /**
-     * Tạo chuỗi URI QR chuẩn NovaPay (`novapay://transfer?...`) kèm tên người nhận (tùy chọn).
-     */
     public static String buildTransferQrUri(
             String accountNumber,
             String bankCode,
@@ -295,10 +280,6 @@ public final class QrHelper {
         return trimmed.isEmpty() ? null : trimmed;
     }
 
-    // =========================================================================
-    // Pure-JVM ISO/IEC 18004 Byte-mode QR Matrix Encoder (ECC Level M, V1-V15)
-    // =========================================================================
-
     private static final int[] TOTAL_DATA_CODEWORDS_M = {
             0, 16, 28, 44, 64, 86, 108, 124, 154, 182, 216, 254, 290, 334, 365, 415
     };
@@ -351,10 +332,6 @@ public final class QrHelper {
         }
     }
 
-    /**
-     * Mã hóa chuỗi UTF-8 thành ma trận module QR chuẩn ISO/IEC 18004 (Byte mode, ECC Level M, V1–V15).
-     * {@code true} = module đen, {@code false} = module trắng.
-     */
     public static boolean[][] encodeQrMatrix(String content) {
         if (content == null || content.isEmpty()) {
             throw new IllegalArgumentException("Nội dung QR không được rỗng.");
@@ -393,9 +370,6 @@ public final class QrHelper {
         return bestMatrix != null ? bestMatrix : baseModules;
     }
 
-    /**
-     * Render ma trận QR (kèm 4 module quiet zone) thành Android {@link Bitmap} ARGB_8888.
-     */
     public static Bitmap generateQrBitmap(String content, int sizePx) {
         if (sizePx <= 0) {
             throw new IllegalArgumentException("Kích thước Bitmap phải lớn hơn 0.");
@@ -447,19 +421,14 @@ public final class QrHelper {
         int[] bits = new int[totalBits];
         int bitIndex = 0;
 
-        // Mode indicator 0100 (Byte mode)
         bitIndex = appendBits(bits, bitIndex, 0b0100, 4);
-        // Character count indicator
         int countBits = version <= 9 ? 8 : 16;
         bitIndex = appendBits(bits, bitIndex, data.length, countBits);
-        // Payload bytes
         for (byte b : data) {
             bitIndex = appendBits(bits, bitIndex, b & 0xFF, 8);
         }
-        // Terminator (up to 4 zero bits)
         int terminator = Math.min(4, totalBits - bitIndex);
         bitIndex += terminator;
-        // Pad to byte boundary
         while (bitIndex % 8 != 0 && bitIndex < totalBits) {
             bitIndex++;
         }
@@ -587,7 +556,6 @@ public final class QrHelper {
             }
         }
 
-        // Timing patterns
         for (int i = 8; i < size - 8; i++) {
             boolean dark = (i % 2 == 0);
             matrix[6][i] = dark;
@@ -596,11 +564,9 @@ public final class QrHelper {
             isFunction[i][6] = true;
         }
 
-        // Dark module
         matrix[size - 8][8] = true;
         isFunction[size - 8][8] = true;
 
-        // Reserve format information areas
         for (int i = 0; i <= 8; i++) {
             if (i != 6) {
                 isFunction[8][i] = true;
@@ -614,7 +580,6 @@ public final class QrHelper {
             isFunction[i][8] = true;
         }
 
-        // Reserve version information areas for V >= 7
         if (version >= 7) {
             for (int i = 0; i < 6; i++) {
                 for (int j = 0; j < 3; j++) {
@@ -725,7 +690,6 @@ public final class QrHelper {
     }
 
     private static void drawFormatInfo(boolean[][] matrix, int mask, int size) {
-        // ECC Level M indicator = 0b00
         int data = (0b00 << 3) | (mask & 0x7);
         int rem = data << 10;
         for (int i = 14; i >= 10; i--) {
@@ -735,7 +699,6 @@ public final class QrHelper {
         }
         int bits = ((data << 10) | rem) ^ 0x5412;
 
-        // Copy 1 (top-left)
         for (int i = 0; i <= 5; i++) {
             matrix[8][i] = bitAt(bits, 14 - i);
         }
@@ -746,7 +709,6 @@ public final class QrHelper {
             matrix[5 - i][8] = bitAt(bits, 5 - i);
         }
 
-        // Copy 2 (bottom-left & top-right)
         for (int i = 0; i < 7; i++) {
             matrix[size - 1 - i][8] = bitAt(bits, 14 - i);
         }
@@ -786,7 +748,6 @@ public final class QrHelper {
 
     private static int calculatePenalty(boolean[][] matrix, int size) {
         int penalty = 0;
-        // Rule 1: 5+ consecutive same-color modules in row or column
         for (int r = 0; r < size; r++) {
             int runLen = 1;
             for (int c = 1; c < size; c++) {
@@ -817,7 +778,6 @@ public final class QrHelper {
                 }
             }
         }
-        // Rule 2: 2x2 blocks of same color
         for (int r = 0; r < size - 1; r++) {
             for (int c = 0; c < size - 1; c++) {
                 boolean color = matrix[r][c];
@@ -826,7 +786,6 @@ public final class QrHelper {
                 }
             }
         }
-        // Rule 3: finder-like 1:1:3:1:1 patterns
         for (int r = 0; r < size; r++) {
             for (int c = 0; c <= size - 11; c++) {
                 if (matchesFinderLikeRow(matrix, r, c)) {
@@ -841,7 +800,6 @@ public final class QrHelper {
                 }
             }
         }
-        // Rule 4: dark module ratio deviation from 50%
         int darkCount = 0;
         for (int r = 0; r < size; r++) {
             for (int c = 0; c < size; c++) {

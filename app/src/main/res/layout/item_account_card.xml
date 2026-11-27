@@ -13,7 +13,6 @@
         android:layout_height="wrap_content"
         android:orientation="horizontal">
 
-        <!-- Vertical Type Indicator Bar (Navy / Emerald / Amber) -->
         <View
             android:id="@+id/viewAccountAccentBar"
             android:layout_width="4dp"

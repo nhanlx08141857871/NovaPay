@@ -3,10 +3,6 @@ package com.novabank.novapay.domain.model.transaction;
 import java.time.Instant;
 import java.util.Objects;
 
-/**
- * Kết quả khởi tạo bản nháp giao dịch từ POST /transactions/initiate.
- * Khi requiresFace == true (> 5.000.000 VNĐ), otpExpiresAt sẽ null cho tới khi qua FaceCheck.
- */
 public final class TransactionDraft {
 
     private final String draftId;

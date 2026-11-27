@@ -52,11 +52,6 @@ function normalizeAndValidateJpegBase64(raw: unknown): string {
   return stripped;
 }
 
-/**
- * Phân hệ eKYC Routes (Owner: Thành viên A).
- * - POST /ekyc/submit: Khách hàng tự chụp hoặc Officer chụp hộ qua targetUid.
- * - POST /ekyc/review: Officer duyệt VERIFIED / REJECTED và ghi audit_logs bắt buộc.
- */
 export function createEkycRouter(deps?: EkycRouteDeps): Router {
   const router = Router();
   const getDb = deps?.getDb ?? (() => admin.firestore());

@@ -25,9 +25,6 @@ import javax.inject.Inject;
 
 import dagger.hilt.android.AndroidEntryPoint;
 
-/**
- * Màn hình Đăng nhập chính thức (Firebase Auth + Custom Claim role + Quên mật khẩu + Sinh trắc học).
- */
 @AndroidEntryPoint
 public class LoginFragment extends BaseFragment<FragmentLoginBinding> {
 

@@ -21,9 +21,6 @@ import java.time.Instant;
 import java.util.ArrayList;
 import java.util.List;
 
-/**
- * Kết xuất Sao kê Giao dịch Điện tử chuẩn A4 (595 x 842 pt) qua PdfDocument.
- */
 public final class StatementPdfExporter {
 
     private static final int PAGE_WIDTH = 595;
@@ -130,7 +127,6 @@ public final class StatementPdfExporter {
 
                 float y;
                 if (pageNumber == 1) {
-                    // Header Banner
                     canvas.drawRect(MARGIN, MARGIN, PAGE_WIDTH - MARGIN, MARGIN + 52, navyPaint);
                     canvas.drawText(
                             context.getString(R.string.core_statement_pdf_bank),
@@ -145,7 +141,6 @@ public final class StatementPdfExporter {
                             headerTitlePaint
                     );
 
-                    // Meta info
                     y = MARGIN + 72;
                     canvas.drawText(
                             context.getString(R.string.core_statement_pdf_customer, customerName),
@@ -178,7 +173,6 @@ public final class StatementPdfExporter {
                             metaPaint
                     );
 
-                    // Summary Box
                     float boxTop = y + 12;
                     float boxBottom = boxTop + 30;
                     canvas.drawRect(MARGIN, boxTop, PAGE_WIDTH - MARGIN, boxBottom, subtleFillPaint);
@@ -206,7 +200,6 @@ public final class StatementPdfExporter {
                     y = nextPageStartY - 18;
                 }
 
-                // Table Column Header
                 y = drawTableHeader(context, canvas, y, subtleFillPaint, dividerPaint, colHeaderPaint);
 
                 List<LedgerEntry> pageEntries = pages.get(pageIndex);
@@ -223,7 +216,6 @@ public final class StatementPdfExporter {
                     );
                 }
 
-                // Footer page number
                 String pageFooter = context.getString(R.string.core_statement_pdf_page, pageNumber, totalPages);
                 float footerWidth = footerPaint.measureText(pageFooter);
                 canvas.drawText(pageFooter, PAGE_WIDTH - MARGIN - footerWidth, PAGE_HEIGHT - 18, footerPaint);

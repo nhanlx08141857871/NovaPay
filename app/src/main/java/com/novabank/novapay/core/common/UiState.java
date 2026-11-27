@@ -2,10 +2,6 @@ package com.novabank.novapay.core.common;
 
 import java.util.Objects;
 
-/**
- * Chuẩn hóa 4 trạng thái giao diện bắt buộc (LOADING, SUCCESS, EMPTY, ERROR)
- * theo quy chuẩn MVVM tại GEMINI.md.
- */
 public final class UiState<T> {
 
     public enum Status {

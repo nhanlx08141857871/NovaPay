@@ -16,9 +16,6 @@ import com.novabank.novapay.domain.model.utility.UtilityBill;
 import java.util.ArrayList;
 import java.util.List;
 
-/**
- * Adapter hiển thị danh sách hóa đơn Điện / Nước chưa thanh toán (utility_bills).
- */
 public class UtilityBillAdapter extends RecyclerView.Adapter<UtilityBillAdapter.ViewHolder> {
 
     public interface OnPayBillClickListener {

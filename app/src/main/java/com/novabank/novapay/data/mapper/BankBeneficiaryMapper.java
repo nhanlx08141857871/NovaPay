@@ -7,9 +7,6 @@ import com.novabank.novapay.domain.model.bank.Beneficiary;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
-/**
- * Mapper cho collections banks/{bankCode} và users/{uid}/beneficiaries/{id}.
- */
 public final class BankBeneficiaryMapper {
 
     private BankBeneficiaryMapper() {

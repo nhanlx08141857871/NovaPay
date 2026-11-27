@@ -14,9 +14,6 @@ import javax.inject.Singleton;
 import io.reactivex.rxjava3.core.Observable;
 import io.reactivex.rxjava3.core.Single;
 
-/**
- * Triển khai AccountRepository dùng chung toàn dự án (A sở hữu, B tiêu thụ qua DI).
- */
 @Singleton
 public class AccountRepositoryImpl implements AccountRepository {
 

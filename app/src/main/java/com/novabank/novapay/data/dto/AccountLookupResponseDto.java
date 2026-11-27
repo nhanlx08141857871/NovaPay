@@ -1,8 +1,5 @@
 package com.novabank.novapay.data.dto;
 
-/**
- * Phản hồi từ GET /accounts/lookup?accountNumber=...
- */
 public final class AccountLookupResponseDto {
 
     private String accountId;

@@ -2,9 +2,6 @@ package com.novabank.novapay.domain.model.security;
 
 import java.time.Instant;
 
-/**
- * Trạng thái bảo mật PIN giao dịch của khách hàng từ GET /security/status (Pure Java 17).
- */
 public final class SecurityStatus {
 
     private final boolean hasTransactionPin;

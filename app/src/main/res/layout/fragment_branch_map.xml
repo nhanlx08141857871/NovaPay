@@ -56,7 +56,6 @@
                 app:layout_constraintTop_toTopOf="parent"
                 app:trackColor="@color/np_border_hairline" />
 
-            <!-- Floating Compact Branch Info Card -->
             <com.google.android.material.card.MaterialCardView
                 android:id="@+id/cardBranchDetails"
                 style="@style/Widget.NovaPay.Card.Outlined"

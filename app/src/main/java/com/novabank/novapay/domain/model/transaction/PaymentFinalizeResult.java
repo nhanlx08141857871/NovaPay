@@ -1,8 +1,5 @@
 package com.novabank.novapay.domain.model.transaction;
 
-/**
- * Kết quả hoàn tất thanh toán Stripe từ POST /payments/finalize.
- */
 public final class PaymentFinalizeResult {
 
     private final String txId;

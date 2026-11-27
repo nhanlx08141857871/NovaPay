@@ -17,7 +17,6 @@
             android:orientation="vertical"
             android:padding="@dimen/np_screen_padding">
 
-            <!-- Header -->
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -42,7 +41,6 @@
                     android:textStyle="bold" />
             </LinearLayout>
 
-            <!-- Card 1: Source Checking Account & Principal Amount -->
             <com.google.android.material.card.MaterialCardView
                 style="@style/Widget.NovaPay.Card.Outlined"
                 android:layout_width="match_parent"
@@ -132,7 +130,6 @@
                 </LinearLayout>
             </com.google.android.material.card.MaterialCardView>
 
-            <!-- Card 2: Term Picker (Realtime Interest Rates) -->
             <com.google.android.material.card.MaterialCardView
                 style="@style/Widget.NovaPay.Card.Outlined"
                 android:layout_width="match_parent"
@@ -163,7 +160,6 @@
                 </LinearLayout>
             </com.google.android.material.card.MaterialCardView>
 
-            <!-- Card 3: Live Interest Preview (Emerald Soft Highlight) -->
             <com.google.android.material.card.MaterialCardView
                 style="@style/Widget.NovaPay.Card.Outlined"
                 android:layout_width="match_parent"
@@ -314,7 +310,6 @@
                 </LinearLayout>
             </com.google.android.material.card.MaterialCardView>
 
-            <!-- Card 4: Smart PIN Verification (shown when hasTransactionPin == true) -->
             <com.google.android.material.card.MaterialCardView
                 android:id="@+id/cardPinVerification"
                 style="@style/Widget.NovaPay.Card.Outlined"

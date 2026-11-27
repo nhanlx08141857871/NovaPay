@@ -29,10 +29,6 @@ import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers;
 import io.reactivex.rxjava3.disposables.CompositeDisposable;
 import io.reactivex.rxjava3.schedulers.Schedulers;
 
-/**
- * ViewModel điều phối Nạp tiền Stripe (GATEWAY -> PaymentSheet -> /payments/finalize),
- * Rút tiền (WITHDRAW) và Trả kỳ hạn khoản vay thế chấp (MORTGAGE_PAYMENT).
- */
 @HiltViewModel
 public class DepositWithdrawViewModel extends ViewModel {
 

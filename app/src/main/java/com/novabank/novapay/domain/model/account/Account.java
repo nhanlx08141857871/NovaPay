@@ -3,10 +3,6 @@ package com.novabank.novapay.domain.model.account;
 import java.time.Instant;
 import java.util.Objects;
 
-/**
- * Thực thể Tài khoản ngân hàng chuẩn Pure Java 17 (tầng domain).
- * Chỉ tài khoản CHECKING đang ACTIVE mới được phép làm nguồn thanh toán/chuyển tiền.
- */
 public final class Account {
 
     private final String accountId;
@@ -50,10 +46,6 @@ public final class Account {
         this.createdAt = createdAt;
     }
 
-    /**
-     * Ràng buộc nghiệp vụ bắt buộc (SPEC_CHOT.md Q7):
-     * Chỉ tài khoản CHECKING đang ACTIVE mới hợp lệ làm nguồn chi tiêu / chuyển khoản.
-     */
     public boolean canBePaymentSource() {
         return type == AccountType.CHECKING && status == AccountStatus.ACTIVE;
     }

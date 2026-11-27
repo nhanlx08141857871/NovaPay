@@ -1,10 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <!-- ========================================================== -->
-    <!-- Reusable Material 3 Component Styles (Quiet Instrument)    -->
-    <!-- ========================================================== -->
 
-    <!-- Primary CTA Button (Deep Navy #0F172A, 12dp radius, 0dp shadow) -->
     <style name="Widget.NovaPay.Button.Primary" parent="Widget.Material3.Button">
         <item name="android:minHeight">@dimen/np_button_height</item>
         <item name="cornerRadius">@dimen/np_control_radius</item>
@@ -14,7 +10,6 @@
         <item name="elevation">0dp</item>
     </style>
 
-    <!-- Accent CTA Button (Emerald #059669 for confirmations / approvals) -->
     <style name="Widget.NovaPay.Button.Accent" parent="Widget.Material3.Button">
         <item name="android:minHeight">@dimen/np_button_height</item>
         <item name="cornerRadius">@dimen/np_control_radius</item>
@@ -27,7 +22,6 @@
         <item name="elevation">0dp</item>
     </style>
 
-    <!-- Outlined Secondary Button (1dp crisp border, 12dp radius) -->
     <style name="Widget.NovaPay.Button.Outlined" parent="Widget.Material3.Button.OutlinedButton">
         <item name="android:minHeight">@dimen/np_button_height</item>
         <item name="cornerRadius">@dimen/np_control_radius</item>
@@ -38,14 +32,12 @@
         <item name="android:textColor">?attr/colorOnSurface</item>
     </style>
 
-    <!-- Destructive Outlined Button (for Reject / Lock actions) -->
     <style name="Widget.NovaPay.Button.Outlined.Danger" parent="Widget.NovaPay.Button.Outlined">
         <item name="strokeColor">@color/np_badge_locked_stroke</item>
         <item name="android:textColor">@color/novapay_expense_negative</item>
         <item name="iconTint">@color/novapay_expense_negative</item>
     </style>
 
-    <!-- Tonal Compact Button -->
     <style name="Widget.NovaPay.Button.Tonal" parent="Widget.Material3.Button.TonalButton">
         <item name="android:minHeight">@dimen/np_button_height_compact</item>
         <item name="cornerRadius">@dimen/np_control_radius</item>
@@ -57,7 +49,6 @@
         <item name="elevation">0dp</item>
     </style>
 
-    <!-- Back Header Button -->
     <style name="Widget.NovaPay.Button.Back" parent="Widget.Material3.Button.TextButton">
         <item name="android:minWidth">0dp</item>
         <item name="android:minHeight">40dp</item>
@@ -71,7 +62,6 @@
         <item name="android:textColor">?attr/colorOnBackground</item>
     </style>
 
-    <!-- Quick Action Grid Tile Button (Icon Top, Crisp Border, Pure Surface) -->
     <style name="Widget.NovaPay.Button.QuickAction" parent="Widget.Material3.Button.OutlinedButton">
         <item name="cornerRadius">@dimen/np_control_radius</item>
         <item name="backgroundTint">?attr/colorSurface</item>
@@ -92,12 +82,10 @@
         <item name="android:paddingEnd">4dp</item>
     </style>
 
-    <!-- Secondary Explore Action Tile (Muted Navy Icon) -->
     <style name="Widget.NovaPay.Button.QuickAction.Secondary" parent="Widget.NovaPay.Button.QuickAction">
         <item name="iconTint">?attr/colorPrimary</item>
     </style>
 
-    <!-- Quiet Instrument Surface Cards: Pure White + 1dp #E2E8F0 Hairline, Zero Heavy Shadow -->
     <style name="Widget.NovaPay.Card.Elevated" parent="Widget.Material3.CardView.Outlined">
         <item name="cardCornerRadius">@dimen/np_card_radius</item>
         <item name="cardElevation">0dp</item>
@@ -114,7 +102,6 @@
         <item name="strokeColor">@color/np_border_hairline</item>
     </style>
 
-    <!-- Modern Outlined TextInputLayout (12dp radius, Emerald focus ring) -->
     <style name="Widget.NovaPay.TextInputLayout" parent="Widget.Material3.TextInputLayout.OutlinedBox">
         <item name="boxCornerRadiusTopStart">@dimen/np_control_radius</item>
         <item name="boxCornerRadiusTopEnd">@dimen/np_control_radius</item>
@@ -127,7 +114,6 @@
         <item name="hintTextColor">?attr/colorOnSurfaceVariant</item>
     </style>
 
-    <!-- Modern Exposed Dropdown Menu (12dp radius, Emerald focus ring) -->
     <style name="Widget.NovaPay.TextInputLayout.Dropdown" parent="Widget.Material3.TextInputLayout.OutlinedBox.ExposedDropdownMenu">
         <item name="boxCornerRadiusTopStart">@dimen/np_control_radius</item>
         <item name="boxCornerRadiusTopEnd">@dimen/np_control_radius</item>
@@ -140,7 +126,6 @@
         <item name="hintTextColor">?attr/colorOnSurfaceVariant</item>
     </style>
 
-    <!-- Semantic Pill Status Badge -->
     <style name="Widget.NovaPay.StatusBadge" parent="android:Widget.TextView">
         <item name="android:paddingStart">10dp</item>
         <item name="android:paddingEnd">10dp</item>
@@ -151,7 +136,6 @@
         <item name="android:background">@drawable/bg_np_badge_neutral</item>
     </style>
 
-    <!-- Customer 4-Tab BottomNavigationView -->
     <style name="Widget.NovaPay.BottomNavigationView" parent="Widget.Material3.BottomNavigationView">
         <item name="backgroundTint">?attr/colorSurface</item>
         <item name="elevation">0dp</item>
@@ -165,7 +149,6 @@
         <item name="android:color">@color/np_accent_emerald_soft</item>
     </style>
 
-    <!-- Brand Logo Rounded Corner Overlays (16dp Hero / 12dp Header & Receipt / 6dp Avatar) -->
     <style name="ShapeAppearance.NovaPay.Logo16" parent="">
         <item name="cornerFamily">rounded</item>
         <item name="cornerSize">16dp</item>

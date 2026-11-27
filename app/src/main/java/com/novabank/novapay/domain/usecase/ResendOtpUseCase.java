@@ -9,9 +9,6 @@ import javax.inject.Inject;
 
 import io.reactivex.rxjava3.core.Single;
 
-/**
- * Gửi lại mã OTP Email 6 chữ số cho bản nháp giao dịch hiện tại.
- */
 public class ResendOtpUseCase {
 
     private final TransactionRepository transactionRepository;

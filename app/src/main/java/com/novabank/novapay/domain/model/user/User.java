@@ -3,9 +3,6 @@ package com.novabank.novapay.domain.model.user;
 import java.time.Instant;
 import java.util.Objects;
 
-/**
- * Thực thể Người dùng chuẩn Pure Java 17 (tầng domain).
- */
 public final class User {
 
     private final String uid;

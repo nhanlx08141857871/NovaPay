@@ -17,10 +17,6 @@ import javax.inject.Inject;
 
 import io.reactivex.rxjava3.core.Observable;
 
-/**
- * UseCase đồng bộ realtime tài khoản tiết kiệm + bảng lãi suất (Observable.combineLatest)
- * và tính tiền lãi dự kiến hàng tháng kiểu long theo SPEC_CHOT.md Q9 & GEMINI.md §2.2.
- */
 public final class ObserveSavingProjectionUseCase {
 
     private final AccountRepository accountRepository;

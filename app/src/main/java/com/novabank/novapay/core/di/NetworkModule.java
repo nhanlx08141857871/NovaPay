@@ -20,10 +20,6 @@ import retrofit2.Retrofit;
 import retrofit2.adapter.rxjava3.RxJava3CallAdapterFactory;
 import retrofit2.converter.gson.GsonConverterFactory;
 
-/**
- * Hilt Module cung cấp @BackendRetrofit (có AuthInterceptor) và @OpenRouteRetrofit (không gắn Token)
- * theo SPEC_CHOT.md Q6 (Owner: Thành viên A).
- */
 @Module
 @InstallIn(SingletonComponent.class)
 public final class NetworkModule {

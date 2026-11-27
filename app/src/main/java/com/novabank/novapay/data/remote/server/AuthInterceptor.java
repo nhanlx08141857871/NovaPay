@@ -18,10 +18,6 @@ import okhttp3.Interceptor;
 import okhttp3.Request;
 import okhttp3.Response;
 
-/**
- * OkHttp Interceptor tự động đính kèm header Authorization: Bearer <Firebase_ID_Token>
- * cho mọi request từ @BackendRetrofit.
- */
 @Singleton
 public class AuthInterceptor implements Interceptor {
 

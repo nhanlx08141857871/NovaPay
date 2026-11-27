@@ -22,10 +22,6 @@ import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers;
 import io.reactivex.rxjava3.disposables.CompositeDisposable;
 import io.reactivex.rxjava3.schedulers.Schedulers;
 
-/**
- * ViewModel điều phối thứ tự xác thực 3 lớp (FaceCheck -> BiometricPrompt -> Email OTP 180s)
- * theo SPEC_CHOT.md Q1, Q2, Q3.
- */
 @HiltViewModel
 public class OtpVerificationViewModel extends ViewModel {
 

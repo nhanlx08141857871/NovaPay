@@ -16,9 +16,6 @@ import com.novabank.novapay.domain.model.utility.Order;
 import java.util.ArrayList;
 import java.util.List;
 
-/**
- * Adapter hiển thị danh sách đơn hàng / vé dịch vụ của khách hàng (orders).
- */
 public class MyOrderAdapter extends RecyclerView.Adapter<MyOrderAdapter.ViewHolder> {
 
     public interface OnOrderClickListener {

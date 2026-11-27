@@ -11,10 +11,6 @@ import com.novabank.novapay.databinding.ViewEmptyStateBinding;
 import com.novabank.novapay.databinding.ViewErrorStateBinding;
 import com.novabank.novapay.databinding.ViewLoadingStateBinding;
 
-/**
- * Hỗ trợ đồng bộ hiển thị 4 trạng thái bắt buộc (LOADING, SUCCESS, EMPTY, ERROR)
- * trên mọi màn hình MVVM của NovaPay.
- */
 public final class StateLayoutHelper {
 
     private final View contentView;

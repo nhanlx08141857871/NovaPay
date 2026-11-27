@@ -8,9 +8,6 @@ import javax.inject.Inject;
 
 import io.reactivex.rxjava3.core.Single;
 
-/**
- * UseCase mở sổ tiết kiệm trực tuyến từ tài khoản CHECKING (Pure Java 17).
- */
 public final class OpenSavingAccountUseCase {
 
     public static final long MIN_PRINCIPAL_VND = 1_000_000L;

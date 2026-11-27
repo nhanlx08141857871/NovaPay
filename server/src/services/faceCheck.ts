@@ -79,9 +79,6 @@ export interface FaceCheckService {
   verifyFaceMatch(ekycImageBase64: string, liveImageBase64: string): Promise<FaceCheckResult>;
 }
 
-/**
- * Strips an optional `data:image/...;base64,` prefix and surrounding whitespace.
- */
 export function stripBase64DataUrlPrefix(input: string): string {
   const trimmed = input.trim();
   const match = /^data:image\/[a-zA-Z0-9.+-]+;base64,/i.exec(trimmed);

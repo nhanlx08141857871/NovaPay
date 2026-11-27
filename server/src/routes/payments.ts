@@ -182,7 +182,6 @@ export function createPaymentsRouter(deps?: PaymentsRouteDeps): Router {
           );
         }
 
-        // PHASE 2: Ghi nguyên tử cộng tiền + ledger IN + transaction + khóa CONFIRMED
         const currentBalance = Number(accData.balance ?? 0);
         const newBalance = currentBalance + amount;
         const txRef = db.collection("transactions").doc();

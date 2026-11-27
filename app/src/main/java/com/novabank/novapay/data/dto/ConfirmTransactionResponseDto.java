@@ -1,8 +1,5 @@
 package com.novabank.novapay.data.dto;
 
-/**
- * Response body từ POST /transactions/confirm.
- */
 public final class ConfirmTransactionResponseDto {
 
     private String txId;

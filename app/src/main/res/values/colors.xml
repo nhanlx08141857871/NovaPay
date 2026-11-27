@@ -1,13 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <!-- Base neutral palette -->
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
 
-    <!-- ========================================================== -->
-    <!-- NovaPay Quiet Instrument — Light Scheme (Material 3)       -->
-    <!-- Zero purple/lavender; 90-95% neutral Slate + Navy/Emerald  -->
-    <!-- ========================================================== -->
     <color name="md_theme_light_primary">#FF0F172A</color>
     <color name="md_theme_light_onPrimary">#FFFFFFFF</color>
     <color name="md_theme_light_primaryContainer">#FFF1F5F9</color>
@@ -44,9 +39,6 @@
     <color name="md_theme_light_surfaceContainerHigh">#FFF1F5F9</color>
     <color name="md_theme_light_surfaceContainerHighest">#FFE2E8F0</color>
 
-    <!-- ========================================================== -->
-    <!-- NovaPay Quiet Instrument — Dark Scheme (Material 3)        -->
-    <!-- ========================================================== -->
     <color name="md_theme_dark_primary">#FFF8FAFC</color>
     <color name="md_theme_dark_onPrimary">#FF0F172A</color>
     <color name="md_theme_dark_primaryContainer">#FF1E293B</color>
@@ -82,9 +74,6 @@
     <color name="md_theme_dark_surfaceContainerHigh">#FF1E293B</color>
     <color name="md_theme_dark_surfaceContainerHighest">#FF334155</color>
 
-    <!-- ========================================================== -->
-    <!-- Semantic Fintech Tokens (Adaptive via values-night)        -->
-    <!-- ========================================================== -->
     <color name="novapay_income_positive">#FF16A34A</color>
     <color name="novapay_expense_negative">#FFDC2626</color>
     <color name="novapay_warning_pending">#FFD97706</color>
@@ -101,7 +90,6 @@
     <color name="np_surface_subtle">#FFF8FAFC</color>
     <color name="np_text_muted">#FF64748B</color>
 
-    <!-- Hero Account / Brand Cards (Always Deep Navy / Deep Emerald) -->
     <color name="np_hero_navy_bg">#FF0F172A</color>
     <color name="np_hero_navy_stroke">#FF1E293B</color>
     <color name="np_hero_navy_text">#FFFFFFFF</color>
@@ -110,7 +98,6 @@
     <color name="np_hero_emerald_stroke">#FF047857</color>
     <color name="np_hero_slate_bg">#FF1E293B</color>
 
-    <!-- Semantic Pill Badge Backgrounds & Borders -->
     <color name="np_badge_verified_bg">#FFDCFCE7</color>
     <color name="np_badge_verified_stroke">#FF86EFAC</color>
     <color name="np_badge_pending_bg">#FFFEF3C7</color>

@@ -40,10 +40,6 @@ import java.util.concurrent.Executors;
 
 import dagger.hilt.android.AndroidEntryPoint;
 
-/**
- * Màn hình Quét mã QR chuyển khoản bằng CameraX + ML Kit Barcode Scanning.
- * Trả QrTransferPayload về TransferFragment qua FragmentResultListener.
- */
 @AndroidEntryPoint
 public class QrScannerFragment extends BaseFragment<FragmentQrScannerBinding> {
 
@@ -242,7 +238,6 @@ public class QrScannerFragment extends BaseFragment<FragmentQrScannerBinding> {
             return;
         }
 
-        // Mở trực tiếp từ Trang chủ (novapay://qr) -> chuyển tiếp sang TransferFragment kèm dữ liệu QR
         Bundle args = new Bundle();
         args.putString("accountNumber", payload.getAccountNumber());
         if (payload.getBankCode() != null) {

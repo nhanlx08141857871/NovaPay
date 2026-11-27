@@ -39,11 +39,6 @@ import java.util.List;
 
 import dagger.hilt.android.AndroidEntryPoint;
 
-/**
- * Màn hình Lịch sử giao dịch nâng cao (novapay://transactions?range=month):
- * Lọc theo tài khoản, chiều IN/OUT, từ khóa, khoảng ngày tùy chỉnh, tổng kết Thu/Chi,
- * mở lại biên lai (novapay://receipt/{txId}) và Xuất Sao kê PDF chuẩn A4.
- */
 @AndroidEntryPoint
 public class TransactionHistoryFragment extends BaseFragment<FragmentTransactionHistoryBinding> {
 

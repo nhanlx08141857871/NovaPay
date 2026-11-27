@@ -6,9 +6,6 @@ import com.novabank.novapay.domain.model.user.User;
 import io.reactivex.rxjava3.core.Observable;
 import io.reactivex.rxjava3.core.Single;
 
-/**
- * Hợp đồng truy xuất & cập nhật hồ sơ người dùng (Pure Java 17).
- */
 public interface UserRepository {
 
     Observable<AppResult<User>> observeMyProfile();

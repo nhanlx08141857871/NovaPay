@@ -13,9 +13,6 @@ import retrofit2.http.Body;
 import retrofit2.http.GET;
 import retrofit2.http.POST;
 
-/**
- * Retrofit API điều phối giao dịch, OTP và kiểm tra sức khỏe Backend Server.
- */
 public interface TransactionApi {
 
     @POST("transactions/initiate")

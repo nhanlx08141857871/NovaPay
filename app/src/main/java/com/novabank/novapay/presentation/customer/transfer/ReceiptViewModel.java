@@ -16,9 +16,6 @@ import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers;
 import io.reactivex.rxjava3.disposables.CompositeDisposable;
 import io.reactivex.rxjava3.schedulers.Schedulers;
 
-/**
- * ViewModel tải chi tiết giao dịch từ Firestore transactions/{txId} phục vụ hiển thị & xuất ảnh PNG.
- */
 @HiltViewModel
 public class ReceiptViewModel extends ViewModel {
 

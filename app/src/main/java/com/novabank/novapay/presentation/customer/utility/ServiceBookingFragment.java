@@ -30,9 +30,6 @@ import java.util.List;
 
 import dagger.hilt.android.AndroidEntryPoint;
 
-/**
- * Màn hình Đặt vé máy bay, xem phim, khách sạn, mua sắm TMĐT & Đơn hàng của tôi (novapay://services).
- */
 @AndroidEntryPoint
 public class ServiceBookingFragment extends BaseFragment<FragmentServiceBookingBinding> {
 

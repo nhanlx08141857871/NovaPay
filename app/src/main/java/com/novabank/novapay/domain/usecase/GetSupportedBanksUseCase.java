@@ -10,9 +10,6 @@ import javax.inject.Inject;
 
 import io.reactivex.rxjava3.core.Single;
 
-/**
- * Tải danh sách ngân hàng hỗ trợ chuyển tiền liên ngân hàng.
- */
 public class GetSupportedBanksUseCase {
 
     private final BankRepository bankRepository;

@@ -74,7 +74,6 @@ public class EkycRepositoryImpl implements EkycRepository {
                 try {
                     return Long.parseLong(trimmed);
                 } catch (NumberFormatException ignoredAgain) {
-                    // Fallback bên dưới
                 }
             }
         }

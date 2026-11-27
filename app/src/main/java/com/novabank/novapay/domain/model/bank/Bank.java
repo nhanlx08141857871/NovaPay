@@ -2,9 +2,6 @@ package com.novabank.novapay.domain.model.bank;
 
 import java.util.Objects;
 
-/**
- * Thông tin ngân hàng liên kết trong collection banks/{bankCode}.
- */
 public final class Bank {
 
     private final String bankCode;

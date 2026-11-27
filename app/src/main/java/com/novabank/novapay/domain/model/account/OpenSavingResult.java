@@ -3,9 +3,6 @@ package com.novabank.novapay.domain.model.account;
 import java.time.Instant;
 import java.util.Objects;
 
-/**
- * Kết quả mở sổ tiết kiệm trực tuyến từ POST /savings/open (Pure Java 17).
- */
 public final class OpenSavingResult {
 
     private final String savingAccountId;

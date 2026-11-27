@@ -5,7 +5,6 @@
     android:id="@+id/nav_money"
     app:startDestination="@id/transferFragment">
 
-    <!-- 1. Chuyển tiền nội bộ NovaPay & Liên ngân hàng 24/7 -->
     <fragment
         android:id="@+id/transferFragment"
         android:name="com.novabank.novapay.presentation.customer.transfer.TransferFragment"
@@ -54,7 +53,6 @@
         <deepLink app:uri="novapay://transfer?accountNumber={accountNumber}&amp;bankCode={bankCode}&amp;recipientName={recipientName}&amp;amount={amount}&amp;note={note}" />
     </fragment>
 
-    <!-- 2. Quét mã QR nhận tiền (CameraX + ML Kit Barcode) -->
     <fragment
         android:id="@+id/qrScannerFragment"
         android:name="com.novabank.novapay.presentation.customer.transfer.QrScannerFragment"
@@ -63,7 +61,6 @@
         <deepLink app:uri="novapay://qr" />
     </fragment>
 
-    <!-- 3. Biên lai giao dịch điện tử (E-Receipt PNG Share) -->
     <fragment
         android:id="@+id/receiptFragment"
         android:name="com.novabank.novapay.presentation.customer.transfer.ReceiptFragment"
@@ -75,7 +72,6 @@
         <deepLink app:uri="novapay://receipt/{txId}" />
     </fragment>
 
-    <!-- 4. Nạp tiền Stripe (GATEWAY), Rút tiền (WITHDRAW) & Trả nợ vay (MORTGAGE_PAYMENT) -->
     <fragment
         android:id="@+id/depositWithdrawFragment"
         android:name="com.novabank.novapay.presentation.customer.payment.DepositWithdrawFragment"
@@ -94,7 +90,6 @@
         <deepLink app:uri="novapay://deposit" />
     </fragment>
 
-    <!-- 5. Thanh toán hóa đơn Điện / Nước -->
     <fragment
         android:id="@+id/utilityBillFragment"
         android:name="com.novabank.novapay.presentation.customer.utility.UtilityBillFragment"
@@ -103,7 +98,6 @@
         <deepLink app:uri="novapay://bills" />
     </fragment>
 
-    <!-- 6. Nạp tiền điện thoại di động -->
     <fragment
         android:id="@+id/phoneTopupFragment"
         android:name="com.novabank.novapay.presentation.customer.utility.PhoneTopupFragment"
@@ -112,7 +106,6 @@
         <deepLink app:uri="novapay://topup" />
     </fragment>
 
-    <!-- 7. Đặt vé máy bay, xem phim, khách sạn & mua sắm TMĐT -->
     <fragment
         android:id="@+id/serviceBookingFragment"
         android:name="com.novabank.novapay.presentation.customer.utility.ServiceBookingFragment"

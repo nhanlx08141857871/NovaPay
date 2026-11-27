@@ -17,17 +17,12 @@ import com.novabank.novapay.core.common.Constants;
 import java.io.ByteArrayOutputStream;
 import java.nio.ByteBuffer;
 
-/**
- * Tiện ích chuyển đổi ImageProxy (CameraX) / Bitmap sang JPEG dung lượng < 200KB
- * và mã hóa Base64 cho luồng eKYC và FaceCheck (> 5.000.000 VNĐ).
- */
 public final class ImageCompressor {
 
     private static final int INITIAL_MAX_EDGE_PX = 1024;
     private static final int[] QUALITY_STEPS = {85, 75, 65, 55, 45, 35, 25};
 
     private ImageCompressor() {
-        // Cấm khởi tạo
     }
 
     @NonNull

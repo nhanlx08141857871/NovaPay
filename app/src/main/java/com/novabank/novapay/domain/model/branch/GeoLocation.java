@@ -2,10 +2,6 @@ package com.novabank.novapay.domain.model.branch;
 
 import java.util.Objects;
 
-/**
- * POJO tọa độ địa lý thuần Java 17 (tầng domain — cấm import android.* / com.google.firebase.*).
- * Tích hợp công thức Haversine tính khoảng cách đường chim bay và kiểm tra ngưỡng vị trí TP.HCM.
- */
 public final class GeoLocation {
 
     private static final double EARTH_RADIUS_METERS = 6_371_000.0;
@@ -26,9 +22,6 @@ public final class GeoLocation {
         return lng;
     }
 
-    /**
-     * Tính khoảng cách giữa hai tọa độ bằng công thức Haversine (đơn vị: mét).
-     */
     public double distanceMetersTo(GeoLocation other) {
         Objects.requireNonNull(other, "other GeoLocation must not be null");
         double dLat = Math.toRadians(other.lat - this.lat);

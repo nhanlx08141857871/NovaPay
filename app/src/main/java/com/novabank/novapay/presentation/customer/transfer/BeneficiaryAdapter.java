@@ -13,9 +13,6 @@ import com.novabank.novapay.domain.model.bank.Beneficiary;
 import java.util.ArrayList;
 import java.util.List;
 
-/**
- * Adapter hiển thị danh sách người thụ hưởng đã lưu (users/{uid}/beneficiaries).
- */
 public class BeneficiaryAdapter extends RecyclerView.Adapter<BeneficiaryAdapter.ViewHolder> {
 
     public interface Listener {

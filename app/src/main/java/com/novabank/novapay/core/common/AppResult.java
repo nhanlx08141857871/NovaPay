@@ -2,10 +2,6 @@ package com.novabank.novapay.core.common;
 
 import java.util.Objects;
 
-/**
- * Lớp bọc kết quả chuẩn Pure Java 17 dùng chung cho tầng domain và data.
- * Tuyệt đối không import android.* hoặc com.google.firebase.*.
- */
 public final class AppResult<T> {
 
     public enum Status {

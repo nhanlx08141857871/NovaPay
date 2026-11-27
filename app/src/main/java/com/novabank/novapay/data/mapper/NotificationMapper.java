@@ -8,9 +8,6 @@ import com.novabank.novapay.domain.model.notification.NotificationCategory;
 
 import java.util.Map;
 
-/**
- * Ánh xạ Document users/{uid}/notifications/{notifId} sang AppNotification (long VNĐ & Instant).
- */
 public final class NotificationMapper {
 
     private NotificationMapper() {

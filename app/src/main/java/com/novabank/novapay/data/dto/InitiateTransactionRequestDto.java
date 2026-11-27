@@ -1,8 +1,5 @@
 package com.novabank.novapay.data.dto;
 
-/**
- * Request body cho POST /transactions/initiate.
- */
 public final class InitiateTransactionRequestDto {
 
     private final String type;

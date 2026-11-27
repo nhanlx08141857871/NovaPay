@@ -6,12 +6,6 @@ import android.graphics.Color;
 import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
 
-/**
- * Bộ tạo mã QR chuẩn ISO/IEC 18004 (Byte Mode, Error Correction Level M, Version 1–10)
- * viết hoàn toàn bằng Pure Java 17 (không phụ thuộc thư viện ngoài ZXing) để hiển thị
- * mã QR nhận tiền cá nhân tại CheckingDetailFragment.
- * Không chạm tới QrHelper.java (thuộc quyền sở hữu của Module B).
- */
 public final class QrBitmapEncoder {
 
     private static final int QUIET_ZONE_MODULES = 4;
@@ -19,17 +13,17 @@ public final class QrBitmapEncoder {
     // Bảng thông số EC Level M cho Version 1..10:
     // {totalDataCodewords, eccPerBlock, group1Blocks, group1Data, group2Blocks, group2Data}
     private static final int[][] EC_M_SPECS = {
-            null, // 1-indexed
-            {16, 10, 1, 16, 0, 0},   // V1 (21x21)
-            {28, 16, 1, 28, 0, 0},   // V2 (25x25)
-            {44, 26, 1, 44, 0, 0},   // V3 (29x29)
-            {64, 18, 2, 32, 0, 0},   // V4 (33x33)
-            {86, 24, 2, 43, 0, 0},   // V5 (37x37)
-            {108, 16, 4, 27, 0, 0},  // V6 (41x41)
-            {124, 18, 4, 31, 0, 0},  // V7 (45x45)
-            {154, 22, 2, 38, 2, 39}, // V8 (49x49)
-            {182, 22, 3, 36, 2, 37}, // V9 (53x53)
-            {216, 26, 4, 43, 1, 44}  // V10 (57x57)
+            null,
+            {16, 10, 1, 16, 0, 0},
+            {28, 16, 1, 28, 0, 0},
+            {44, 26, 1, 44, 0, 0},
+            {64, 18, 2, 32, 0, 0},
+            {86, 24, 2, 43, 0, 0},
+            {108, 16, 4, 27, 0, 0},
+            {124, 18, 4, 31, 0, 0},
+            {154, 22, 2, 38, 2, 39},
+            {182, 22, 3, 36, 2, 37},
+            {216, 26, 4, 43, 1, 44}
     };
 
     private static final int[][] ALIGNMENT_CENTERS = {
@@ -65,13 +59,8 @@ public final class QrBitmapEncoder {
     }
 
     private QrBitmapEncoder() {
-        // Cấm khởi tạo
     }
 
-    /**
-     * Mã hóa nội dung thành ma trận boolean[][] chuẩn QR (bao gồm vùng lề trắng 4 ô).
-     * Phương thức Pure Java hoàn toàn — kiểm thử được trực tiếp trên JVM JUnit 4.
-     */
     public static boolean[][] encodeMatrix(String content) {
         if (content == null || content.isEmpty()) {
             throw new IllegalArgumentException("QR content must not be empty");
@@ -114,9 +103,6 @@ public final class QrBitmapEncoder {
         return padded;
     }
 
-    /**
-     * Kết xuất ma trận QR thành Android Bitmap sắc nét (ARGB_8888).
-     */
     public static Bitmap encodeToBitmap(String content, int sizePx) {
         if (sizePx <= 0) {
             throw new IllegalArgumentException("sizePx must be positive");
@@ -168,7 +154,6 @@ public final class QrBitmapEncoder {
         int[] bits = new int[totalBits];
         int bitPos = 0;
 
-        // Mode indicator: Byte = 0100
         bitPos = appendBits(bits, bitPos, 0b0100, 4);
         int countBits = version <= 9 ? 8 : 16;
         bitPos = appendBits(bits, bitPos, data.length, countBits);
@@ -177,11 +162,9 @@ public final class QrBitmapEncoder {
             bitPos = appendBits(bits, bitPos, b & 0xFF, 8);
         }
 
-        // Terminator up to 4 zero bits
         int terminator = Math.min(4, totalBits - bitPos);
         bitPos += terminator;
 
-        // Pad to byte boundary
         while (bitPos % 8 != 0) {
             bitPos++;
         }
@@ -196,7 +179,6 @@ public final class QrBitmapEncoder {
             codewords[i] = (byte) val;
         }
 
-        // Pad codewords alternating 0xEC, 0x11
         boolean toggle = true;
         for (int i = byteCount; i < totalDataCodewords; i++) {
             codewords[i] = toggle ? (byte) 0xEC : (byte) 0x11;
@@ -299,19 +281,16 @@ public final class QrBitmapEncoder {
             int version,
             int size
     ) {
-        // Timing patterns
         for (int i = 0; i < size; i++) {
             boolean dark = i % 2 == 0;
             setFunctionModule(modules, isFunction, 6, i, dark);
             setFunctionModule(modules, isFunction, i, 6, dark);
         }
 
-        // Finder patterns + separators
         drawFinderPattern(modules, isFunction, 3, 3, size);
         drawFinderPattern(modules, isFunction, 3, size - 4, size);
         drawFinderPattern(modules, isFunction, size - 4, 3, size);
 
-        // Alignment patterns
         int[] centers = ALIGNMENT_CENTERS[version];
         for (int r : centers) {
             for (int c : centers) {
@@ -322,10 +301,8 @@ public final class QrBitmapEncoder {
             }
         }
 
-        // Dark module
         setFunctionModule(modules, isFunction, size - 8, 8, true);
 
-        // Reserve format info strips (filled later)
         for (int i = 0; i <= 8; i++) {
             if (i != 6) {
                 isFunction[8][i] = true;
@@ -337,7 +314,6 @@ public final class QrBitmapEncoder {
             isFunction[size - 1 - i][8] = true;
         }
 
-        // Reserve version info areas for V7+
         if (version >= 7) {
             for (int i = 0; i < 6; i++) {
                 for (int j = 0; j < 3; j++) {
@@ -472,7 +448,6 @@ public final class QrBitmapEncoder {
     }
 
     private static void drawFormatBits(boolean[][] modules, int mask, int size) {
-        // EC Level M = 00
         int data = mask & 0x7;
         int rem = data;
         for (int i = 0; i < 10; i++) {
@@ -516,7 +491,6 @@ public final class QrBitmapEncoder {
     private static int computePenaltyScore(boolean[][] modules, int size) {
         int penalty = 0;
 
-        // N1: adjacent same-color runs >= 5 in rows and columns
         for (int r = 0; r < size; r++) {
             int runLen = 1;
             for (int c = 1; c < size; c++) {
@@ -548,7 +522,6 @@ public final class QrBitmapEncoder {
             }
         }
 
-        // N2: 2x2 blocks of same color
         for (int r = 0; r < size - 1; r++) {
             for (int c = 0; c < size - 1; c++) {
                 boolean color = modules[r][c];
@@ -560,7 +533,6 @@ public final class QrBitmapEncoder {
             }
         }
 
-        // N3: finder-like 1:1:3:1:1 patterns
         for (int r = 0; r < size; r++) {
             for (int c = 0; c <= size - 11; c++) {
                 if (matchesFinderLikeRow(modules, r, c)) {
@@ -576,7 +548,6 @@ public final class QrBitmapEncoder {
             }
         }
 
-        // N4: dark module balance around 50%
         int darkCount = 0;
         for (int r = 0; r < size; r++) {
             for (int c = 0; c < size; c++) {

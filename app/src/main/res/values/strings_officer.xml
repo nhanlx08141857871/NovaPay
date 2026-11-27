@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <!-- Chuỗi giao diện Phân hệ Officer, Bản đồ, AI Chatbot & State Views dùng chung (Owner: Thành viên C) -->
     <string name="state_loading_message">Đang tải dữ liệu…</string>
     <string name="state_empty_title">Chưa có dữ liệu</string>
     <string name="state_empty_subtitle">Danh sách hiện đang trống.</string>
@@ -9,10 +8,8 @@
     <string name="state_action_retry">Thử lại</string>
     <string name="map_tdtu_fallback_notice">Không xác định được tín hiệu GPS hiện tại — đang hiển thị khu vực trung tâm Nam Sài Gòn (Quận 7, TP.HCM).</string>
 
-    <!-- OpenRouteService API key (để trống mặc định; nạp cục bộ khi cần định tuyến đi bộ trực tuyến) -->
     <string name="openroute_api_key" translatable="false"></string>
 
-    <!-- Dùng chung Menu & Điều hướng -->
     <string name="officer_action_refresh">Làm mới</string>
     <string name="officer_action_logout">Đăng xuất</string>
     <string name="officer_action_back">Quay lại</string>
@@ -21,7 +18,6 @@
     <string name="officer_action_save">Lưu thay đổi</string>
     <string name="officer_action_close">Đóng</string>
 
-    <!-- Màn hình 1: OfficerDashboardFragment -->
     <string name="officer_dashboard_title">Bảng điều khiển Nhân viên</string>
     <string name="officer_dashboard_role_badge">Nhân viên Ngân hàng (Officer)</string>
     <string name="officer_dashboard_email_fallback">Tài khoản nhân viên NovaPay</string>
@@ -51,7 +47,6 @@
     <string name="officer_logout_confirm_title">Đăng xuất tài khoản?</string>
     <string name="officer_logout_confirm_message">Bạn sẽ rời khỏi phân hệ Nhân viên Ngân hàng và quay về màn hình đăng nhập.</string>
 
-    <!-- Màn hình 2: CustomerManagementFragment -->
     <string name="officer_customers_title">Quản lý khách hàng</string>
     <string name="officer_customers_search_hint">Tìm theo tên, email, SĐT hoặc CCCD</string>
     <string name="officer_customers_empty_title">Không tìm thấy khách hàng</string>
@@ -76,7 +71,6 @@
     <string name="officer_customer_status_locked_success">Đã khóa tài khoản khách hàng.</string>
     <string name="officer_customer_status_unlocked_success">Đã mở khóa tài khoản khách hàng.</string>
 
-    <!-- Màn hình 3: CreateCustomerFragment -->
     <string name="officer_create_customer_title">Tạo khách hàng mới</string>
     <string name="officer_create_customer_subtitle">Khởi tạo tài khoản ngân hàng &amp; ví thanh toán CHECKING mặc định</string>
     <string name="officer_customer_field_fullname">Họ và tên</string>
@@ -96,7 +90,6 @@
     <string name="officer_validation_address">Địa chỉ không được để trống.</string>
     <string name="officer_validation_password">Mật khẩu khởi tạo phải có ít nhất 6 ký tự.</string>
 
-    <!-- Màn hình 4: OfficerEkycReviewFragment -->
     <string name="officer_ekyc_review_title">Duyệt eKYC &amp; Hậu kiểm</string>
     <string name="officer_ekyc_filter_pending">Chờ duyệt</string>
     <string name="officer_ekyc_filter_all">Chưa xác minh</string>
@@ -123,7 +116,6 @@
     <string name="officer_kpi_zero" translatable="false">0</string>
     <string name="chatbot_bot_badge">Trợ lý NovaPay AI</string>
 
-    <!-- Màn hình 5: InterestRateManagementFragment -->
     <string name="officer_interest_rates_title">Quản lý lãi suất tiết kiệm</string>
     <string name="officer_rate_form_title">Cập nhật / Thêm mức lãi suất</string>
     <string name="officer_rate_term_hint">Kỳ hạn (tháng)</string>
@@ -141,7 +133,6 @@
     <string name="officer_rate_empty_title">Chưa có cấu hình lãi suất</string>
     <string name="officer_rate_empty_subtitle">Hãy nhập kỳ hạn và lãi suất ở biểu mẫu phía trên để tạo mới.</string>
 
-    <!-- Màn hình 6: BranchMapFragment -->
     <string name="map_branches_title">Chi nhánh &amp; ATM NovaPay</string>
     <string name="map_my_location_action">Vị trí của tôi</string>
     <string name="map_user_marker_title">Vị trí của bạn</string>
@@ -158,7 +149,6 @@
     <string name="map_branches_empty_title">Chưa có dữ liệu chi nhánh</string>
     <string name="map_branches_empty_subtitle">Hiện chưa có chi nhánh hoặc cây ATM nào được cấu hình.</string>
 
-    <!-- Màn hình 7: ChatbotFragment -->
     <string name="chatbot_title">Trợ lý ảo NovaPay AI</string>
     <string name="chatbot_empty_title">Xin chào! Tôi là trợ lý NovaPay</string>
     <string name="chatbot_empty_subtitle">Hãy hỏi về số dư, biến động tháng này, chuyển tiền, hóa đơn điện nước hoặc tìm chi nhánh gần nhất.</string>

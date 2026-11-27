@@ -33,9 +33,6 @@ import javax.inject.Singleton;
 import io.reactivex.rxjava3.core.Observable;
 import io.reactivex.rxjava3.core.Single;
 
-/**
- * Nguồn dữ liệu Cloud Firestore cho phân hệ B, tuân thủ tuyệt đối firestore.rules và firestore.indexes.json.
- */
 @Singleton
 public class MoneyFirestoreDataSource {
 

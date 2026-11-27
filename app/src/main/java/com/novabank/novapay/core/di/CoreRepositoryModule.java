@@ -30,9 +30,6 @@ import dagger.hilt.InstallIn;
 import dagger.hilt.components.SingletonComponent;
 import retrofit2.Retrofit;
 
-/**
- * Hilt Module gắn kết toàn bộ Retrofit API & Repository của Phân hệ A (Owner: Thành viên A).
- */
 @Module
 @InstallIn(SingletonComponent.class)
 public abstract class CoreRepositoryModule {

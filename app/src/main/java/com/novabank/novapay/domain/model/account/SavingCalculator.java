@@ -5,9 +5,6 @@ import java.time.LocalDate;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
 
-/**
- * Bộ tính lãi tiết kiệm chuẩn số nguyên long (VNĐ) đồng bộ với Backend Server (Pure Java 17).
- */
 public final class SavingCalculator {
 
     public static final double DEFAULT_DEMAND_ANNUAL_RATE = 0.5;
@@ -46,9 +43,6 @@ public final class SavingCalculator {
         return (long) Math.floor((principal * demandAnnualRate * daysHeld) / (365.0 * 100.0));
     }
 
-    /**
-     * Dự toán tất toán sổ tiết kiệm dựa trên SavingProjection và lãi không kỳ hạn hiện hành.
-     */
     public static SavingSettlementPreview previewSettlement(
             SavingProjection projection,
             double demandAnnualRate,

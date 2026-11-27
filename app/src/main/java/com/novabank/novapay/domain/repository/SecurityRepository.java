@@ -7,9 +7,6 @@ import com.novabank.novapay.domain.model.security.SecurityStatus;
 
 import io.reactivex.rxjava3.core.Single;
 
-/**
- * Hợp đồng quản lý PIN giao dịch 6 số và kiểm soát hạn mức / tạm khóa tài khoản CHECKING (Pure Java 17).
- */
 public interface SecurityRepository {
 
     Single<AppResult<SecurityStatus>> getSecurityStatus();

@@ -18,10 +18,6 @@ import com.google.android.material.snackbar.Snackbar;
 import io.reactivex.rxjava3.disposables.CompositeDisposable;
 import io.reactivex.rxjava3.disposables.Disposable;
 
-/**
- * Lớp cơ sở bắt buộc cho mọi Fragment trong dự án NovaPay.
- * Tự động quản lý vòng đời ViewBinding (chống rò rỉ bộ nhớ) và CompositeDisposable của RxJava 3.
- */
 public abstract class BaseFragment<VB extends ViewBinding> extends Fragment {
 
     private VB binding;
@@ -69,9 +65,6 @@ public abstract class BaseFragment<VB extends ViewBinding> extends Fragment {
         disposables.add(disposable);
     }
 
-    /**
-     * Điều hướng liên phân hệ an toàn bằng Internal DeepLink (novapay://...) theo SPEC_CHOT.md Q4.
-     */
     protected final void navigateDeepLink(@NonNull String deepLinkUri) {
         NavController navController = NavHostFragment.findNavController(this);
         navController.navigate(Uri.parse(deepLinkUri));

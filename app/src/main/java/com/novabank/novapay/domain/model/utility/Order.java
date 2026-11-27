@@ -3,9 +3,6 @@ package com.novabank.novapay.domain.model.utility;
 import java.time.Instant;
 import java.util.Objects;
 
-/**
- * Đơn hàng / vé đã đặt trong collection orders/{orderId}.
- */
 public final class Order {
 
     private final String orderId;

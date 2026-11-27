@@ -7,9 +7,6 @@ import javax.inject.Inject;
 
 import io.reactivex.rxjava3.core.Single;
 
-/**
- * UseCase gửi ảnh đối chiếu khuôn mặt FaceCheck cho giao dịch > 5.000.000 VNĐ.
- */
 public final class SubmitFaceCheckUseCase {
 
     private final EkycRepository ekycRepository;

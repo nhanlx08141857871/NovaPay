@@ -16,9 +16,6 @@ import com.novabank.novapay.domain.model.utility.ServiceItem;
 import java.util.ArrayList;
 import java.util.List;
 
-/**
- * Adapter hiển thị danh mục dịch vụ Vé máy bay, Xem phim, Khách sạn & Mua sắm (service_catalog).
- */
 public class ServiceCatalogAdapter extends RecyclerView.Adapter<ServiceCatalogAdapter.ViewHolder> {
 
     public interface OnServiceItemSelectListener {

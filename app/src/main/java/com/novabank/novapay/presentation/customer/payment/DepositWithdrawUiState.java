@@ -8,9 +8,6 @@ import com.novabank.novapay.domain.model.account.Account;
 import java.util.Collections;
 import java.util.List;
 
-/**
- * Trạng thái màn hình Nạp tiền Stripe (GATEWAY), Rút tiền (WITHDRAW) và Trả nợ vay (MORTGAGE_PAYMENT).
- */
 public final class DepositWithdrawUiState {
 
     public enum Mode {

@@ -8,9 +8,6 @@ import javax.inject.Inject;
 
 import io.reactivex.rxjava3.core.Single;
 
-/**
- * UseCase đăng nhập Firebase Auth và nạp Custom Claim role.
- */
 public final class SignInUseCase {
 
     private final AuthRepository authRepository;

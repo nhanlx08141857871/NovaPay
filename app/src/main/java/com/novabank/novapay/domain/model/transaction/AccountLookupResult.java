@@ -2,9 +2,6 @@ package com.novabank.novapay.domain.model.transaction;
 
 import java.util.Objects;
 
-/**
- * Kết quả tra cứu tài khoản nội bộ an toàn từ GET /accounts/lookup.
- */
 public final class AccountLookupResult {
 
     private final String accountId;

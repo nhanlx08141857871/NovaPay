@@ -36,10 +36,6 @@ import io.reactivex.rxjava3.disposables.CompositeDisposable;
 import io.reactivex.rxjava3.disposables.Disposable;
 import io.reactivex.rxjava3.schedulers.Schedulers;
 
-/**
- * ViewModel xử lý toàn bộ nghiệp vụ Chuyển tiền nội bộ NovaPay, Liên ngân hàng 24/7,
- * Tra cứu tài khoản nhận qua GET /accounts/lookup và Quản lý danh bạ thụ hưởng.
- */
 @HiltViewModel
 public class TransferViewModel extends ViewModel {
 

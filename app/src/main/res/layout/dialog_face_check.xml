@@ -46,7 +46,6 @@
                     android:layout_width="match_parent"
                     android:layout_height="match_parent" />
 
-                <!-- Face Alignment Guide Frame -->
                 <View
                     android:layout_width="200dp"
                     android:layout_height="240dp"

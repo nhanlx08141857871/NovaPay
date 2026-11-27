@@ -1,8 +1,5 @@
 package com.novabank.novapay.data.dto;
 
-/**
- * Phong bì lỗi chuẩn từ Node.js Server (server/src/middleware/auth.ts): { "error": ..., "message": ... }.
- */
 public final class ApiErrorDto {
 
     private String error;

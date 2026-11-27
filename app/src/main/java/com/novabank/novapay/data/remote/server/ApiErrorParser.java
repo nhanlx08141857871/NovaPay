@@ -13,9 +13,6 @@ import okhttp3.ResponseBody;
 import retrofit2.HttpException;
 import retrofit2.Response;
 
-/**
- * Chuyển đổi HttpException ({ error, message }), IOException và lỗi ngoại lệ khác thành AppResult.error.
- */
 @Singleton
 public class ApiErrorParser {
 
@@ -55,7 +52,6 @@ public class ApiErrorParser {
                         }
                     }
                 } catch (Exception ignored) {
-                    // Fallback về mã HTTP bên dưới nếu body không phải JSON hợp lệ
                 }
             }
         }

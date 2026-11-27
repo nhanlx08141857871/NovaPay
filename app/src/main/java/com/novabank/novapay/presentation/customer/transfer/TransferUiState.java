@@ -11,9 +11,6 @@ import com.novabank.novapay.domain.model.transaction.AccountLookupResult;
 import java.util.Collections;
 import java.util.List;
 
-/**
- * Trạng thái giao diện màn hình Chuyển tiền nội bộ & liên ngân hàng (TransferFragment).
- */
 public final class TransferUiState {
 
     private final List<Account> checkingAccounts;

@@ -10,9 +10,6 @@ import javax.inject.Inject;
 
 import io.reactivex.rxjava3.core.Observable;
 
-/**
- * UseCase quan sát realtime toàn bộ tài khoản của khách hàng hiện tại.
- */
 public final class ObserveMyAccountsUseCase {
 
     private final AccountRepository accountRepository;

@@ -11,9 +11,6 @@ import javax.inject.Inject;
 
 import io.reactivex.rxjava3.core.Single;
 
-/**
- * Tải danh mục dịch vụ đặt vé máy bay, xem phim, khách sạn và mua sắm.
- */
 public class GetServiceCatalogUseCase {
 
     private final UtilityRepository utilityRepository;

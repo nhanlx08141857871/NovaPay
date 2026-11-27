@@ -13,9 +13,6 @@ import javax.inject.Inject;
 
 import io.reactivex.rxjava3.core.Single;
 
-/**
- * Truy vấn tài khoản vay thế chấp MORTGAGE đang ACTIVE phục vụ luồng trả nợ vay.
- */
 public class GetMortgageAccountUseCase {
 
     private final SourceAccountRepository sourceAccountRepository;

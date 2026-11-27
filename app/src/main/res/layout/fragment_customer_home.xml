@@ -19,7 +19,6 @@
             android:paddingTop="14dp"
             android:paddingBottom="24dp">
 
-            <!-- Clean Top Bar -->
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -110,7 +109,6 @@
                     app:iconTint="?attr/colorOnSurfaceVariant" />
             </LinearLayout>
 
-            <!-- eKYC Warning Banner (shown when NOT VERIFIED) -->
             <com.google.android.material.card.MaterialCardView
                 android:id="@+id/cardEkycBanner"
                 style="@style/Widget.NovaPay.Card.Outlined"
@@ -162,7 +160,6 @@
                 </LinearLayout>
             </com.google.android.material.card.MaterialCardView>
 
-            <!-- Hero Total Assets Card (Deep Navy #0F172A, Tabular Balance, Eye Toggle) -->
             <com.google.android.material.card.MaterialCardView
                 style="@style/Widget.NovaPay.Card.Outlined"
                 android:layout_width="match_parent"
@@ -238,7 +235,6 @@
                 </LinearLayout>
             </com.google.android.material.card.MaterialCardView>
 
-            <!-- Primary 4 Quick Actions Grid (Transfer • QR Scan • Deposit • Bills) -->
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -300,7 +296,6 @@
                     app:icon="@drawable/ic_np_bill" />
             </LinearLayout>
 
-            <!-- Secondary 4 Explore & Utility Actions (Topup • Services • Branches • AI Chatbot) -->
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -382,7 +377,6 @@
                     app:icon="@drawable/ic_np_sparkle_ai" />
             </LinearLayout>
 
-            <!-- Accounts List (Checking, Saving, Mortgage) -->
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -419,7 +413,6 @@
                 android:layout_marginTop="10dp"
                 android:nestedScrollingEnabled="false" />
 
-            <!-- Minimalist MPAndroidChart Cashflow Card -->
             <com.google.android.material.card.MaterialCardView
                 style="@style/Widget.NovaPay.Card.Outlined"
                 android:layout_width="match_parent"

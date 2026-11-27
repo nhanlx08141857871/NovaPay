@@ -10,9 +10,6 @@ import com.novabank.novapay.domain.model.account.SavingInfo;
 
 import java.util.Map;
 
-/**
- * Chuyển đổi Firestore Document accounts/{accountId} sang domain model Account.
- */
 public final class AccountMapper {
 
     private AccountMapper() {

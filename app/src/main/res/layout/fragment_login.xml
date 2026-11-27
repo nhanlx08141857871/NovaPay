@@ -23,7 +23,6 @@
                 android:layout_width="match_parent"
                 android:layout_height="20dp" />
 
-            <!-- NovaPay Official Brand Logo (16dp smooth rounded corners) -->
             <com.google.android.material.imageview.ShapeableImageView
                 android:layout_width="76dp"
                 android:layout_height="76dp"
@@ -53,7 +52,6 @@
                 android:textAppearance="?attr/textAppearanceBodyMedium"
                 android:textColor="?attr/colorOnSurfaceVariant" />
 
-            <!-- Crisp White Login Card (1dp #E2E8F0 hairline, 0dp shadow) -->
             <com.google.android.material.card.MaterialCardView
                 style="@style/Widget.NovaPay.Card.Outlined"
                 android:layout_width="match_parent"

@@ -15,9 +15,6 @@ import {
   validateUpsertInterestRatePayload,
 } from "../services/officerAudit";
 
-/**
- * Phân hệ Quản trị Nhân viên Ngân hàng & Audit Logs (Owner: Thành viên C).
- */
 export const officerRouter = Router();
 
 officerRouter.use(requireAuth, requireOfficer);

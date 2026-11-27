@@ -2,9 +2,6 @@ package com.novabank.novapay.domain.model.transaction;
 
 import java.util.Objects;
 
-/**
- * Thông tin người nhận liên ngân hàng (TRANSFER_INTERBANK).
- */
 public final class ExternalRecipient {
 
     private final String bankCode;

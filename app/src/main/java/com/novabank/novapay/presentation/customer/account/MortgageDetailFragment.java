@@ -23,11 +23,6 @@ import com.novabank.novapay.domain.model.account.MortgageInfo;
 
 import dagger.hilt.android.AndroidEntryPoint;
 
-/**
- * Màn hình chi tiết khoản vay thế chấp (MORTGAGE):
- * Dư nợ, kỳ trả định kỳ kiểu long, nút Thanh toán kỳ hạn điều hướng sang
- * novapay://transfer?type=MORTGAGE_PAYMENT&accountId={accountId}.
- */
 @AndroidEntryPoint
 public class MortgageDetailFragment extends BaseFragment<FragmentMortgageDetailBinding> {
 

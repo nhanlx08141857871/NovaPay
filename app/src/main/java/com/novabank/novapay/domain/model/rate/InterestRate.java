@@ -3,9 +3,6 @@ package com.novabank.novapay.domain.model.rate;
 import java.time.Instant;
 import java.util.Objects;
 
-/**
- * Biểu lãi suất tiết kiệm theo kỳ hạn từ collection interest_rates/{rateId} (Pure Java 17).
- */
 public final class InterestRate {
 
     public static final int MAX_TERM_MONTHS = 120;

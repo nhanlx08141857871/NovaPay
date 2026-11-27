@@ -10,9 +10,6 @@ import dagger.Provides;
 import dagger.hilt.InstallIn;
 import dagger.hilt.components.SingletonComponent;
 
-/**
- * Hilt Module cung cấp FirebaseAuth và FirebaseFirestore (Owner: Thành viên A).
- */
 @Module
 @InstallIn(SingletonComponent.class)
 public final class FirebaseModule {

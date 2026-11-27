@@ -1,8 +1,5 @@
 package com.novabank.novapay.data.dto;
 
-/**
- * DTO thông tin người nhận liên ngân hàng gửi/nhận với Server.
- */
 public final class ExternalRecipientDto {
 
     private String bankCode;

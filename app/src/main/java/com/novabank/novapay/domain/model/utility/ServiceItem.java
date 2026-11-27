@@ -2,9 +2,6 @@ package com.novabank.novapay.domain.model.utility;
 
 import java.util.Objects;
 
-/**
- * Mục sản phẩm / vé / phòng khách sạn trong service_catalog/{itemId}.
- */
 public final class ServiceItem {
 
     private final String itemId;

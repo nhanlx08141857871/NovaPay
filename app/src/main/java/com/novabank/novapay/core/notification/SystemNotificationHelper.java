@@ -25,10 +25,6 @@ import javax.inject.Singleton;
 
 import dagger.hilt.android.qualifiers.ApplicationContext;
 
-/**
- * Tạo kênh thông báo IMPORTANCE_HIGH và hiển thị Android System Notification
- * khi có biến động số dư / tiết kiệm / bảo mật / eKYC.
- */
 @Singleton
 public class SystemNotificationHelper {
 

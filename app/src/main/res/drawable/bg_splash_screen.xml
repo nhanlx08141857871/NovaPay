@@ -1,9 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <layer-list xmlns:android="http://schemas.android.com/apk/res/android">
-    <!-- Deep Navy Brand Background matching NovaPay Logo -->
     <item android:drawable="@color/ic_launcher_background" />
 
-    <!-- Centered NovaPay Emblem for Pre-Android 12 Launch Window -->
     <item
         android:width="148dp"
         android:height="148dp"

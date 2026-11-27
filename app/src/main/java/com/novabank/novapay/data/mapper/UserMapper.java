@@ -10,9 +10,6 @@ import com.novabank.novapay.domain.model.user.UserStatus;
 
 import java.util.Map;
 
-/**
- * Chuyển đổi Firestore Document users/{uid} sang domain model User.
- */
 public final class UserMapper {
 
     private UserMapper() {

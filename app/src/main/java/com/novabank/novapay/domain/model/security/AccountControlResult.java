@@ -2,9 +2,6 @@ package com.novabank.novapay.domain.model.security;
 
 import com.novabank.novapay.domain.model.account.AccountStatus;
 
-/**
- * Kết quả cập nhật kiểm soát tài khoản CHECKING từ PATCH /security/accounts/:accountId/controls (Pure Java 17).
- */
 public final class AccountControlResult {
 
     private final AccountStatus status;

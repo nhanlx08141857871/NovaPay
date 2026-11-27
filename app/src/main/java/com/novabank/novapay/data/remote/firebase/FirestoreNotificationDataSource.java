@@ -19,9 +19,6 @@ import javax.inject.Singleton;
 import io.reactivex.rxjava3.core.Observable;
 import io.reactivex.rxjava3.core.Single;
 
-/**
- * Nguồn dữ liệu Firestore cho subcollection users/{uid}/notifications/{notifId}.
- */
 @Singleton
 public class FirestoreNotificationDataSource {
 

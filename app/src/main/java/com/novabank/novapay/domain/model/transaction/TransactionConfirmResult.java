@@ -1,9 +1,5 @@
 package com.novabank.novapay.domain.model.transaction;
 
-/**
- * Kết quả xác nhận OTP từ POST /transactions/confirm.
- * Với giao dịch GATEWAY (Stripe), status là "PENDING_PAYMENT" kèm clientSecret và txId == null.
- */
 public final class TransactionConfirmResult {
 
     private final String txId;

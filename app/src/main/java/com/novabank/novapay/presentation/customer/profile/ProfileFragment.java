@@ -22,10 +22,6 @@ import com.novabank.novapay.domain.model.user.UserRole;
 
 import dagger.hilt.android.AndroidEntryPoint;
 
-/**
- * Màn hình Hồ sơ cá nhân (novapay://profile):
- * Cập nhật an toàn phone, address, avatarUrl khi user ACTIVE; hỗ trợ mở eKYC và Đăng xuất.
- */
 @AndroidEntryPoint
 public class ProfileFragment extends BaseFragment<FragmentProfileBinding> {
 

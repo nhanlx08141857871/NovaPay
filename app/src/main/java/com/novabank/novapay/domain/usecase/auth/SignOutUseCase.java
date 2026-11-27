@@ -4,9 +4,6 @@ import com.novabank.novapay.domain.repository.AuthRepository;
 
 import javax.inject.Inject;
 
-/**
- * UseCase đăng xuất khỏi hệ thống NovaPay.
- */
 public final class SignOutUseCase {
 
     private final AuthRepository authRepository;

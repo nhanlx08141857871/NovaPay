@@ -17,10 +17,6 @@ import javax.inject.Inject;
 
 import io.reactivex.rxjava3.core.Observable;
 
-/**
- * UseCase quan sát sổ cái biến động số dư tại accounts/{accountId}/ledger
- * (tuân thủ firestore.rules & firestore.indexes.json).
- */
 public final class ObserveAccountLedgerUseCase {
 
     private final AccountRepository accountRepository;

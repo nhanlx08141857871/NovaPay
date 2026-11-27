@@ -1,8 +1,5 @@
 package com.novabank.novapay.domain.model.user;
 
-/**
- * Trạng thái định danh khuôn mặt điện tử (eKYC).
- */
 public enum EkycStatus {
     UNVERIFIED,
     PENDING,

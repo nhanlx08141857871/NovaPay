@@ -2,9 +2,6 @@ package com.novabank.novapay.domain.model.notification;
 
 import java.util.Locale;
 
-/**
- * Phân loại thông báo trong hộp thư users/{uid}/notifications (Pure Java 17).
- */
 public enum NotificationCategory {
     BALANCE,
     SECURITY,

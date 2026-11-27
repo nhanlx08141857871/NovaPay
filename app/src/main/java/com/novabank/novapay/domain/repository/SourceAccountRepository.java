@@ -8,10 +8,6 @@ import java.util.List;
 import io.reactivex.rxjava3.core.Observable;
 import io.reactivex.rxjava3.core.Single;
 
-/**
- * Hợp đồng nguồn tài khoản dành riêng cho phân hệ B, bọc Optional<AccountRepository>
- * và cơ chế fallback Firestore khi chạy độc lập trước khi merge với phân hệ A.
- */
 public interface SourceAccountRepository {
 
     Observable<AppResult<List<Account>>> observeActiveCheckingAccounts();

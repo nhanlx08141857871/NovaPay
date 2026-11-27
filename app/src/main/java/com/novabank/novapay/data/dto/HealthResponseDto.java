@@ -1,8 +1,5 @@
 package com.novabank.novapay.data.dto;
 
-/**
- * Response body từ GET /health.
- */
 public final class HealthResponseDto {
 
     private boolean ok;

@@ -10,9 +10,6 @@ import javax.inject.Inject;
 
 import io.reactivex.rxjava3.core.Single;
 
-/**
- * Xác thực mã OTP 6 chữ số và hoàn tất giao dịch qua POST /transactions/confirm.
- */
 public class ConfirmTransactionUseCase {
 
     private static final Pattern OTP_SIX_DIGITS = Pattern.compile("^\\d{6}$");

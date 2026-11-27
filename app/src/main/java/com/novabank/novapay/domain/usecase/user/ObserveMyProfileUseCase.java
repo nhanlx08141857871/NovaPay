@@ -8,9 +8,6 @@ import javax.inject.Inject;
 
 import io.reactivex.rxjava3.core.Observable;
 
-/**
- * UseCase lắng nghe realtime hồ sơ cá nhân của người dùng hiện tại.
- */
 public final class ObserveMyProfileUseCase {
 
     private final UserRepository userRepository;

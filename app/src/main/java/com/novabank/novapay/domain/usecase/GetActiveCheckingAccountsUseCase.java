@@ -12,9 +12,6 @@ import javax.inject.Inject;
 import io.reactivex.rxjava3.core.Observable;
 import io.reactivex.rxjava3.core.Single;
 
-/**
- * Lấy danh sách tài khoản thanh toán CHECKING đang ACTIVE làm nguồn giao dịch.
- */
 public class GetActiveCheckingAccountsUseCase {
 
     private final SourceAccountRepository sourceAccountRepository;

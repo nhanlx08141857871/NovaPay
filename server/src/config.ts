@@ -17,11 +17,7 @@ export interface AppConfig {
   geminiModel: string;
 }
 
-/**
- * Chuẩn hóa khóa PEM từ biến môi trường .env:
- * - Bỏ dấu ngoặc kép bao ngoài nếu có
- * - Chuyển các ký tự "\\n" thành ký tự xuống dòng thực sự "\n"
- */
+// Chuẩn hóa chuỗi PEM từ biến môi trường (bỏ ngoặc kép & chuyển "\\n" thành "\n").
 export function normalizePrivateKey(rawKey?: string): string {
   if (!rawKey) {
     return "";
@@ -58,7 +54,6 @@ export function initFirebaseAdmin(): void {
     return;
   }
 
-  // Cách 1 (Ưu tiên): Đọc từ 3 biến rời FIREBASE_PROJECT_ID, FIREBASE_CLIENT_EMAIL, FIREBASE_PRIVATE_KEY
   const projectId = (process.env.FIREBASE_PROJECT_ID || config.firebaseProjectId).trim();
   const clientEmail = (process.env.FIREBASE_CLIENT_EMAIL || config.firebaseClientEmail).trim();
   const privateKey = normalizePrivateKey(process.env.FIREBASE_PRIVATE_KEY);
@@ -75,7 +70,6 @@ export function initFirebaseAdmin(): void {
     return;
   }
 
-  // Cách 2: Đọc từ chuỗi JSON một dòng FIREBASE_SERVICE_ACCOUNT_JSON
   const rawServiceAccount = process.env.FIREBASE_SERVICE_ACCOUNT_JSON;
   if (rawServiceAccount && rawServiceAccount.trim().length > 0) {
     const parsedCredential = JSON.parse(rawServiceAccount) as admin.ServiceAccount;
@@ -86,7 +80,6 @@ export function initFirebaseAdmin(): void {
     return;
   }
 
-  // Cách 3: Đọc từ đường dẫn file GOOGLE_APPLICATION_CREDENTIALS
   if (process.env.GOOGLE_APPLICATION_CREDENTIALS) {
     admin.initializeApp({
       credential: admin.credential.applicationDefault(),

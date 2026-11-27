@@ -8,9 +8,6 @@ import javax.inject.Inject;
 
 import io.reactivex.rxjava3.core.Single;
 
-/**
- * Tra cứu tên chủ tài khoản nhận nội bộ qua GET /accounts/lookup.
- */
 public class LookupInternalAccountUseCase {
 
     private final TransactionRepository transactionRepository;

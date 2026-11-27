@@ -9,9 +9,6 @@ import java.util.List;
 
 import io.reactivex.rxjava3.core.Observable;
 
-/**
- * Hợp đồng đọc sổ cái biến động số dư tại accounts/{accountId}/ledger (Pure Java 17).
- */
 public interface LedgerRepository {
 
     Observable<AppResult<List<LedgerEntry>>> observeLedger(

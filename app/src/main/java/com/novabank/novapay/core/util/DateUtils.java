@@ -9,9 +9,6 @@ import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.Locale;
 
-/**
- * Tiện ích xử lý thời gian chuẩn java.time.Instant theo múi giờ Việt Nam (Asia/Ho_Chi_Minh).
- */
 public final class DateUtils {
 
     public static final ZoneId VIETNAM_ZONE = ZoneId.of(Constants.ZONE_HO_CHI_MINH);
@@ -25,7 +22,6 @@ public final class DateUtils {
             DateTimeFormatter.ofPattern("MM/yyyy", LOCALE_VI_VN).withZone(VIETNAM_ZONE);
 
     private DateUtils() {
-        // Cấm khởi tạo
     }
 
     public static String formatDateTime(Instant instant) {

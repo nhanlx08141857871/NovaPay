@@ -25,9 +25,6 @@ import javax.inject.Singleton;
 
 import io.reactivex.rxjava3.core.Single;
 
-/**
- * Triển khai TransactionRepository gọi Retrofit API (@BackendRetrofit) và Firestore transactions/{txId}.
- */
 @Singleton
 public class TransactionRepositoryImpl implements TransactionRepository {
 

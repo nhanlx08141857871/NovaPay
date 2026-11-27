@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <!-- Chuỗi giao diện Phân hệ Core, Auth, eKYC & Tài khoản (Owner: Thành viên A) -->
     <string name="core_brand_tagline">Ngân hàng số thế hệ mới — An toàn &amp; Thông minh</string>
     <string name="core_login_title">Đăng nhập NovaPay</string>
     <string name="core_login_email_hint">Email đăng nhập</string>
@@ -10,7 +9,6 @@
     <string name="core_error_network_generic">Không thể kết nối máy chủ. Vui lòng kiểm tra mạng và thử lại.</string>
     <string name="core_session_locked_message">Tài khoản của bạn đã bị khóa bởi ngân hàng. Vui lòng liên hệ quầy giao dịch.</string>
 
-    <!-- Điều hướng & Bảo vệ phân quyền -->
     <string name="core_guard_role_denied">Bạn không có quyền truy cập chức năng của phân hệ khác.</string>
     <string name="core_guard_destination_unavailable">Chức năng này chưa khả dụng ở mô-đun hiện tại.</string>
     <string name="core_action_back">Quay lại</string>
@@ -18,12 +16,10 @@
     <string name="core_action_copy">Sao chép</string>
     <string name="core_copied_account_number">Đã sao chép số tài khoản: %1$s</string>
 
-    <!-- Đăng nhập mở rộng -->
     <string name="core_login_invalid_email">Email đăng nhập không đúng định dạng.</string>
     <string name="core_login_officer_redirect">Đăng nhập thành công với vai trò Nhân viên ngân hàng.</string>
     <string name="core_home_bank_subtitle">Ngân hàng số NovaBank</string>
 
-    <!-- Trang chủ Khách hàng (CustomerHomeFragment) -->
     <string name="core_home_title">Trang chủ NovaPay</string>
     <string name="core_home_greeting">Xin chào, %1$s</string>
     <string name="core_home_default_customer">Quý khách</string>
@@ -54,13 +50,11 @@
     <string name="core_home_view_all_history">Xem lịch sử</string>
     <string name="core_home_verified_shield">Bảo mật đa lớp NovaPay</string>
 
-    <!-- Thanh điều hướng 4 Tab Khách hàng -->
     <string name="core_nav_home">Trang chủ</string>
     <string name="core_nav_transfer">Chuyển tiền</string>
     <string name="core_nav_history">Lịch sử</string>
     <string name="core_nav_profile">Cá nhân</string>
 
-    <!-- Tiêu đề phân nhóm biểu mẫu & thông tin -->
     <string name="core_profile_identity_section">Thông tin định danh</string>
     <string name="core_profile_contact_section">Thông tin liên hệ</string>
     <string name="core_checking_limits_section">Hạn mức giao dịch</string>
@@ -74,7 +68,6 @@
     <string name="core_home_accounts_title">Danh sách tài khoản</string>
     <string name="core_home_accounts_empty">Bạn chưa có tài khoản nào được kích hoạt.</string>
 
-    <!-- Tài khoản: Bộ định tuyến, Thanh toán, Tiết kiệm, Vay thế chấp -->
     <string name="core_account_router_title">Đang mở tài khoản</string>
     <string name="core_account_not_found">Không tìm thấy thông tin tài khoản yêu cầu.</string>
     <string name="core_account_type_checking">Tài khoản thanh toán</string>
@@ -121,7 +114,6 @@
     <string name="core_mortgage_pay_action">Thanh toán kỳ hạn</string>
     <string name="core_mortgage_settled_notice">Khoản vay đã tất toán hoặc không còn hiệu lực thanh toán.</string>
 
-    <!-- Lịch sử giao dịch (TransactionHistoryFragment) -->
     <string name="core_history_title">Lịch sử giao dịch</string>
     <string name="core_history_filter_all">Tất cả</string>
     <string name="core_history_filter_in">Tiền vào</string>
@@ -132,7 +124,6 @@
     <string name="core_history_balance_after">Số dư sau GD: %1$s</string>
     <string name="core_history_empty">Không có bút toán giao dịch nào trong khoảng thời gian đã chọn.</string>
 
-    <!-- Hồ sơ cá nhân (ProfileFragment) -->
     <string name="core_profile_title">Hồ sơ cá nhân</string>
     <string name="core_profile_full_name">Họ và tên</string>
     <string name="core_profile_email">Email</string>
@@ -154,7 +145,6 @@
     <string name="core_profile_save_success">Đã cập nhật thông tin liên hệ thành công.</string>
     <string name="core_profile_locked_readonly">Tài khoản đang bị khóa, không thể chỉnh sửa hồ sơ.</string>
 
-    <!-- eKYC & FaceCheck (CameraX + ML Kit) -->
     <string name="core_ekyc_title">Định danh khuôn mặt eKYC</string>
     <string name="core_ekyc_counter_subtitle">Chụp ảnh định danh tại quầy cho khách hàng</string>
     <string name="core_ekyc_self_subtitle">Vui lòng đặt khuôn mặt trong khung và mở to hai mắt</string>
@@ -181,7 +171,6 @@
     <string name="core_liveness_ready">Khuôn mặt hợp lệ! Nhấn nút để chụp ngay.</string>
     <string name="core_liveness_capture_failed">Không thể chụp ảnh từ camera. Vui lòng thử lại.</string>
 
-    <!-- Thông báo Biến động số dư & Hệ thống (NotificationCenter + SystemNotificationHelper) -->
     <string name="core_notif_channel_name">Biến động số dư &amp; Bảo mật</string>
     <string name="core_notif_channel_desc">Thông báo tức thì khi có tiền vào/ra, tiết kiệm, eKYC và bảo mật tài khoản.</string>
     <string name="core_notif_center_title">Thông báo</string>
@@ -201,7 +190,6 @@
     <string name="core_notif_permission_rationale">Bật quyền thông báo để nhận cảnh báo biến động số dư và bảo mật ngay lập tức.</string>
     <string name="core_notif_permission_allow">Cho phép</string>
 
-    <!-- Mở & Tất toán Sổ tiết kiệm trực tuyến (OpenSavingFragment & SavingDetailFragment) -->
     <string name="core_home_action_open_saving">Mở tiết kiệm</string>
     <string name="core_home_open_saving_cta">+ Mở sổ mới</string>
     <string name="core_open_saving_title">Mở sổ tiết kiệm trực tuyến</string>
@@ -246,7 +234,6 @@
     <string name="core_saving_settle_success">Đã tất toán sổ tiết kiệm thành công. Tổng tiền nhận: %1$s</string>
     <string name="core_saving_settle_no_checking">Không tìm thấy tài khoản CHECKING đang hoạt động để nhận tiền tất toán.</string>
 
-    <!-- Trung tâm Bảo mật, Quên/Đổi Mật khẩu, Sinh trắc học & Kiểm soát Tài khoản -->
     <string name="core_login_forgot_password">Quên mật khẩu?</string>
     <string name="core_login_biometric_action">Đăng nhập bằng Sinh trắc học</string>
     <string name="core_login_biometric_prompt_title">Đăng nhập nhanh NovaPay</string>
@@ -302,7 +289,6 @@
     <string name="core_security_controls_success">Đã cập nhật hạn mức và trạng thái tài khoản CHECKING.</string>
     <string name="core_security_controls_no_changes">Không có thay đổi cấu hình nào cần lưu.</string>
 
-    <!-- Lịch sử giao dịch nâng cao & Xuất Sao kê PDF -->
     <string name="core_history_account_filter_hint">Lọc theo tài khoản</string>
     <string name="core_history_search_hint">Tìm theo nội dung, mã GD hoặc số tiền…</string>
     <string name="core_history_range_custom">Tùy chọn ngày</string>

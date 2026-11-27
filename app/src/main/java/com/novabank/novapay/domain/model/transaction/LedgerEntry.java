@@ -3,10 +3,6 @@ package com.novabank.novapay.domain.model.transaction;
 import java.time.Instant;
 import java.util.Objects;
 
-/**
- * Bút toán sổ cái tại accounts/{accountId}/ledger/{entryId} (Pure Java 17).
- * Số tiền và số dư sau giao dịch bắt buộc dùng kiểu long (VNĐ).
- */
 public final class LedgerEntry {
 
     private final String entryId;

@@ -1,8 +1,5 @@
 package com.novabank.novapay.data.dto;
 
-/**
- * Request body cho POST /transactions/confirm.
- */
 public final class ConfirmTransactionRequestDto {
 
     private final String draftId;

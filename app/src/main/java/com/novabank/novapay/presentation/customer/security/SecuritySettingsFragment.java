@@ -34,10 +34,6 @@ import javax.inject.Inject;
 
 import dagger.hilt.android.AndroidEntryPoint;
 
-/**
- * Trung tâm Bảo mật khách hàng (novapay://security):
- * Đổi mật khẩu, thiết lập/đổi PIN giao dịch 6 số, bật/tắt Sinh trắc học & Kiểm soát CHECKING.
- */
 @AndroidEntryPoint
 public class SecuritySettingsFragment extends BaseFragment<FragmentSecuritySettingsBinding> {
 

@@ -2,10 +2,6 @@ package com.novabank.novapay.domain.model.account;
 
 import java.util.Objects;
 
-/**
- * Kết quả tất toán sổ tiết kiệm từ POST /savings/:accountId/settle (Pure Java 17).
- * Toàn bộ số tiền dùng kiểu long (VNĐ).
- */
 public final class SettleSavingResult {
 
     private final String txId;

@@ -6,9 +6,6 @@ import java.time.Instant;
 import java.util.Date;
 import java.util.Map;
 
-/**
- * Tiện ích chuyển đổi kiểu dữ liệu Firestore Map sang kiểu chuẩn Java 17 (long VNĐ, Instant).
- */
 public final class FirestoreMapUtils {
 
     private FirestoreMapUtils() {

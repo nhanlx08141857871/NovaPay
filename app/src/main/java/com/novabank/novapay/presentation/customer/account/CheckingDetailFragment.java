@@ -25,10 +25,6 @@ import com.novabank.novapay.domain.model.account.AccountStatus;
 
 import dagger.hilt.android.AndroidEntryPoint;
 
-/**
- * Màn hình chi tiết tài khoản Thanh toán (CHECKING):
- * Hiển thị số dư (long), hạn mức giao dịch/ngày và mã QR cá nhân tạo bằng QrBitmapEncoder.
- */
 @AndroidEntryPoint
 public class CheckingDetailFragment extends BaseFragment<FragmentCheckingDetailBinding> {
 

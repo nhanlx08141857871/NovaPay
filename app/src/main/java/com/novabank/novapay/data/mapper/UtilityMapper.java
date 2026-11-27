@@ -11,9 +11,6 @@ import com.novabank.novapay.domain.model.utility.UtilityBillType;
 import java.util.Map;
 import java.util.StringJoiner;
 
-/**
- * Mapper cho utility_bills, service_catalog và orders.
- */
 public final class UtilityMapper {
 
     private UtilityMapper() {
@@ -101,9 +98,6 @@ public final class UtilityMapper {
         );
     }
 
-    /**
-     * Đọc an toàn trường details trong service_catalog (hỗ trợ cả String lẫn Map).
-     */
     public static String parseDetailsSafely(Object rawDetails) {
         if (rawDetails == null) {
             return "";

@@ -20,9 +20,6 @@ import com.novabank.novapay.domain.model.notification.NotificationCategory;
 
 import dagger.hilt.android.AndroidEntryPoint;
 
-/**
- * Trung tâm Thông báo Biến động số dư, Tiết kiệm, Bảo mật & eKYC (novapay://notifications).
- */
 @AndroidEntryPoint
 public class NotificationCenterFragment extends BaseFragment<FragmentNotificationCenterBinding> {
 

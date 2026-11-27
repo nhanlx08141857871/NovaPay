@@ -32,11 +32,6 @@ import javax.inject.Inject;
 
 import dagger.hilt.android.AndroidEntryPoint;
 
-/**
- * Dialog xác thực OTP Email 6 số (đếm ngược 180s, gửi lại mã) kết hợp điều phối tự động
- * FaceCheckDialogFragment (> 5.000.000 VNĐ) và BiometricHelper trước khi gọi /transactions/confirm.
- * Trả kết quả qua FragmentResultListener với khóa Constants.REQ_OTP_VERIFICATION.
- */
 @AndroidEntryPoint
 public class OtpVerificationDialogFragment extends AppCompatDialogFragment {
 
@@ -204,7 +199,6 @@ public class OtpVerificationDialogFragment extends AppCompatDialogFragment {
             return;
         }
 
-        // Sau khi qua FaceCheck (hoặc đơn <= 5M), đồng hồ OTP 180s bắt đầu đếm ngược
         if (data.getOtpExpiresAtEpochMs() > 0L) {
             binding.tvCountdown.setVisibility(View.VISIBLE);
             startCountdownIfNeeded(data.getOtpExpiresAtEpochMs());
@@ -226,7 +220,6 @@ public class OtpVerificationDialogFragment extends AppCompatDialogFragment {
             return;
         }
 
-        // Đã qua đủ các bước sinh trắc học cần thiết -> Sẵn sàng nhập OTP 6 số
         binding.tvStepGuide.setText(R.string.money_otp_step_otp_ready);
         binding.btnRetrySecurityStep.setVisibility(View.GONE);
         binding.tilOtpCode.setEnabled(!otpExpired);

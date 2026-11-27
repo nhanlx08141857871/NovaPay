@@ -8,9 +8,6 @@ import java.util.List;
 import io.reactivex.rxjava3.core.Observable;
 import io.reactivex.rxjava3.core.Single;
 
-/**
- * Hợp đồng quan sát hộp thư thông báo users/{uid}/notifications và đánh dấu đã đọc (Pure Java 17).
- */
 public interface NotificationRepository {
 
     Observable<AppResult<List<AppNotification>>> observeNotifications();

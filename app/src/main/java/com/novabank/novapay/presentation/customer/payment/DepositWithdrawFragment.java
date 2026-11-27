@@ -30,10 +30,6 @@ import java.util.List;
 
 import dagger.hilt.android.AndroidEntryPoint;
 
-/**
- * Màn hình Nạp tiền qua cổng Stripe PaymentSheet (GATEWAY), Rút tiền (WITHDRAW)
- * và Thanh toán kỳ hạn khoản vay thế chấp (MORTGAGE_PAYMENT).
- */
 @AndroidEntryPoint
 public class DepositWithdrawFragment extends BaseFragment<FragmentDepositWithdrawBinding> {
 
@@ -165,7 +161,6 @@ public class DepositWithdrawFragment extends BaseFragment<FragmentDepositWithdra
                     String txId = bundle.getString(Constants.BUNDLE_TX_ID);
 
                     if (clientSecret != null && !clientSecret.trim().isEmpty()) {
-                        // Luồng GATEWAY: OTP đã xác thực -> Mở Stripe PaymentSheet
                         String stripePubKey = !BuildConfig.STRIPE_PUBLISHABLE_KEY.isEmpty()
                                 ? BuildConfig.STRIPE_PUBLISHABLE_KEY
                                 : getString(R.string.money_stripe_publishable_key);

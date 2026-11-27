@@ -3,9 +3,6 @@ package com.novabank.novapay.domain.model.user;
 import java.time.Instant;
 import java.util.Objects;
 
-/**
- * Thông tin trạng thái eKYC của người dùng (Pure Java 17).
- */
 public final class EkycInfo {
 
     private final EkycStatus status;

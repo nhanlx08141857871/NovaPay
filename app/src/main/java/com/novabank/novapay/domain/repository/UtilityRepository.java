@@ -12,9 +12,6 @@ import java.util.List;
 import io.reactivex.rxjava3.core.Observable;
 import io.reactivex.rxjava3.core.Single;
 
-/**
- * Hợp đồng Repository tra cứu hóa đơn Điện/Nước, danh mục dịch vụ và đơn hàng đã đặt.
- */
 public interface UtilityRepository {
 
     Single<AppResult<List<UtilityBill>>> lookupUnpaidBills(String customerCode, UtilityBillType type);

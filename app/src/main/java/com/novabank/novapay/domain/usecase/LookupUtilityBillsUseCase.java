@@ -11,9 +11,6 @@ import javax.inject.Inject;
 
 import io.reactivex.rxjava3.core.Single;
 
-/**
- * Tra cứu hóa đơn Điện / Nước chưa thanh toán theo mã khách hàng.
- */
 public class LookupUtilityBillsUseCase {
 
     private final UtilityRepository utilityRepository;

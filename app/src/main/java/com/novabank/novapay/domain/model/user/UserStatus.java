@@ -1,8 +1,5 @@
 package com.novabank.novapay.domain.model.user;
 
-/**
- * Trạng thái hoạt động của tài khoản người dùng.
- */
 public enum UserStatus {
     ACTIVE,
     LOCKED;

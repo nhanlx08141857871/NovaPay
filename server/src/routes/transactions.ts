@@ -629,7 +629,6 @@ export function createTransactionsRouter(deps?: TransactionsRouteDeps): Router {
       }
 
       const requiresFace = type !== "GATEWAY" && amount > HIGH_VALUE_THRESHOLD_VND;
-      const requiresBiometric = requiresFace;
 
       const draftRef = db.collection("transaction_drafts").doc();
       const draftId = draftRef.id;
@@ -1219,7 +1218,6 @@ export function createTransactionsRouter(deps?: TransactionsRouteDeps): Router {
             : null;
         const mortAccSnap = mortAccRef ? await tx.get(mortAccRef) : null;
 
-        // --- KIỂM TRA LẠI TOÀN BỘ ĐIỀU KIỆN BÊN TRONG TRANSACTION ---
         if (!freshDraftSnap.exists) {
           throw new RouteApiError(404, "DRAFT_EXPIRED", "Phiên giao dịch không tồn tại.");
         }
@@ -1317,7 +1315,6 @@ export function createTransactionsRouter(deps?: TransactionsRouteDeps): Router {
           }
         }
 
-        // --- PHASE 2: THỰC THI GHI NGUYÊN TỬ ---
         const txRef = db.collection("transactions").doc();
         const txId = txRef.id;
         const nowTs = admin.firestore.FieldValue.serverTimestamp();

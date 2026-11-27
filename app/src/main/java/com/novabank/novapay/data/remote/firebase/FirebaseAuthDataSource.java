@@ -20,9 +20,6 @@ import javax.inject.Singleton;
 
 import io.reactivex.rxjava3.core.Single;
 
-/**
- * Nguồn dữ liệu xác thực Firebase Auth và đọc Custom Claim role.
- */
 @Singleton
 public class FirebaseAuthDataSource {
 

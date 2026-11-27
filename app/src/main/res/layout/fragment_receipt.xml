@@ -43,7 +43,6 @@
                     android:textStyle="bold" />
             </LinearLayout>
 
-            <!-- Bank-Slip Electronic Receipt Card (Rendered to PNG / PDF) -->
             <com.google.android.material.card.MaterialCardView
                 android:id="@+id/cardReceiptCapture"
                 style="@style/Widget.NovaPay.Card.Outlined"
@@ -59,7 +58,6 @@
                     android:gravity="center_horizontal"
                     android:orientation="vertical">
 
-                    <!-- Official NovaPay Brand Logo & Check Emblem -->
                     <LinearLayout
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
@@ -123,7 +121,6 @@
                         android:textColor="?attr/colorOnSurface"
                         android:textStyle="bold" />
 
-                    <!-- Perforated Bank-Slip Dashed Rule -->
                     <View
                         android:layout_width="match_parent"
                         android:layout_height="3dp"
@@ -131,7 +128,6 @@
                         android:background="@drawable/bg_np_dashed_divider"
                         android:layerType="software" />
 
-                    <!-- Row 1: Transaction ID -->
                     <LinearLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
@@ -163,7 +159,6 @@
                         android:layout_marginVertical="10dp"
                         android:background="@color/np_divider_subtle" />
 
-                    <!-- Row 2: Time -->
                     <LinearLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
@@ -194,7 +189,6 @@
                         android:layout_marginVertical="10dp"
                         android:background="@color/np_divider_subtle" />
 
-                    <!-- Row 3: Type -->
                     <LinearLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
@@ -225,7 +219,6 @@
                         android:layout_marginVertical="10dp"
                         android:background="@color/np_divider_subtle" />
 
-                    <!-- Row 4: Source Account -->
                     <LinearLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
@@ -257,7 +250,6 @@
                         android:layout_marginVertical="10dp"
                         android:background="@color/np_divider_subtle" />
 
-                    <!-- Row 5: Beneficiary / Target -->
                     <LinearLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
@@ -290,7 +282,6 @@
                         android:layout_marginVertical="10dp"
                         android:background="@color/np_divider_subtle" />
 
-                    <!-- Row 6: Fee -->
                     <LinearLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
@@ -321,7 +312,6 @@
                         android:layout_marginVertical="10dp"
                         android:background="@color/np_divider_subtle" />
 
-                    <!-- Row 7: Note -->
                     <LinearLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
@@ -345,7 +335,6 @@
                             android:textColor="?attr/colorOnSurface" />
                     </LinearLayout>
 
-                    <!-- Security Footer Strip -->
                     <LinearLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"

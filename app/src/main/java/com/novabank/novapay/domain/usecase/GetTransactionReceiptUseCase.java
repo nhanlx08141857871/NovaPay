@@ -8,9 +8,6 @@ import javax.inject.Inject;
 
 import io.reactivex.rxjava3.core.Single;
 
-/**
- * Tải chi tiết giao dịch từ transactions/{txId} để hiển thị và xuất ảnh biên lai PNG.
- */
 public class GetTransactionReceiptUseCase {
 
     private final TransactionRepository transactionRepository;

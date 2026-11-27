@@ -4,7 +4,6 @@
     android:height="108dp"
     android:viewportWidth="108"
     android:viewportHeight="108">
-    <!-- Geometric NovaPay Monogram "N" + Emerald Precision Node -->
     <path
         android:fillColor="#FFFFFF"
         android:pathData="M34,34h9l22,28V34h9v40h-9L43,46v28h-9z" />

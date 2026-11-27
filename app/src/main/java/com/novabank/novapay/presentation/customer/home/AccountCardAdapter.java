@@ -18,9 +18,6 @@ import com.novabank.novapay.domain.model.account.AccountType;
 import java.util.ArrayList;
 import java.util.List;
 
-/**
- * Adapter hiển thị thẻ tài khoản (CHECKING / SAVING / MORTGAGE) trên Trang chủ Khách hàng.
- */
 public class AccountCardAdapter extends RecyclerView.Adapter<AccountCardAdapter.AccountViewHolder> {
 
     public interface OnAccountClickListener {

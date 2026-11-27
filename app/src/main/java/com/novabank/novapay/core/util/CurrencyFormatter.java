@@ -4,21 +4,13 @@ import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
 import java.util.Locale;
 
-/**
- * Định dạng tiền tệ thống nhất cho toàn bộ ứng dụng NovaPay.
- * BẮT BUỘC chỉ sử dụng kiểu nguyên thủy long / Long (đơn vị VNĐ), tuyệt đối cấm double/float.
- */
 public final class CurrencyFormatter {
 
     private static final Locale LOCALE_VI_VN = Locale.forLanguageTag("vi-VN");
 
     private CurrencyFormatter() {
-        // Cấm khởi tạo
     }
 
-    /**
-     * Định dạng số tiền nguyên VNĐ sang chuỗi chuẩn Việt Nam (ví dụ: 1250000L -> "1.250.000 ₫").
-     */
     public static String formatVnd(long amount) {
         DecimalFormatSymbols symbols = new DecimalFormatSymbols(LOCALE_VI_VN);
         symbols.setGroupingSeparator('.');
@@ -35,9 +27,6 @@ public final class CurrencyFormatter {
         return formatter.format(amount) + " ₫";
     }
 
-    /**
-     * Định dạng số tiền có kèm dấu biến động số dư ("+1.250.000 ₫" hoặc "-500.000 ₫").
-     */
     public static String formatSignedVnd(long amount, boolean isInflow) {
         long absAmount = Math.abs(amount);
         String formatted = formatVnd(absAmount);
@@ -47,10 +36,6 @@ public final class CurrencyFormatter {
         return (isInflow ? "+" : "-") + formatted;
     }
 
-    /**
-     * Tách lọc các chữ số từ chuỗi người dùng nhập vào EditText thành kiểu long an toàn.
-     * Trả về 0L nếu chuỗi rỗng hoặc không hợp lệ.
-     */
     public static long parseVndDigits(String rawInput) {
         if (rawInput == null || rawInput.isEmpty()) {
             return 0L;

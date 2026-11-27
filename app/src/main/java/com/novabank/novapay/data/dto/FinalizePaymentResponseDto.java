@@ -1,8 +1,5 @@
 package com.novabank.novapay.data.dto;
 
-/**
- * Response body từ POST /payments/finalize.
- */
 public final class FinalizePaymentResponseDto {
 
     private String txId;

@@ -1,8 +1,5 @@
 package com.novabank.novapay.domain.model.user;
 
-/**
- * Vai trò người dùng trên hệ thống NovaPay (khớp Firebase Custom Claim role).
- */
 public enum UserRole {
     CUSTOMER,
     OFFICER;

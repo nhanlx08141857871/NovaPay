@@ -3,10 +3,6 @@ package com.novabank.novapay.domain.model.utility;
 import java.time.Instant;
 import java.util.Objects;
 
-/**
- * Thực thể Hóa đơn Điện / Nước trong collection utility_bills/{billId}.
- * Số tiền bắt buộc dùng kiểu long (VNĐ); hạn thanh toán dùng java.time.Instant.
- */
 public final class UtilityBill {
 
     private final String billId;

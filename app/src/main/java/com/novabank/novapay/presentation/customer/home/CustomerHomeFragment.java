@@ -3,7 +3,6 @@ package com.novabank.novapay.presentation.customer.home;
 import android.Manifest;
 import android.content.pm.PackageManager;
 import android.os.Build;
-import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -41,11 +40,6 @@ import java.util.Collections;
 
 import dagger.hilt.android.AndroidEntryPoint;
 
-/**
- * Màn hình Trang chủ Khách hàng (novapay://home):
- * Tổng tài sản (long), banner eKYC, 4 tác vụ nhanh chính + 4 tiện ích mở rộng,
- * Danh sách 3 loại tài khoản & Biểu đồ thu/chi MPAndroidChart tối giản.
- */
 @AndroidEntryPoint
 public class CustomerHomeFragment extends BaseFragment<FragmentCustomerHomeBinding> {
 

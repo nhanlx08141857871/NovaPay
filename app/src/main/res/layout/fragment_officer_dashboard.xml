@@ -41,7 +41,6 @@
                 android:paddingTop="16dp"
                 android:paddingBottom="28dp">
 
-                <!-- Officer Identity Console Header (Deep Navy #0F172A) -->
                 <com.google.android.material.card.MaterialCardView
                     style="@style/Widget.NovaPay.Card.Outlined"
                     android:layout_width="match_parent"
@@ -94,7 +93,6 @@
                     </LinearLayout>
                 </com.google.android.material.card.MaterialCardView>
 
-                <!-- 3 KPI Stat Cards (Tabular Figures) -->
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
@@ -202,7 +200,6 @@
                     </com.google.android.material.card.MaterialCardView>
                 </LinearLayout>
 
-                <!-- Admin Navigation Grid (2x2) -->
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
@@ -424,7 +421,6 @@
                     </com.google.android.material.card.MaterialCardView>
                 </LinearLayout>
 
-                <!-- Post-Audit FaceCheck Queue -->
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
@@ -479,7 +475,6 @@
                     android:layout_marginTop="10dp"
                     android:text="@string/officer_post_audit_open_review" />
 
-                <!-- System Audit Logs -->
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"

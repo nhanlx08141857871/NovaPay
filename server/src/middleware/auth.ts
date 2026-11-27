@@ -26,9 +26,6 @@ export function sendApiError(
   });
 }
 
-/**
- * Middleware xác thực Firebase ID Token bắt buộc cho mọi API bảo vệ (trừ GET /health).
- */
 export async function requireAuth(
   req: AuthenticatedRequest,
   res: Response,
@@ -75,9 +72,6 @@ export async function requireAuth(
   }
 }
 
-/**
- * Middleware chỉ cho phép nhân viên ngân hàng (Custom Claim role === "OFFICER").
- */
 export function requireOfficer(
   req: AuthenticatedRequest,
   res: Response,

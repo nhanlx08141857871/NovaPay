@@ -5,9 +5,6 @@ import com.novabank.novapay.domain.model.rate.InterestRate;
 
 import java.util.Map;
 
-/**
- * Chuyển đổi Firestore Document interest_rates/{rateId} sang domain model InterestRate.
- */
 public final class InterestRateMapper {
 
     private InterestRateMapper() {

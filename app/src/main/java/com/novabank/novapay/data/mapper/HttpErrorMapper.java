@@ -7,9 +7,6 @@ import com.novabank.novapay.data.dto.ApiErrorDto;
 import okhttp3.ResponseBody;
 import retrofit2.HttpException;
 
-/**
- * Ánh xạ lỗi Retrofit HttpException / Exception sang AppResult.error với mã lỗi chuẩn của Server.
- */
 public final class HttpErrorMapper {
 
     private static final Gson GSON = new Gson();
@@ -32,7 +29,6 @@ public final class HttpErrorMapper {
                     }
                 }
             } catch (Exception ignored) {
-                // Fallback bên dưới
             }
             return AppResult.error("HTTP_" + httpEx.code(), fallbackMessage);
         }

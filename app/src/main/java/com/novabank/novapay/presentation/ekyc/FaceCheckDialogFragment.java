@@ -45,10 +45,6 @@ import java.util.concurrent.Executors;
 
 import dagger.hilt.android.AndroidEntryPoint;
 
-/**
- * Dialog xác thực khuôn mặt cho giao dịch chi/rút > 5.000.000 VNĐ (SPEC_CHOT.md Q1, Q2, Q4).
- * Trả kết quả về phân hệ gọi (B) qua FragmentResultListener với khóa Constants.REQ_FACE_CHECK.
- */
 @AndroidEntryPoint
 public class FaceCheckDialogFragment extends AppCompatDialogFragment {
 

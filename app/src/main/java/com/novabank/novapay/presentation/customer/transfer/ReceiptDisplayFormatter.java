@@ -5,11 +5,6 @@ import com.novabank.novapay.domain.model.transaction.Transaction;
 import com.novabank.novapay.domain.model.transaction.TransactionMeta;
 import com.novabank.novapay.domain.model.transaction.TransactionType;
 
-/**
- * Pure Java formatter cho màn hình Biên lai giao dịch điện tử (ReceiptFragment):
- * Ưu tiên hiển thị số tài khoản và tên người nhận (fromAccountNumber, toAccountNumber, toOwnerName),
- * tự động fallback về documentId đối với các giao dịch cũ chưa lưu snapshot.
- */
 public final class ReceiptDisplayFormatter {
 
     private ReceiptDisplayFormatter() {
@@ -110,7 +105,6 @@ public final class ReceiptDisplayFormatter {
             }
         }
 
-        // Fallback tổng quát (WITHDRAW, DEPOSIT hoặc giao dịch cũ thiếu trường mới)
         if (toOwnerName != null && toAccountNumber != null) {
             return toOwnerName + " (" + toAccountNumber + ")";
         }

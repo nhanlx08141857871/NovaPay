@@ -26,9 +26,6 @@ import java.util.List;
 
 import dagger.hilt.android.AndroidEntryPoint;
 
-/**
- * Màn hình Nạp tiền điện thoại di động (novapay://topup).
- */
 @AndroidEntryPoint
 public class PhoneTopupFragment extends BaseFragment<FragmentPhoneTopupBinding> {
 

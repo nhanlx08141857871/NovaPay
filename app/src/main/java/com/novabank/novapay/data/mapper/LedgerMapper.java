@@ -6,9 +6,6 @@ import com.novabank.novapay.domain.model.transaction.LedgerEntry;
 
 import java.util.Map;
 
-/**
- * Chuyển đổi Firestore Document accounts/{accountId}/ledger/{entryId} sang LedgerEntry.
- */
 public final class LedgerMapper {
 
     private LedgerMapper() {

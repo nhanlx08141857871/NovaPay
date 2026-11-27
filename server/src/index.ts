@@ -49,7 +49,6 @@ app.use("/savings", createRateLimiter({ windowMs: MINUTE_MS, max: 20 }));
 app.use("/security", createRateLimiter({ windowMs: MINUTE_MS, max: 30 }));
 app.use("/officer", createRateLimiter({ windowMs: MINUTE_MS, max: 30 }));
 
-// Định tuyến phân tách theo đúng phạm vi sở hữu của 3 thành viên (A, B, C)
 app.use("/ekyc", ekycRouter);
 app.use("/accounts", accountsRouter);
 app.use("/transactions", transactionsRouter);
@@ -59,12 +58,10 @@ app.use("/security", securityRouter);
 app.use("/officer", officerRouter);
 app.use("/ai", aiRouter);
 
-// Bắt lỗi route không tồn tại
 app.use((_req: Request, res: Response) => {
   sendApiError(res, 404, "NOT_FOUND", "Đường dẫn API không tồn tại.");
 });
 
-// Bộ xử lý lỗi tập trung
 app.use((err: Error & { type?: string }, _req: Request, res: Response, _next: NextFunction) => {
   if (err.type === "entity.parse.failed") {
     sendApiError(res, 400, "INVALID_ARGUMENT", "Dữ liệu JSON gửi lên không hợp lệ.");

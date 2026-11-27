@@ -30,9 +30,6 @@ import java.util.List;
 
 import dagger.hilt.android.AndroidEntryPoint;
 
-/**
- * Màn hình Tra cứu và Thanh toán Hóa đơn Điện / Nước (novapay://bills).
- */
 @AndroidEntryPoint
 public class UtilityBillFragment extends BaseFragment<FragmentUtilityBillBinding> {
 

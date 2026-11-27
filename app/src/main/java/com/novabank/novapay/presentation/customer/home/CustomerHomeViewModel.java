@@ -24,9 +24,6 @@ import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers;
 import io.reactivex.rxjava3.core.Observable;
 import io.reactivex.rxjava3.disposables.CompositeDisposable;
 
-/**
- * ViewModel Trang chủ Khách hàng: đồng bộ realtime Hồ sơ + Danh sách tài khoản + Biểu đồ Thu/Chi tháng.
- */
 @HiltViewModel
 public class CustomerHomeViewModel extends ViewModel {
 

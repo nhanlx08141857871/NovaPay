@@ -43,11 +43,6 @@ import java.util.concurrent.Executors;
 
 import dagger.hilt.android.AndroidEntryPoint;
 
-/**
- * Màn hình chụp ảnh định danh khuôn mặt eKYC (novapay://ekyc & ?targetUid={targetUid}).
- * Sử dụng CameraX + ML Kit Face Detection (PERFORMANCE_MODE_ACCURATE + CLASSIFICATION_MODE_ALL),
- * nén ảnh JPEG < 200KB và gửi POST /ekyc/submit.
- */
 @AndroidEntryPoint
 public class EkycCaptureFragment extends BaseFragment<FragmentEkycCaptureBinding> {
 

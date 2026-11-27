@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <!-- Chuỗi giao diện Phân hệ Giao dịch, Chuyển tiền, Stripe & Tiện ích (Owner: Thành viên B) -->
     <string name="money_section_title">Giao dịch &amp; Thanh toán</string>
     <string name="money_action_back">Quay lại</string>
     <string name="money_transfer_recipient_section">Thông tin người thụ hưởng</string>
@@ -13,7 +12,6 @@
     <string name="money_no_active_checking_desc">Bạn cần ít nhất một tài khoản CHECKING đang hoạt động để thực hiện giao dịch.</string>
     <string name="money_high_value_security_hint">Giao dịch trên 5.000.000 ₫ sẽ được bảo vệ 3 lớp: Quét khuôn mặt eKYC + Sinh trắc học + OTP Email.</string>
 
-    <!-- Chuyển tiền (TransferFragment) -->
     <string name="money_transfer_title">Chuyển tiền nhanh 24/7</string>
     <string name="money_transfer_open_deposit_withdraw">Nạp / Rút / Vay</string>
     <string name="money_transfer_tab_internal">Nội bộ NovaPay</string>
@@ -42,7 +40,6 @@
     <string name="money_transfer_alias_hint">Tên gợi nhớ (tùy chọn)</string>
     <string name="money_transfer_submit_action">Tiếp tục xác thực giao dịch</string>
 
-    <!-- Quét mã QR (QrScannerFragment) -->
     <string name="money_qr_title">Quét mã QR chuyển khoản</string>
     <string name="money_qr_subtitle">Đưa mã QR NovaPay hoặc mã tài khoản vào khung hình để tự động điền thông tin người nhận.</string>
     <string name="money_qr_permission_message">Ứng dụng cần quyền Camera để quét mã QR thanh toán.</string>
@@ -53,7 +50,6 @@
     <string name="money_qr_invalid_payload">Mã QR không hợp lệ hoặc không chứa số tài khoản nhận tiền.</string>
     <string name="money_qr_applied_success">Đã điền thông tin người nhận từ mã QR.</string>
 
-    <!-- Nạp / Rút tiền trực tuyến & Trả nợ vay (DepositWithdrawFragment) -->
     <string name="money_dw_title">Nạp / Rút tiền &amp; Trả nợ vay</string>
     <string name="money_dw_tab_deposit">Nạp trực tuyến</string>
     <string name="money_dw_tab_withdraw">Rút tiền</string>
@@ -84,7 +80,6 @@
     <string name="money_stripe_finalizing">Đang xác nhận giao dịch nạp tiền trực tuyến…</string>
     <string name="money_stripe_key_unconfigured">Cổng thanh toán thẻ quốc tế hiện chưa sẵn sàng kết nối. Vui lòng thử lại sau.</string>
 
-    <!-- Xác thực OTP 2FA & Điều phối 3 lớp (OtpVerificationDialogFragment) -->
     <string name="money_otp_dialog_title">Xác thực bảo mật giao dịch</string>
     <string name="money_otp_step_face_pending">Bước 1/3: Giao dịch giá trị cao (&gt; 5.000.000 ₫) — Vui lòng quét khuôn mặt đối chiếu eKYC.</string>
     <string name="money_otp_step_biometric_pending">Bước 2/3: Đã khớp khuôn mặt eKYC — Vui lòng xác thực sinh trắc học / mã khóa thiết bị.</string>
@@ -102,7 +97,6 @@
     <string name="money_otp_biometric_subtitle">Xác nhận sinh trắc học hoặc mật khẩu thiết bị để tiếp tục nhập OTP</string>
     <string name="money_otp_verifying_loading">Đang xác thực mã OTP và hạch toán giao dịch…</string>
 
-    <!-- Biên lai giao dịch điện tử (ReceiptFragment) -->
     <string name="money_receipt_title">Biên lai giao dịch điện tử</string>
     <string name="money_receipt_bank_header">NOVAPAY DIGITAL BANKING</string>
     <string name="money_receipt_status_success">GIAO DỊCH THÀNH CÔNG</string>
@@ -133,7 +127,6 @@
     <string name="money_tx_type_service">Đặt vé &amp; Mua sắm dịch vụ</string>
     <string name="money_tx_type_mortgage">Thanh toán kỳ hạn khoản vay thế chấp</string>
 
-    <!-- Hóa đơn Điện / Nước (UtilityBillFragment) -->
     <string name="money_bills_title">Thanh toán Hóa đơn Điện / Nước</string>
     <string name="money_bills_filter_all">Tất cả</string>
     <string name="money_bills_filter_electric">Tiền điện</string>
@@ -147,7 +140,6 @@
     <string name="money_bills_pay_action">Thanh toán ngay</string>
     <string name="money_bills_default_note">Thanh toán hóa đơn %1$s kỳ %2$s</string>
 
-    <!-- Nạp tiền điện thoại (PhoneTopupFragment) -->
     <string name="money_topup_title">Nạp tiền điện thoại</string>
     <string name="money_topup_phone_hint">Số điện thoại di động (VD: 0901234567)</string>
     <string name="money_topup_carrier_label">Nhà mạng viễn thông</string>
@@ -167,7 +159,6 @@
     <string name="money_topup_submit_action">Nạp tiền ngay</string>
     <string name="money_topup_default_note">Nạp tiền điện thoại %1$s (%2$s)</string>
 
-    <!-- Đặt dịch vụ & Mua sắm (ServiceBookingFragment) -->
     <string name="money_services_title">Đặt vé &amp; Mua sắm tiện ích</string>
     <string name="money_services_tab_flight">Vé máy bay</string>
     <string name="money_services_tab_movie">Xem phim</string>

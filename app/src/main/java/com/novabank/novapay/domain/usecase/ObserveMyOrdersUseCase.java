@@ -10,9 +10,6 @@ import javax.inject.Inject;
 
 import io.reactivex.rxjava3.core.Observable;
 
-/**
- * Theo dõi danh sách đơn hàng / vé dịch vụ của khách hàng hiện tại.
- */
 public class ObserveMyOrdersUseCase {
 
     private final UtilityRepository utilityRepository;
