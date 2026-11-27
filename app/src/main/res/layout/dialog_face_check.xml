@@ -109,8 +109,8 @@
             android:background="@drawable/bg_np_badge_locked"
             android:gravity="center"
             android:paddingHorizontal="12dp"
-            android:paddingVertical="8dp"
-            android:textAppearance="?attr/textAppearanceBodySmall"
+            android:paddingVertical="10dp"
+            android:textAppearance="?attr/textAppearanceBodyMedium"
             android:textColor="@color/novapay_expense_negative"
             android:textStyle="bold"
             android:visibility="gone" />

@@ -53,7 +53,7 @@ public class EkycRepositoryImpl implements EkycRepository {
                     if (!response.isOk()) {
                         return AppResult.<Long>error(
                                 "FACE_MISMATCH",
-                                "Khuôn mặt không khớp với hồ sơ eKYC đã đăng ký."
+                                "Khuôn mặt không khớp với hồ sơ eKYC đã đăng ký. Vui lòng thử lại!"
                         );
                     }
                     long expiresAtMs = parseEpochMillis(response.getOtpExpiresAt());

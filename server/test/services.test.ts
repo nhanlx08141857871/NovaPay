@@ -2,6 +2,9 @@ import assert from "node:assert/strict";
 import { describe, it } from "node:test";
 import { EmailSendError, createEmailService } from "../src/services/email";
 import {
+  EkycFaceNotFoundError,
+  FaceCheckUnavailableError,
+  SAMPLE_SEED_PLACEHOLDER_BASE64,
   createFaceCheckService,
   parseGeminiFaceCheckResponse,
   stripBase64DataUrlPrefix,
@@ -237,55 +240,101 @@ describe("Gemini FaceCheck Service", () => {
     assert.equal(stripBase64DataUrlPrefix("rawBase64=="), "rawBase64==");
   });
 
-  it("passes when samePerson is true and confidence >= 0.75", async () => {
+  it("sends both images and strict biometric systemInstruction to configured GEMINI_MODEL and passes when matched=true & confidence >= 0.80", async () => {
+    let capturedUrl = "";
+    let capturedBody: Record<string, unknown> = {};
+
     const svc = createFaceCheckService({
       apiKey: "gemini-key",
       model: "gemini-2.5-flash",
-      fetchFn: async () =>
-        new Response(
+      fetchFn: async (input, init) => {
+        capturedUrl = String(input);
+        capturedBody = JSON.parse(String(init?.body)) as Record<string, unknown>;
+        return new Response(
           JSON.stringify({
             candidates: [
               {
                 content: {
-                  parts: [{ text: JSON.stringify({ samePerson: true, confidence: 0.91 }) }],
+                  parts: [
+                    {
+                      text: JSON.stringify({
+                        matched: true,
+                        confidence: 0.91,
+                        reason: "Cấu trúc khuôn mặt trùng khớp.",
+                      }),
+                    },
+                  ],
                 },
               },
             ],
           }),
           { status: 200 }
-        ),
+        );
+      },
     });
 
-    const res = await svc.verifyFaceMatch("data:image/jpeg;base64,AAA", "BBB");
+    const res = await svc.verifyFaceMatch("data:image/jpeg;base64,REF_FACE_IMG", "LIVE_FACE_IMG");
     assert.equal(res.matched, true);
     assert.equal(res.manualAuditRequired, false);
     assert.equal(res.confidence, 0.91);
+    assert.ok(capturedUrl.includes("models/gemini-2.5-flash:generateContent"));
+    assert.ok(capturedBody.systemInstruction);
+    const contents = capturedBody.contents as Array<{ parts: Array<Record<string, unknown>> }>;
+    const inlineParts = contents[0].parts.filter((p) => p.inline_data !== undefined);
+    assert.equal(inlineParts.length, 2);
+    assert.deepEqual(inlineParts[0].inline_data, { mime_type: "image/jpeg", data: "REF_FACE_IMG" });
+    assert.deepEqual(inlineParts[1].inline_data, { mime_type: "image/jpeg", data: "LIVE_FACE_IMG" });
   });
 
-  it("rejects when samePerson is false or confidence < 0.75", async () => {
-    const lowConf = parseGeminiFaceCheckResponse('{"samePerson": true, "confidence": 0.74}');
+  it("rejects when matched is false or confidence < 0.80 and preserves Vietnamese reason", () => {
+    const lowConf = parseGeminiFaceCheckResponse(
+      '{"matched": true, "confidence": 0.79, "reason": "Độ tin cậy chưa đạt ngưỡng 0.80"}'
+    );
     assert.equal(lowConf.matched, false);
     assert.equal(lowConf.manualAuditRequired, false);
 
-    const diffPerson = parseGeminiFaceCheckResponse('{"samePerson": false, "confidence": 0.95}');
+    const diffPerson = parseGeminiFaceCheckResponse(
+      '{"matched": false, "confidence": 0.12, "reason": "Khác cấu trúc sống mũi và khuôn hàm"}'
+    );
     assert.equal(diffPerson.matched, false);
-    assert.equal(diffPerson.manualAuditRequired, false);
+    assert.equal(diffPerson.reason, "Khác cấu trúc sống mũi và khuôn hàm");
   });
 
-  it("falls back with manualAuditRequired=true on HTTP 429", async () => {
-    const svc = createFaceCheckService({
+  it("throws EkycFaceNotFoundError when reference eKYC image is empty or 1x1 seed placeholder", async () => {
+    const svc = createFaceCheckService({ apiKey: "gemini-key" });
+    await assert.rejects(
+      () => svc.verifyFaceMatch("", "LIVE_FACE"),
+      (err: unknown) => err instanceof EkycFaceNotFoundError && err.code === "EKYC_FACE_NOT_FOUND"
+    );
+    await assert.rejects(
+      () => svc.verifyFaceMatch(SAMPLE_SEED_PLACEHOLDER_BASE64, "LIVE_FACE"),
+      (err: unknown) => err instanceof EkycFaceNotFoundError && err.code === "EKYC_FACE_NOT_FOUND"
+    );
+  });
+
+  it("throws FaceCheckUnavailableError (HTTP 503) instead of auto-passing on HTTP 429, missing key, or timeout", async () => {
+    const quotaSvc = createFaceCheckService({
       apiKey: "gemini-key",
       fetchFn: async () => new Response("Too Many Requests", { status: 429 }),
     });
+    await assert.rejects(
+      () => quotaSvc.verifyFaceMatch("REF_FACE", "LIVE_FACE"),
+      (err: unknown) =>
+        err instanceof FaceCheckUnavailableError &&
+        err.statusCode === 503 &&
+        err.reasonCode === "GEMINI_QUOTA_EXCEEDED"
+    );
 
-    const res = await svc.verifyFaceMatch("AAA", "BBB");
-    assert.equal(res.matched, true);
-    assert.equal(res.manualAuditRequired, true);
-    assert.equal(res.reason, "GEMINI_QUOTA_EXCEEDED");
-  });
+    const noKeySvc = createFaceCheckService({ apiKey: "" });
+    await assert.rejects(
+      () => noKeySvc.verifyFaceMatch("REF_FACE", "LIVE_FACE"),
+      (err: unknown) =>
+        err instanceof FaceCheckUnavailableError &&
+        err.statusCode === 503 &&
+        err.reasonCode === "GEMINI_API_KEY_MISSING"
+    );
 
-  it("falls back with manualAuditRequired=true on timeout > 8s (AbortController)", async () => {
-    const svc = createFaceCheckService({
+    const timeoutSvc = createFaceCheckService({
       apiKey: "gemini-key",
       timeoutMs: 20,
       fetchFn: async (_url, init) =>
@@ -297,10 +346,12 @@ describe("Gemini FaceCheck Service", () => {
           });
         }),
     });
-
-    const res = await svc.verifyFaceMatch("AAA", "BBB");
-    assert.equal(res.matched, true);
-    assert.equal(res.manualAuditRequired, true);
-    assert.equal(res.reason, "GEMINI_TIMEOUT");
+    await assert.rejects(
+      () => timeoutSvc.verifyFaceMatch("REF_FACE", "LIVE_FACE"),
+      (err: unknown) =>
+        err instanceof FaceCheckUnavailableError &&
+        err.statusCode === 503 &&
+        err.reasonCode === "GEMINI_TIMEOUT"
+    );
   });
 });

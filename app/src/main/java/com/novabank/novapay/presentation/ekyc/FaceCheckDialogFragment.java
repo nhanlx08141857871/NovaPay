@@ -176,9 +176,15 @@ public class FaceCheckDialogFragment extends AppCompatDialogFragment {
                 String inlineError = data.getInlineError();
                 if (inlineError != null && !inlineError.isEmpty()) {
                     binding.tvFaceCheckError.setText(inlineError);
+                    binding.tvFaceCheckError.setTextColor(ContextCompat.getColor(
+                            requireContext(),
+                            R.color.novapay_expense_negative
+                    ));
                     binding.tvFaceCheckError.setVisibility(View.VISIBLE);
+                    binding.btnVerifyFace.setText(R.string.core_face_check_retry_action);
                 } else {
                     binding.tvFaceCheckError.setVisibility(View.GONE);
+                    binding.btnVerifyFace.setText(R.string.core_face_check_verify_action);
                 }
                 binding.btnVerifyFace.setEnabled(data.isLivenessPassed() && !isCapturing);
             }
@@ -348,7 +354,14 @@ public class FaceCheckDialogFragment extends AppCompatDialogFragment {
 
     private void showMessage(@NonNull String message) {
         if (binding != null && !message.isEmpty()) {
-            Snackbar.make(binding.getRoot(), message, Snackbar.LENGTH_LONG).show();
+            Snackbar snackbar = Snackbar.make(binding.getRoot(), message, Snackbar.LENGTH_LONG);
+            snackbar.setBackgroundTint(
+                    ContextCompat.getColor(requireContext(), R.color.novapay_expense_negative)
+            );
+            snackbar.setTextColor(
+                    ContextCompat.getColor(requireContext(), R.color.white)
+            );
+            snackbar.show();
         }
     }
 

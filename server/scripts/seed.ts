@@ -5,7 +5,9 @@ import { GeoPoint, Timestamp } from "firebase-admin/firestore";
 dotenv.config();
 
 /**
- * Ảnh JPEG 1x1 pixel chuẩn JFIF (SOI 0xFF 0xD8 ... EOI 0xFF 0xD9) dùng làm mẫu ekyc_images khi seed.
+ * Ảnh JPEG 1x1 pixel chuẩn JFIF (SOI 0xFF 0xD8 ... EOI 0xFF 0xD9) dùng làm placeholder khi tạo mới
+ * hồ sơ eKYC chưa chụp ảnh mặt thật (để màn hình Officer có dữ liệu xem trước; khi chụp ảnh thật
+ * qua eKYC thì ảnh thật > 500 ký tự Base64 sẽ được bảo toàn ở các lần seed sau).
  */
 const SAMPLE_EKYC_JPEG_BASE64 = Buffer.from([
   0xff, 0xd8, 0xff, 0xe0, 0x00, 0x10, 0x4a, 0x46, 0x49, 0x46, 0x00, 0x01, 0x01, 0x01, 0x00, 0x48,
@@ -20,6 +22,18 @@ const SAMPLE_EKYC_JPEG_BASE64 = Buffer.from([
   0x00, 0x00, 0xff, 0xda, 0x00, 0x08, 0x01, 0x01, 0x00, 0x00, 0x3f, 0x00, 0xd2, 0xcf, 0x20, 0xff,
   0xd9,
 ]).toString("base64");
+
+const LEGACY_SAMPLE_UIDS = new Set<string>([
+  "uid_customer_verified_01",
+  "uid_customer_pending_02",
+  "uid_customer_unverified_03",
+]);
+
+const LEGACY_SAMPLE_ACCOUNT_IDS = [
+  "acc_cust1_checking",
+  "acc_cust2_checking",
+  "acc_cust3_checking",
+];
 
 function initFirebase(): void {
   if (admin.apps.length > 0) {
@@ -71,14 +85,127 @@ interface SeedUserSpec {
   role: "CUSTOMER" | "OFFICER";
 }
 
-function resolveEnvEmail(envKey: string, fallback: string): string {
-  const raw = (process.env[envKey] || "").trim();
-  return raw && raw.includes("@") ? raw : fallback;
+function resolveRequiredEnvEmail(envKey: string): string {
+  const raw = (process.env[envKey] || "").trim().toLowerCase();
+  if (!raw || !raw.includes("@")) {
+    throw new Error(
+      `Thiếu biến môi trường bắt buộc ${envKey} trong server/.env (yêu cầu địa chỉ Gmail thật).`
+    );
+  }
+  if (raw.endsWith("@novapay.vn")) {
+    throw new Error(
+      `Biến ${envKey} không được dùng địa chỉ ảo @novapay.vn. Vui lòng cấu hình Gmail thật trong server/.env.`
+    );
+  }
+  return raw;
 }
 
-function resolveOptionalEnvEmail(envKey: string): string | null {
-  const raw = (process.env[envKey] || "").trim();
-  return raw && raw.includes("@") ? raw : null;
+async function deleteSubcollection(
+  db: admin.firestore.Firestore,
+  parentPath: string,
+  subcollectionName: string
+): Promise<number> {
+  const snap = await db.doc(parentPath).collection(subcollectionName).get();
+  if (snap.empty) {
+    return 0;
+  }
+  const batch = db.batch();
+  for (const doc of snap.docs) {
+    batch.delete(doc.ref);
+  }
+  await batch.commit();
+  return snap.size;
+}
+
+async function purgeLegacyNovapayAccounts(
+  db: admin.firestore.Firestore
+): Promise<{ deletedAuthCount: number; deletedFirestoreUsersCount: number }> {
+  const auth = admin.auth();
+  const uidsToPurgeFromFirestore = new Set<string>(LEGACY_SAMPLE_UIDS);
+  let deletedAuthCount = 0;
+
+  // 1. Quét toàn bộ Firebase Auth để xóa mọi tài khoản @novapay.vn và UID mẫu cũ
+  let nextPageToken: string | undefined;
+  do {
+    const page = await auth.listUsers(1000, nextPageToken);
+    for (const userRecord of page.users) {
+      const emailLower = (userRecord.email || "").trim().toLowerCase();
+      const isVirtualNovapay = emailLower.endsWith("@novapay.vn");
+      const isLegacyUid = LEGACY_SAMPLE_UIDS.has(userRecord.uid);
+      if (isVirtualNovapay || isLegacyUid) {
+        await auth.deleteUser(userRecord.uid);
+        deletedAuthCount += 1;
+        if (userRecord.uid !== "uid_officer_novapay_01") {
+          uidsToPurgeFromFirestore.add(userRecord.uid);
+        }
+      }
+    }
+    nextPageToken = page.pageToken;
+  } while (nextPageToken);
+
+  // 2. Quét collection users trên Firestore tìm thêm mọi bản ghi có đuôi @novapay.vn
+  const allUsersSnap = await db.collection("users").get();
+  for (const userDoc of allUsersSnap.docs) {
+    const emailLower = String(userDoc.data()?.email ?? "").trim().toLowerCase();
+    if (emailLower.endsWith("@novapay.vn") && userDoc.id !== "uid_officer_novapay_01") {
+      uidsToPurgeFromFirestore.add(userDoc.id);
+    }
+  }
+
+  // 3. Xóa sạch dữ liệu liên quan trên Firestore của các tài khoản ảo/cũ
+  let deletedFirestoreUsersCount = 0;
+  for (const legacyUid of uidsToPurgeFromFirestore) {
+    await deleteSubcollection(db, `users/${legacyUid}`, "beneficiaries");
+    await deleteSubcollection(db, `chat_sessions/${legacyUid}`, "messages");
+
+    // Xóa toàn bộ tài khoản & sổ cái thuộc legacyUid
+    const accSnap = await db.collection("accounts").where("ownerUid", "==", legacyUid).get();
+    for (const accDoc of accSnap.docs) {
+      await deleteSubcollection(db, `accounts/${accDoc.id}`, "ledger");
+      await accDoc.ref.delete();
+    }
+
+    // Xóa các bảng dữ liệu phụ thuộc legacyUid
+    const cleanupQueries = [
+      db.collection("orders").where("uid", "==", legacyUid).get(),
+      db.collection("transactions").where("initiatedBy", "==", legacyUid).get(),
+      db.collection("transaction_drafts").where("uid", "==", legacyUid).get(),
+      db.collection("face_checks").where("uid", "==", legacyUid).get(),
+    ];
+    const querySnaps = await Promise.all(cleanupQueries);
+    const cleanupBatch = db.batch();
+    let hasCleanupWrites = false;
+
+    for (const qSnap of querySnaps) {
+      for (const doc of qSnap.docs) {
+        cleanupBatch.delete(doc.ref);
+        hasCleanupWrites = true;
+      }
+    }
+
+    const userRef = db.collection("users").doc(legacyUid);
+    const userExists = (await userRef.get()).exists;
+    if (userExists) {
+      deletedFirestoreUsersCount += 1;
+    }
+    cleanupBatch.delete(userRef);
+    cleanupBatch.delete(db.collection("ekyc_images").doc(legacyUid));
+    cleanupBatch.delete(db.collection("ekyc_profiles").doc(legacyUid));
+    cleanupBatch.delete(db.collection("chat_sessions").doc(legacyUid));
+    hasCleanupWrites = true;
+
+    if (hasCleanupWrites) {
+      await cleanupBatch.commit();
+    }
+  }
+
+  // Xóa thêm các ID tài khoản mẫu cũ phòng trường hợp còn sót
+  for (const legacyAccId of LEGACY_SAMPLE_ACCOUNT_IDS) {
+    await deleteSubcollection(db, `accounts/${legacyAccId}`, "ledger");
+    await db.collection("accounts").doc(legacyAccId).delete();
+  }
+
+  return { deletedAuthCount, deletedFirestoreUsersCount };
 }
 
 async function upsertAuthUser(spec: SeedUserSpec): Promise<string> {
@@ -134,45 +261,33 @@ async function runSeed(): Promise<void> {
   const now = new Date();
   const nowTs = Timestamp.fromDate(now);
 
-  // 1. Seed 3 Sandbox Auth users (Officer, Pending, Unverified) + 3 Team Member Auth users + Optional Sandbox Verified
-  const pendingEmail = resolveEnvEmail("SEED_PENDING_EMAIL", "customer.pending@novapay.vn");
-  const unverifiedEmail = resolveEnvEmail("SEED_UNVERIFIED_EMAIL", "customer.unverified@novapay.vn");
-  const optionalVerifiedEmail = resolveOptionalEnvEmail("SEED_VERIFIED_EMAIL");
+  // 0. Đọc và xác thực bắt buộc đúng 4 Gmail thật từ server/.env
+  const officerEmail = resolveRequiredEnvEmail("SEED_OFFICER_EMAIL");
+  const member1Email = resolveRequiredEnvEmail("SEED_MEMBER_1_EMAIL");
+  const member2Email = resolveRequiredEnvEmail("SEED_MEMBER_2_EMAIL");
+  const member3Email = resolveRequiredEnvEmail("SEED_MEMBER_3_EMAIL");
 
+  const uniqueEmails = new Set([officerEmail, member1Email, member2Email, member3Email]);
+  if (uniqueEmails.size !== 4) {
+    throw new Error(
+      "4 biến SEED_OFFICER_EMAIL, SEED_MEMBER_1_EMAIL, SEED_MEMBER_2_EMAIL, SEED_MEMBER_3_EMAIL bắt buộc phải là 4 địa chỉ Gmail khác nhau."
+    );
+  }
+
+  // 1. Dọn sạch toàn bộ tài khoản ảo @novapay.vn và UID mẫu cũ trên Firebase Auth & Firestore
+  const purgeSummary = await purgeLegacyNovapayAccounts(db);
+  console.log(
+    `[NovaPay Seed] Đã dọn sạch tài khoản ảo @novapay.vn / mẫu cũ: ${purgeSummary.deletedAuthCount} Auth users, ${purgeSummary.deletedFirestoreUsersCount} Firestore users.`
+  );
+
+  // 2. Tạo/cập nhật đúng 4 tài khoản thật trên Firebase Authentication
   const officerUid = await upsertAuthUser({
     defaultUid: "uid_officer_novapay_01",
-    email: "officer@novapay.vn",
+    email: officerEmail,
     password: "NovaPay@Officer2026",
     displayName: "Trần Minh Quân",
     role: "OFFICER",
   });
-
-  const custPendingUid = await upsertAuthUser({
-    defaultUid: "uid_customer_pending_02",
-    email: pendingEmail,
-    password: "NovaPay@User2026",
-    displayName: "Lê Thị Thu Hà",
-    role: "CUSTOMER",
-  });
-
-  const custUnverifiedUid = await upsertAuthUser({
-    defaultUid: "uid_customer_unverified_03",
-    email: unverifiedEmail,
-    password: "NovaPay@User2026",
-    displayName: "Phạm Quốc Bảo",
-    role: "CUSTOMER",
-  });
-
-  let optionalVerifiedUid: string | null = null;
-  if (optionalVerifiedEmail) {
-    optionalVerifiedUid = await upsertAuthUser({
-      defaultUid: "uid_customer_verified_01",
-      email: optionalVerifiedEmail,
-      password: "NovaPay@User2026",
-      displayName: "Nguyễn Hoàng Anh",
-      role: "CUSTOMER",
-    });
-  }
 
   interface TeamMemberSpec {
     defaultUid: string;
@@ -180,6 +295,7 @@ async function runSeed(): Promise<void> {
     fullName: string;
     email: string;
     password: string;
+    ekycStatus: "VERIFIED" | "PENDING";
     phone: string;
     nationalId: string;
     dob: string;
@@ -206,8 +322,9 @@ async function runSeed(): Promise<void> {
     {
       defaultUid: "uid_member_nhan_01",
       fullName: "Nguyễn Phan Nhân",
-      email: resolveEnvEmail("SEED_MEMBER_1_EMAIL", "member1.nhan@novapay.vn"),
+      email: member1Email,
       password: "NovaPay@2026",
+      ekycStatus: "VERIFIED",
       phone: "0902000001",
       nationalId: "079204000001",
       dob: "2004-06-15",
@@ -232,8 +349,9 @@ async function runSeed(): Promise<void> {
     {
       defaultUid: "uid_member_dat_02",
       fullName: "Nguyễn Thành Đạt",
-      email: resolveEnvEmail("SEED_MEMBER_2_EMAIL", "member2.dat@novapay.vn"),
+      email: member2Email,
       password: "NovaPay@2026",
+      ekycStatus: "VERIFIED",
       phone: "0902000002",
       nationalId: "079204000002",
       dob: "2004-08-20",
@@ -258,8 +376,9 @@ async function runSeed(): Promise<void> {
     {
       defaultUid: "uid_member_duy_03",
       fullName: "Nguyễn Văn Duy",
-      email: resolveEnvEmail("SEED_MEMBER_3_EMAIL", "member3.duy@novapay.vn"),
+      email: member3Email,
       password: "NovaPay@2026",
+      ekycStatus: "PENDING",
       phone: "0902000003",
       nationalId: "079204000003",
       dob: "2004-07-18",
@@ -293,30 +412,28 @@ async function runSeed(): Promise<void> {
     });
   }
 
-  // Bảo toàn ảnh eKYC thật (> 500 ký tự Base64) nếu thành viên đã chụp ảnh thật trước đó
+  // Bảo toàn ảnh eKYC thật (> 500 ký tự Base64) nếu thành viên đã chụp ảnh mặt thật trước đó
   const existingRealEkycUids = new Set<string>();
-  const ekycCheckUids = [
-    custPendingUid,
-    ...(optionalVerifiedUid ? [optionalVerifiedUid] : []),
-    ...teamMembers.map((m) => m.uid as string),
-  ];
-  for (const uid of ekycCheckUids) {
-    const snap = await db.collection("ekyc_images").doc(uid).get();
+  for (const member of teamMembers) {
+    const memberUid = member.uid as string;
+    const snap = await db.collection("ekyc_images").doc(memberUid).get();
     const img = snap.exists ? String(snap.data()?.imageBase64 ?? "") : "";
     if (img.length > 500) {
-      existingRealEkycUids.add(uid);
+      existingRealEkycUids.add(memberUid);
     }
+    // Dọn sạch danh bạ thụ hưởng cũ trước khi nạp lại đúng 2 thành viên còn lại + VCB
+    await deleteSubcollection(db, `users/${memberUid}`, "beneficiaries");
   }
 
   const batch = db.batch();
 
-  // 2. Seed users/{uid}
+  // 3. Seed users/{uid} cho đúng 1 OFFICER + 3 CUSTOMER
   batch.set(
     db.collection("users").doc(officerUid),
     {
       role: "OFFICER",
       fullName: "Trần Minh Quân",
-      email: "officer@novapay.vn",
+      email: officerEmail,
       phone: "0901000001",
       nationalId: "079090000001",
       dob: "1990-05-12",
@@ -335,83 +452,10 @@ async function runSeed(): Promise<void> {
     { merge: true }
   );
 
-  if (optionalVerifiedUid && optionalVerifiedEmail) {
-    batch.set(
-      db.collection("users").doc(optionalVerifiedUid),
-      {
-        role: "CUSTOMER",
-        fullName: "Nguyễn Hoàng Anh",
-        email: optionalVerifiedEmail,
-        phone: "0909123456",
-        nationalId: "079201001234",
-        dob: "2001-09-20",
-        address: "25 Nguyễn Thị Thập, Tân Hưng, Quận 7, TP.HCM",
-        avatarUrl: "",
-        status: "ACTIVE",
-        ekyc: {
-          status: "VERIFIED",
-          verifiedBy: officerUid,
-          verifiedAt: nowTs,
-        },
-        createdBy: officerUid,
-        createdAt: nowTs,
-        updatedAt: nowTs,
-      },
-      { merge: true }
-    );
-  }
-
-  batch.set(
-    db.collection("users").doc(custPendingUid),
-    {
-      role: "CUSTOMER",
-      fullName: "Lê Thị Thu Hà",
-      email: pendingEmail,
-      phone: "0912345678",
-      nationalId: "079302005678",
-      dob: "2002-03-15",
-      address: "120 Lê Văn Lương, Tân Kiểng, Quận 7, TP.HCM",
-      avatarUrl: "",
-      status: "ACTIVE",
-      ekyc: {
-        status: "PENDING",
-        verifiedBy: null,
-        verifiedAt: null,
-      },
-      createdBy: officerUid,
-      createdAt: nowTs,
-      updatedAt: nowTs,
-    },
-    { merge: true }
-  );
-
-  batch.set(
-    db.collection("users").doc(custUnverifiedUid),
-    {
-      role: "CUSTOMER",
-      fullName: "Phạm Quốc Bảo",
-      email: unverifiedEmail,
-      phone: "0987654321",
-      nationalId: "079203009876",
-      dob: "2003-11-08",
-      address: "45 Huỳnh Tấn Phát, Phú Thuận, Quận 7, TP.HCM",
-      avatarUrl: "",
-      status: "ACTIVE",
-      ekyc: {
-        status: "UNVERIFIED",
-        verifiedBy: null,
-        verifiedAt: null,
-      },
-      createdBy: officerUid,
-      createdAt: nowTs,
-      updatedAt: nowTs,
-    },
-    { merge: true }
-  );
-
-  // 2b. Seed users/{uid} + beneficiaries cho 3 thành viên trong nhóm (VERIFIED)
   for (const member of teamMembers) {
     const memberUid = member.uid as string;
+    const isVerified = member.ekycStatus === "VERIFIED";
+
     batch.set(
       db.collection("users").doc(memberUid),
       {
@@ -425,9 +469,9 @@ async function runSeed(): Promise<void> {
         avatarUrl: "",
         status: "ACTIVE",
         ekyc: {
-          status: "VERIFIED",
-          verifiedBy: officerUid,
-          verifiedAt: nowTs,
+          status: member.ekycStatus,
+          verifiedBy: isVerified ? officerUid : null,
+          verifiedAt: isVerified ? nowTs : null,
         },
         createdBy: officerUid,
         createdAt: nowTs,
@@ -436,7 +480,7 @@ async function runSeed(): Promise<void> {
       { merge: true }
     );
 
-    // Danh bạ thụ hưởng: lưu sẵn 2 thành viên còn lại trong nhóm + 1 tài khoản VCB
+    // Danh bạ thụ hưởng: lưu sẵn 2 thành viên còn lại (1001000001..1001000003) + 1 tài khoản VCB
     const peers = teamMembers.filter((other) => other.defaultUid !== member.defaultUid);
     peers.forEach((peer, idx) => {
       batch.set(
@@ -466,29 +510,7 @@ async function runSeed(): Promise<void> {
     );
   }
 
-  // 3. Seed ekyc_images/{uid} (chỉ nạp ảnh mẫu nếu chưa có ảnh mặt thật)
-  if (optionalVerifiedUid && !existingRealEkycUids.has(optionalVerifiedUid)) {
-    batch.set(
-      db.collection("ekyc_images").doc(optionalVerifiedUid),
-      {
-        imageBase64: SAMPLE_EKYC_JPEG_BASE64,
-        capturedAt: nowTs,
-        capturedBy: optionalVerifiedUid,
-      },
-      { merge: true }
-    );
-  }
-  if (!existingRealEkycUids.has(custPendingUid)) {
-    batch.set(
-      db.collection("ekyc_images").doc(custPendingUid),
-      {
-        imageBase64: SAMPLE_EKYC_JPEG_BASE64,
-        capturedAt: nowTs,
-        capturedBy: custPendingUid,
-      },
-      { merge: true }
-    );
-  }
+  // 4. Seed ekyc_images/{uid} (bảo toàn ảnh thật nếu đã chụp, tạo placeholder cho hồ sơ chưa chụp)
   for (const member of teamMembers) {
     const memberUid = member.uid as string;
     if (!existingRealEkycUids.has(memberUid)) {
@@ -504,7 +526,7 @@ async function runSeed(): Promise<void> {
     }
   }
 
-  // 4. Seed interest_rates/{rateId}
+  // 5. Seed interest_rates/{rateId}
   const rateSpecs = [
     { id: "rate_0m", termMonths: 0, annualRate: 0.5 },
     { id: "rate_1m", termMonths: 1, annualRate: 3.5 },
@@ -527,68 +549,11 @@ async function runSeed(): Promise<void> {
     );
   }
 
-  // 5. Seed accounts/{accountId}
+  // 6. Seed accounts (CHECKING 50M + SAVING + MORTGAGE) cho 3 thành viên nhóm
   const openedAt = Timestamp.fromDate(new Date(now.getTime() - 90 * 24 * 60 * 60 * 1000));
   const maturityDate = Timestamp.fromDate(new Date(now.getTime() + 275 * 24 * 60 * 60 * 1000));
   const nextDueDate = Timestamp.fromDate(new Date(now.getTime() + 15 * 24 * 60 * 60 * 1000));
 
-  if (optionalVerifiedUid) {
-    batch.set(
-      db.collection("accounts").doc("acc_cust1_checking"),
-      {
-        ownerUid: optionalVerifiedUid,
-        type: "CHECKING",
-        accountNumber: "1001000101",
-        status: "ACTIVE",
-        balance: 25_000_000,
-        currency: "VND",
-        perTxnLimit: 50_000_000,
-        dailyLimit: 200_000_000,
-        saving: null,
-        mortgage: null,
-        createdAt: openedAt,
-      },
-      { merge: true }
-    );
-  }
-
-  batch.set(
-    db.collection("accounts").doc("acc_cust2_checking"),
-    {
-      ownerUid: custPendingUid,
-      type: "CHECKING",
-      accountNumber: "1001000102",
-      status: "ACTIVE",
-      balance: 10_000_000,
-      currency: "VND",
-      perTxnLimit: 20_000_000,
-      dailyLimit: 100_000_000,
-      saving: null,
-      mortgage: null,
-      createdAt: openedAt,
-    },
-    { merge: true }
-  );
-
-  batch.set(
-    db.collection("accounts").doc("acc_cust3_checking"),
-    {
-      ownerUid: custUnverifiedUid,
-      type: "CHECKING",
-      accountNumber: "1001000103",
-      status: "ACTIVE",
-      balance: 2_000_000,
-      currency: "VND",
-      perTxnLimit: 20_000_000,
-      dailyLimit: 50_000_000,
-      saving: null,
-      mortgage: null,
-      createdAt: openedAt,
-    },
-    { merge: true }
-  );
-
-  // 5b. Seed accounts (CHECKING 50M + SAVING + MORTGAGE) cho 3 thành viên nhóm
   for (const member of teamMembers) {
     const memberUid = member.uid as string;
 
@@ -661,12 +626,13 @@ async function runSeed(): Promise<void> {
     );
   }
 
-  // 6. Seed current-month ledger & transactions (always inside current month!)
+  // 7. Seed bút toán sổ cái & giao dịch tháng hiện tại cho 3 thành viên (biểu đồ Thu/Chi & Lịch sử)
   const startOfMonth = new Date(Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), 1, 2, 0, 0));
   const dayOffsetMs = (days: number) =>
-    Timestamp.fromDate(new Date(Math.min(now.getTime() - 60_000, startOfMonth.getTime() + days * 3_600_000)));
+    Timestamp.fromDate(
+      new Date(Math.min(now.getTime() - 60_000, startOfMonth.getTime() + days * 3_600_000))
+    );
 
-  // Seed bút toán mẫu trong tháng hiện tại cho 3 tài khoản thành viên nhóm (phục vụ biểu đồ Thu/Chi & Lịch sử)
   for (const member of teamMembers) {
     const memberUid = member.uid as string;
     const memberLedger = [
@@ -730,7 +696,7 @@ async function runSeed(): Promise<void> {
     }
   }
 
-  // 7. Seed banks/{bankCode}
+  // 8. Seed banks/{bankCode}
   const banks = [
     { code: "VCB", name: "Vietcombank", napasCode: "970436" },
     { code: "BIDV", name: "BIDV", napasCode: "970418" },
@@ -751,7 +717,7 @@ async function runSeed(): Promise<void> {
     );
   }
 
-  // 8. Seed 10 HCMC branches & ATMs around TDTU (10.7326, 106.6998)
+  // 9. Seed 10 chi nhánh & ATM NovaBank tại TP.HCM
   const branches = [
     {
       id: "br_tdtu_q7",
@@ -847,7 +813,7 @@ async function runSeed(): Promise<void> {
       id: "br_binhthanh_lm81",
       name: "NovaBank PGD Landmark Bình Thạnh",
       address: "720A Điện Biên Phủ, Phường 22, Bình Thạnh, TP.HCM",
-      lat: 10.7950,
+      lat: 10.795,
       lng: 106.7218,
       phone: "02837755007",
       openHours: "08:00 - 17:00",
@@ -869,15 +835,17 @@ async function runSeed(): Promise<void> {
     );
   }
 
-  // 9. Seed utility_bills/{billId}
+  // 10. Seed utility_bills/{billId} gắn trực tiếp với UID & tên của 3 thành viên nhóm
   const billDue = Timestamp.fromDate(new Date(now.getTime() + 10 * 24 * 60 * 60 * 1000));
+  const [member1, member2, member3] = teamMembers;
   const bills = [
     {
       id: "bill_elec_01",
       type: "ELECTRIC",
       providerName: "EVN TP.HCM",
       customerCode: "PE0100001234",
-      customerName: "Nguyễn Hoàng Anh",
+      customerName: member1.fullName,
+      ownerUid: member1.uid as string,
       period: "Tháng hiện tại",
       amount: 850_000,
       status: "UNPAID",
@@ -887,7 +855,8 @@ async function runSeed(): Promise<void> {
       type: "ELECTRIC",
       providerName: "EVN TP.HCM",
       customerCode: "PE0100009999",
-      customerName: "Công ty TNHH Thương mại Nam Sài Gòn",
+      customerName: member2.fullName,
+      ownerUid: member2.uid as string,
       period: "Tháng hiện tại",
       amount: 6_200_000,
       status: "UNPAID",
@@ -897,7 +866,8 @@ async function runSeed(): Promise<void> {
       type: "WATER",
       providerName: "SAWACO Nhà Bè",
       customerCode: "NU0700005678",
-      customerName: "Nguyễn Hoàng Anh",
+      customerName: member1.fullName,
+      ownerUid: member1.uid as string,
       period: "Tháng hiện tại",
       amount: 240_000,
       status: "UNPAID",
@@ -907,7 +877,8 @@ async function runSeed(): Promise<void> {
       type: "WATER",
       providerName: "SAWACO Nhà Bè",
       customerCode: "NU0700008888",
-      customerName: "Nguyễn Hoàng Anh",
+      customerName: member3.fullName,
+      ownerUid: member3.uid as string,
       period: "Tháng trước",
       amount: 195_000,
       status: "PAID",
@@ -921,6 +892,7 @@ async function runSeed(): Promise<void> {
         providerName: bill.providerName,
         customerCode: bill.customerCode,
         customerName: bill.customerName,
+        ownerUid: bill.ownerUid,
         period: bill.period,
         amount: bill.amount,
         dueDate: billDue,
@@ -930,7 +902,7 @@ async function runSeed(): Promise<void> {
     );
   }
 
-  // 10. Seed service_catalog/{itemId} (4 categories)
+  // 11. Seed service_catalog/{itemId} (4 categories)
   const catalogItems = [
     {
       id: "svc_flight_sgn_han",
@@ -1012,16 +984,11 @@ async function runSeed(): Promise<void> {
   }
 
   await batch.commit();
-  console.log("[NovaPay Seed] Đã khởi tạo dữ liệu mẫu thành công (Idempotent).");
-  console.log("  Officer UID:", officerUid);
-  if (optionalVerifiedUid) {
-    console.log("  Optional Sandbox Verified UID:", optionalVerifiedUid);
-  }
-  console.log("  Customer Pending UID:", custPendingUid);
-  console.log("  Customer Unverified UID:", custUnverifiedUid);
+  console.log("[NovaPay Seed] Đã khởi tạo sạch đúng 4 tài khoản Gmail thật (1 OFFICER + 3 CUSTOMER).");
+  console.log(`  [OFFICER] Trần Minh Quân | UID: ${officerUid} | Source: SEED_OFFICER_EMAIL`);
   for (const member of teamMembers) {
     console.log(
-      `  Team Member (${member.fullName}) UID: ${member.uid} | Checking: ${member.checkingNumber} (${member.checkingBalance.toLocaleString("vi-VN")} ₫)`
+      `  [CUSTOMER - ${member.ekycStatus}] ${member.fullName} | UID: ${member.uid} | Checking: ${member.checkingNumber} (${member.checkingBalance.toLocaleString("vi-VN")} ₫)`
     );
   }
 }

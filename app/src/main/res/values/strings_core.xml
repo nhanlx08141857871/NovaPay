@@ -166,9 +166,10 @@
     <string name="core_face_check_title">Xác thực khuôn mặt (&gt; 5.000.000 ₫)</string>
     <string name="core_face_check_subtitle">Đối chiếu khuôn mặt trực tiếp trước khi nhận mã OTP</string>
     <string name="core_face_check_verify_action">Xác minh khuôn mặt</string>
+    <string name="core_face_check_retry_action">Quét lại khuôn mặt</string>
     <string name="core_face_check_cancel_action">Hủy</string>
     <string name="core_face_check_verifying">Đang đối chiếu khuôn mặt với hồ sơ eKYC…</string>
-    <string name="core_face_check_mismatch">Khuôn mặt không trùng khớp với hồ sơ eKYC. Vui lòng thử lại.</string>
+    <string name="core_face_check_mismatch">Khuôn mặt không khớp với hồ sơ eKYC đã đăng ký. Vui lòng thử lại!</string>
 
     <string name="core_liveness_permission_title">Cần quyền sử dụng Camera</string>
     <string name="core_liveness_permission_desc">NovaPay cần quyền Camera để xác thực khuôn mặt trực tiếp theo chuẩn an toàn ngân hàng.</string>

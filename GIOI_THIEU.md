@@ -110,25 +110,23 @@ Phiên bản APK phát hành của **NovaPay** đã cấu hình kết nối tr�
 
 > *(Nếu bạn là nhà phát triển muốn tự biên dịch mã nguồn Android và vận hành Backend riêng, xem hướng dẫn kỹ thuật chi tiết tại [README.md](./README.md)).*
 
-### 5.2 Danh sách tài khoản trải nghiệm thực tế
+### 5.2 Danh sách 4 tài khoản trải nghiệm thực tế (Gmail thật nhận OTP)
 
-Hệ thống khởi tạo sẵn bộ tài khoản đa vai trò và đầy đủ dữ liệu giao dịch thực tế (chi tiết xem tại [docs/TEST_ACCOUNTS.md](docs/TEST_ACCOUNTS.md)):
+Hệ thống sử dụng **4 tài khoản Gmail thật** (1 Quản trị viên Officer và 3 Khách hàng, không sử dụng email ảo) được đồng bộ trực tiếp qua biến môi trường trong `server/.env` (xem hướng dẫn cấu hình chi tiết tại [docs/TEST_ACCOUNTS.md](docs/TEST_ACCOUNTS.md)):
 
-| Vai trò / Trạng thái | Họ và tên | Email đăng nhập *(hoặc biến `.env`)* | Mật khẩu | Thông tin tài khoản & Phạm vi trải nghiệm |
+| Vai trò / Trạng thái | Họ và tên | Email đăng nhập & nhận OTP *(từ `server/.env`)* | Mật khẩu | Thông tin tài khoản & Phạm vi trải nghiệm |
 | :--- | :--- | :--- | :--- | :--- |
-| **`OFFICER`** | Trần Minh Quân | `officer@novapay.vn` | `NovaPay@Officer2026` | Quản trị viên: Dashboard vận hành, duyệt eKYC, tạo/sửa/khóa KH, chỉnh lãi suất, Audit Logs |
-| **`CUSTOMER`** (`VERIFIED`) | Nguyễn Phan Nhân | `member1.nhan@novapay.vn` *(`SEED_MEMBER_1_EMAIL`)* | `NovaPay@2026` | Checking **`1001000001`** (`50.000.000 ₫`) • Saving **`2001000001`** (`100.000.000 ₫`, 12T) • Mortgage **`3001000001`** (dư nợ `350.000.000 ₫`) |
-| **`CUSTOMER`** (`VERIFIED`) | Nguyễn Thành Đạt | `member2.dat@novapay.vn` *(`SEED_MEMBER_2_EMAIL`)* | `NovaPay@2026` | Checking **`1001000002`** (`50.000.000 ₫`) • Saving **`2001000002`** (`80.000.000 ₫`, 6T) • Mortgage **`3001000002`** (dư nợ `240.000.000 ₫`, `BIWEEKLY`) |
-| **`CUSTOMER`** (`VERIFIED`) | Nguyễn Văn Duy | `member3.duy@novapay.vn` *(`SEED_MEMBER_3_EMAIL`)* | `NovaPay@2026` | Checking **`1001000003`** (`50.000.000 ₫`) • Saving **`2001000003`** (`120.000.000 ₫`, 12T) • Mortgage **`3001000003`** (dư nợ `300.000.000 ₫`) |
-| **`CUSTOMER`** (`PENDING`) | Lê Thị Thu Hà | `customer.pending@novapay.vn` *(`SEED_PENDING_EMAIL`)* | `NovaPay@User2026` | Checking **`1001000102`** (`10.000.000 ₫`) — Trải nghiệm hồ sơ eKYC đang chờ Officer phê duyệt |
-| **`CUSTOMER`** (`UNVERIFIED`) | Phạm Quốc Bảo | `customer.unverified@novapay.vn` *(`SEED_UNVERIFIED_EMAIL`)* | `NovaPay@User2026` | Checking **`1001000103`** (`2.000.000 ₫`) — Trải nghiệm luồng tự định danh eKYC trên ứng dụng |
+| **`OFFICER`** (`VERIFIED`) | Trần Minh Quân | Biến **`SEED_OFFICER_EMAIL`** | `NovaPay@Officer2026` | Quản trị viên: Dashboard vận hành, duyệt hồ sơ eKYC, tạo/sửa/khóa KH, chỉnh biểu lãi suất, Audit Logs |
+| **`CUSTOMER`** (`VERIFIED`) | Nguyễn Phan Nhân | Biến **`SEED_MEMBER_1_EMAIL`** | `NovaPay@2026` | Checking **`1001000001`** (`50.000.000 ₫`) • Saving **`2001000001`** (`100.000.000 ₫`, 12T) • Mortgage **`3001000001`** (dư nợ `350.000.000 ₫`) |
+| **`CUSTOMER`** (`VERIFIED`) | Nguyễn Thành Đạt | Biến **`SEED_MEMBER_2_EMAIL`** | `NovaPay@2026` | Checking **`1001000002`** (`50.000.000 ₫`) • Saving **`2001000002`** (`80.000.000 ₫`, 6T) • Mortgage **`3001000002`** (dư nợ `240.000.000 ₫`, `BIWEEKLY`) |
+| **`CUSTOMER`** (`PENDING`) | Nguyễn Văn Duy | Biến **`SEED_MEMBER_3_EMAIL`** | `NovaPay@2026` | Checking **`1001000003`** (`50.000.000 ₫`) • Saving **`2001000003`** (`120.000.000 ₫`, 12T) • Mortgage **`3001000003`** (dư nợ `300.000.000 ₫`) — Chờ Officer duyệt eKYC |
 
 **Dữ liệu tra cứu nhanh khi trải nghiệm giao dịch:**
 - **Nạp tiền trực tuyến qua Stripe:** Số thẻ `4242 4242 4242 4242` • Hết hạn tương lai (VD: `12/34`) • CVC `424` • ZIP `70000`.
-- **Hóa đơn Điện (`EVN TP.HCM`):** `PE0100001234` (`850.000 ₫` — xác thực OTP chuẩn) • `PE0100009999` (`6.200.000 ₫` — kích hoạt bảo mật 3 lớp FaceCheck + Sinh trắc học + OTP).
-- **Hóa đơn Nước (`SAWACO Nhà Bè`):** `NU0700005678` (`240.000 ₫` chưa thanh toán).
+- **Hóa đơn Điện (`EVN TP.HCM`):** `PE0100001234` (*Nguyễn Phan Nhân* — `850.000 ₫`, xác thực OTP chuẩn) • `PE0100009999` (*Nguyễn Thành Đạt* — `6.200.000 ₫`, kích hoạt bảo mật 3 lớp FaceCheck + Sinh trắc học + OTP).
+- **Hóa đơn Nước (`SAWACO Nhà Bè`):** `NU0700005678` (*Nguyễn Phan Nhân* — `240.000 ₫`, chưa thanh toán).
 
-> *Mẹo trải nghiệm FaceCheck `> 5.000.000 ₫`: Hãy dùng tài khoản **Officer** → **Quản lý khách hàng** → **Chụp hộ eKYC tại quầy** cho tài khoản khách hàng bạn đang sử dụng và phê duyệt trong **Duyệt eKYC & Hậu kiểm**, giúp Gemini đối chiếu chính xác gương mặt của bạn.*
+> *Mẹo trải nghiệm FaceCheck `> 5.000.000 ₫`: Hãy chụp ảnh khuôn mặt thật vào hồ sơ eKYC (tự chụp hoặc dùng tài khoản **Officer** → **Quản lý khách hàng** → **Chụp hộ eKYC tại quầy** rồi phê duyệt trong **Duyệt eKYC & Hậu kiểm**) để Gemini đối chiếu chính xác gương mặt của bạn.*
 
 ### 5.3 Đội ngũ phát triển
 

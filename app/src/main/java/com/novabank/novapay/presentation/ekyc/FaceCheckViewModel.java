@@ -35,6 +35,9 @@ public class FaceCheckViewModel extends ViewModel {
         this.submitFaceCheckUseCase = submitFaceCheckUseCase;
     }
 
+    public static final String MISMATCH_WARNING_MESSAGE =
+            "Khuôn mặt không khớp với hồ sơ eKYC đã đăng ký. Vui lòng thử lại!";
+
     public static boolean isTerminalErrorCode(String errorCode) {
         if (errorCode == null) {
             return false;
@@ -43,6 +46,7 @@ public class FaceCheckViewModel extends ViewModel {
         return "TOO_MANY_ATTEMPTS".equals(normalized)
                 || "DRAFT_EXPIRED".equals(normalized)
                 || "EKYC_REQUIRED".equals(normalized)
+                || "EKYC_FACE_NOT_FOUND".equals(normalized)
                 || "PERMISSION_DENIED".equals(normalized);
     }
 
@@ -87,6 +91,8 @@ public class FaceCheckViewModel extends ViewModel {
         if (isTerminalErrorCode(result.getErrorCode())) {
             lastInlineError = null;
             uiState.setValue(UiState.error(result.getMessage()));
+        } else if ("FACE_MISMATCH".equalsIgnoreCase(result.getErrorCode())) {
+            emitRetryableFailure(MISMATCH_WARNING_MESSAGE);
         } else {
             emitRetryableFailure(result.getMessage());
         }

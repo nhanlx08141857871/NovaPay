@@ -3,8 +3,11 @@ import admin from "firebase-admin";
 import { AuthenticatedRequest, requireAuth, sendApiError } from "../middleware/auth";
 import { EmailSendError, EmailService, emailService as defaultEmailService } from "../services/email";
 import {
+  EkycFaceNotFoundError,
   FaceCheckService,
+  FaceCheckUnavailableError,
   faceCheckService as defaultFaceCheckService,
+  isPlaceholderOrEmptyEkycImage,
   stripBase64DataUrlPrefix,
 } from "../services/faceCheck";
 import {
@@ -796,15 +799,48 @@ export function createTransactionsRouter(deps?: TransactionsRouteDeps): Router {
         }
 
         const ekycSnap = await db.collection("ekyc_images").doc(uid).get();
-        const ekycImageBase64 = ekycSnap.exists
-          ? asTrimmedString(ekycSnap.data()?.imageBase64)
+        let rawEkycImage = ekycSnap.exists
+          ? asTrimmedString(ekycSnap.data()?.imageBase64 || ekycSnap.data()?.faceImageBase64)
           : "";
-        if (!ekycImageBase64) {
-          sendApiError(res, 403, "EKYC_REQUIRED", "Không tìm thấy ảnh eKYC gốc để đối chiếu.");
+        if (!rawEkycImage) {
+          const profileSnap = await db.collection("ekyc_profiles").doc(uid).get();
+          if (profileSnap.exists) {
+            rawEkycImage = asTrimmedString(
+              profileSnap.data()?.faceImageBase64 || profileSnap.data()?.imageBase64
+            );
+          }
+        }
+        const cleanEkycImage = rawEkycImage ? stripBase64DataUrlPrefix(rawEkycImage) : "";
+        if (!cleanEkycImage || isPlaceholderOrEmptyEkycImage(cleanEkycImage)) {
+          sendApiError(
+            res,
+            403,
+            "EKYC_FACE_NOT_FOUND",
+            "Tài khoản chưa có ảnh khuôn mặt gốc trong hồ sơ eKYC. Vui lòng cập nhật ảnh định danh eKYC trước khi thực hiện giao dịch."
+          );
           return;
         }
 
-        const faceResult = await faceCheckSvc.verifyFaceMatch(ekycImageBase64, imageBase64);
+        let faceResult;
+        try {
+          faceResult = await faceCheckSvc.verifyFaceMatch(cleanEkycImage, cleanLiveImage);
+        } catch (err) {
+          if (err instanceof EkycFaceNotFoundError) {
+            sendApiError(res, err.statusCode, err.code, err.message);
+            return;
+          }
+          if (err instanceof FaceCheckUnavailableError) {
+            sendApiError(res, 503, err.code, err.message);
+            return;
+          }
+          const errMsg =
+            err instanceof Error
+              ? err.message
+              : "Dịch vụ xác thực khuôn mặt AI tạm thời không khả dụng. Vui lòng thử lại sau.";
+          sendApiError(res, 503, "SERVICE_UNAVAILABLE", errMsg);
+          return;
+        }
+
         if (!faceResult.matched) {
           const faceAttempts = Number(draftData.faceAttempts ?? 0) + 1;
           if (faceAttempts >= FACE_CHECK_MAX_ATTEMPTS) {
@@ -813,17 +849,19 @@ export function createTransactionsRouter(deps?: TransactionsRouteDeps): Router {
               res,
               429,
               "TOO_MANY_ATTEMPTS",
-              "Bạn đã xác thực khuôn mặt sai quá số lần cho phép. Giao dịch đã bị khóa."
+              "Bạn đã xác thực khuôn mặt không khớp quá 5 lần cho phép. Giao dịch đã bị khóa."
             );
             return;
           }
           await draftRef.update({ faceAttempts });
-          sendApiError(
-            res,
-            403,
-            "FACE_MISMATCH",
-            "Khuôn mặt không khớp với hồ sơ eKYC đã xác thực."
-          );
+          res.status(403).json({
+            matched: false,
+            error: "FACE_MISMATCH",
+            message: "Khuôn mặt không khớp với hồ sơ eKYC đã đăng ký. Vui lòng thử lại!",
+            reason: faceResult.reason ?? null,
+            attempts: faceAttempts,
+            remainingAttempts: FACE_CHECK_MAX_ATTEMPTS - faceAttempts,
+          });
           return;
         }
 

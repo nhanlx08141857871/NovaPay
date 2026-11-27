@@ -10,7 +10,12 @@ import {
   getHoChiMinhDayBounds,
 } from "../src/routes/transactions";
 import { EmailService } from "../src/services/email";
-import { FaceCheckResult, FaceCheckService } from "../src/services/faceCheck";
+import {
+  FaceCheckResult,
+  FaceCheckService,
+  FaceCheckUnavailableError,
+  SAMPLE_SEED_PLACEHOLDER_BASE64,
+} from "../src/services/faceCheck";
 import { otpService } from "../src/services/otp";
 import { MockFirestore } from "./helpers/mockFirestore";
 
@@ -21,6 +26,7 @@ interface TestHarness {
   setNow: (ms: number) => void;
   setUid: (uid: string) => void;
   setFaceResult: (result: FaceCheckResult) => void;
+  setFaceError: (err: Error | null) => void;
   close: () => Promise<void>;
 }
 
@@ -32,6 +38,7 @@ async function createTestHarness(): Promise<TestHarness> {
     manualAuditRequired: false,
     confidence: 0.92,
   };
+  let nextFaceError: Error | null = null;
   const sentEmails: TestHarness["sentEmails"] = [];
   const db = new MockFirestore(() => currentNow);
 
@@ -132,6 +139,9 @@ async function createTestHarness(): Promise<TestHarness> {
 
   const faceCheckService: FaceCheckService = {
     async verifyFaceMatch() {
+      if (nextFaceError) {
+        throw nextFaceError;
+      }
       return nextFaceResult;
     },
   };
@@ -173,6 +183,9 @@ async function createTestHarness(): Promise<TestHarness> {
     },
     setFaceResult: (result) => {
       nextFaceResult = result;
+    },
+    setFaceError: (err) => {
+      nextFaceError = err;
     },
     close: () =>
       new Promise<void>((resolve, reject) => {
@@ -654,7 +667,13 @@ describe("Transactions Routes", () => {
     for (let attempt = 1; attempt <= 4; attempt++) {
       const res = await faceCheck();
       assert.equal(res.status, 403);
-      assert.equal(((await res.json()) as { error: string }).error, "FACE_MISMATCH");
+      const body = (await res.json()) as { error: string; matched: boolean; message: string };
+      assert.equal(body.error, "FACE_MISMATCH");
+      assert.equal(body.matched, false);
+      assert.equal(
+        body.message,
+        "Khuôn mặt không khớp với hồ sơ eKYC đã đăng ký. Vui lòng thử lại!"
+      );
     }
     const lockedRes = await faceCheck();
     assert.equal(lockedRes.status, 429);
@@ -809,5 +828,55 @@ describe("Transactions Routes", () => {
     });
     assert.equal(lockedRecvRes.status, 400);
     assert.equal(((await lockedRecvRes.json()) as { error: string }).error, "ACCOUNT_NOT_ACTIVE");
+
+    // Missing or 1x1-placeholder eKYC reference image must return 403 EKYC_FACE_NOT_FOUND
+    h.db.seed("ekyc_images/uid_1", { imageBase64: "" });
+    const missingEkycFaceRes = await fetch(`${h.baseUrl}/transactions/face-check`, {
+      method: "POST",
+      headers: { "content-type": "application/json" },
+      body: JSON.stringify({ draftId, imageBase64: "LIVE_FACE_OK" }),
+    });
+    assert.equal(missingEkycFaceRes.status, 403);
+    assert.equal(
+      ((await missingEkycFaceRes.json()) as { error: string }).error,
+      "EKYC_FACE_NOT_FOUND"
+    );
+
+    h.db.seed("ekyc_images/uid_1", { imageBase64: SAMPLE_SEED_PLACEHOLDER_BASE64 });
+    const placeholderEkycFaceRes = await fetch(`${h.baseUrl}/transactions/face-check`, {
+      method: "POST",
+      headers: { "content-type": "application/json" },
+      body: JSON.stringify({ draftId, imageBase64: "LIVE_FACE_OK" }),
+    });
+    assert.equal(placeholderEkycFaceRes.status, 403);
+    assert.equal(
+      ((await placeholderEkycFaceRes.json()) as { error: string }).error,
+      "EKYC_FACE_NOT_FOUND"
+    );
+
+    // Fallback read from ekyc_profiles.faceImageBase64 + HTTP 503 on Gemini quota/network error
+    h.db.seed("ekyc_images/uid_1", { imageBase64: "" });
+    h.db.seed("ekyc_profiles/uid_1", { faceImageBase64: "REAL_PROFILE_FACE_BASE64" });
+    h.setFaceError(new FaceCheckUnavailableError("GEMINI_QUOTA_EXCEEDED"));
+    const unavailableRes = await fetch(`${h.baseUrl}/transactions/face-check`, {
+      method: "POST",
+      headers: { "content-type": "application/json" },
+      body: JSON.stringify({ draftId, imageBase64: "LIVE_FACE_OK" }),
+    });
+    assert.equal(unavailableRes.status, 503);
+    assert.equal(
+      ((await unavailableRes.json()) as { error: string }).error,
+      "SERVICE_UNAVAILABLE"
+    );
+    assert.equal(h.db.getRaw(`transaction_drafts/${draftId}`)?.status, "PENDING_FACE");
+
+    // Once Gemini recovers, ekyc_profiles.faceImageBase64 succeeds
+    h.setFaceError(null);
+    const recoveredRes = await fetch(`${h.baseUrl}/transactions/face-check`, {
+      method: "POST",
+      headers: { "content-type": "application/json" },
+      body: JSON.stringify({ draftId, imageBase64: "LIVE_FACE_OK" }),
+    });
+    assert.equal(recoveredRes.status, 200);
   });
 });
